@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.tlong</groupId>
+		<artifactId>center</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>center-service</artifactId>
+	<packaging>war</packaging>
+
+	<name>service</name>
+	<description>Demo project for Spring Boot</description>
+
+
+	<properties>
+		<skipSpringBootMavenPlugin>false</skipSpringBootMavenPlugin>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+        <!--Start Boot基础依赖-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <!--End Boot基础依赖-->
+
+		<!--Start 数据库连接池依赖 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.25</version>
+		</dependency>
+        <!--End 数据库连接池依赖 -->
+
+		<!--Start 当前子项目依赖 -->
+		<dependency>
+			<groupId>com.tlong</groupId>
+			<artifactId>center-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.tlong</groupId>
+			<artifactId>center-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+        <!--End 当前子项目依赖 -->
+
+        <!--Start quartz依赖-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <!--End quartz依赖-->
+	</dependencies>
+
+	<build>
+		<plugins>
+
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>snapshots</id>
+			<name>tlong-snapshot</name>
+			<url>http://192.168.1.142:8081/repository/tlong-snapshot/</url>
+		</repository>
+		<!--<snapshotRepository>-->
+		<!--<id>releases</id>-->
+		<!--<url>http://192.168.1.142:8081/repository/maven-public/</url>-->
+		<!--</snapshotRepository>-->
+	</distributionManagement>
+
+</project>
