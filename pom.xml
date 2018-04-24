@@ -9,11 +9,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <!--<parent>-->
-        <!--<groupId>org.springframework.boot</groupId>-->
-        <!--<artifactId>spring-boot-starter-parent</artifactId>-->
-        <!--<version>1.5.4.RELEASE</version>-->
-    <!--</parent>-->
 
 	<groupId>com.tlong</groupId>
 	<artifactId>center</artifactId>
@@ -37,52 +32,8 @@
 
 	<dependencies>
 
-        <!--&lt;!&ndash;Start swagger2依赖 &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>io.springfox</groupId>-->
-            <!--<artifactId>springfox-swagger2</artifactId>-->
-            <!--<version>2.7.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>io.springfox</groupId>-->
-            <!--<artifactId>springfox-swagger-ui</artifactId>-->
-            <!--<version>2.7.0</version>-->
-        <!--</dependency>-->
-		<!--&lt;!&ndash;End swagger2依赖 &ndash;&gt;-->
-
-		<!--&lt;!&ndash;Start feign 依赖&ndash;&gt;-->
-		<!--<dependency>-->
-			<!--<groupId>org.springframework.cloud</groupId>-->
-			<!--<artifactId>spring-cloud-starter-feign</artifactId>-->
-		<!--</dependency>-->
-		<!--&lt;!&ndash;End feign 依赖&ndash;&gt;-->
-
-		<!--&lt;!&ndash;Start 代码热部署插件&ndash;&gt;-->
-		<!--<dependency>-->
-			<!--<groupId>org.springframework.boot</groupId>-->
-			<!--<artifactId>spring-boot-devtools</artifactId>-->
-			<!--<optional>true</optional>-->
-		<!--</dependency>-->
-		<!--&lt;!&ndash;End 代码热部署插件&ndash;&gt;-->
 
 	</dependencies>
-
-	<!--<dependencyManagement>-->
-		<!--<dependencies>-->
-			<!--<dependency>-->
-				<!--<groupId>org.springframework.cloud</groupId>-->
-				<!--<artifactId>spring-cloud-dependencies</artifactId>-->
-				<!--<version>Edgware.RELEASE</version>-->
-				<!--&lt;!&ndash;<version>Dalston.SR5</version>&ndash;&gt;-->
-				<!--<type>pom</type>-->
-				<!--<scope>import</scope>-->
-			<!--</dependency>-->
-			<!--<dependency>-->
-				<!--<groupId>org.springframework.cloud</groupId>-->
-				<!--<artifactId>spring-cloud-starter-config</artifactId>-->
-			<!--</dependency>-->
-		<!--</dependencies>-->
-	<!--</dependencyManagement>-->
 
     <distributionManagement>
         <repository>
@@ -95,4 +46,11 @@
         <!--<url>http://192.168.1.142:8081/repository/maven-public/</url>-->
         <!--</snapshotRepository>-->
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>snapshots</id>
+            <name>tlong-snapshot</name>
+            <url>http://192.168.1.142:8081/repository/tlong-snapshot/</url>
+        </repository>
+    </repositories>
 </project>

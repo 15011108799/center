@@ -2,49 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
+    <title>全屏背景切换</title>
+    <script src="http://api.asilu.com/cdn/jquery.js,jquery.backstretch.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="js/new1.css">
 </head>
-<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<body>
 <script type="text/javascript">
 
-    var appendHtml = "<li>第二</li><li>第三</li>";
-
-    $(function(){
-        $("#leftMenuListUl").append(appendHtml)
-
-        //给li标签都加上这个属性
-        $("li").addClass("list-group-item")
-
-    })
-
-
-
+    $.backstretch([
+        'https://desk-fd.zol-img.com.cn/t_s1920x1080c5/g5/M00/01/04/ChMkJlg2YRiIIRUrACInyJpNuWYAAYB1QDJOB8AIifg406.png',
+        'http://img.netbian.com/file/2017/0825/a397e77bc80a8a9a8ebb7016c86a9694.jpg',
+        'https://desk-fd.zol-img.com.cn/t_s1920x1080c5/g5/M00/01/04/ChMkJ1g2YQeIbYQRABTlVmUrO4AAAYB0gGpqwMAFOVu246.jpg',
+        'https://desk-fd.zol-img.com.cn/t_s1920x1080c5/g5/M00/01/04/ChMkJlg2YQmIcX8bAB2MXkUwdIwAAYB0gLxApEAHYx2470.png',
+    ], {
+        fade : 1000, // 动画时长
+        duration : 2000 // 切换延时
+    });
 </script>
-<body>
-<div class="container">
-    <div class="row">
-        <div id="leftMenuList" class="col-md-6">
-            <ul id="leftMenuListUl" style="list-style: none" class="list-group">
-                <li>第一</li>
-            </ul>
-        </div>
+<!--引用腾讯QQ音乐播放器的路径-->
+<audio autoplay="autoplay" loop=""><source src="http://dl.stream.qqmusic.qq.com/C400000VOBAv1zQol0.m4a?vkey=29E58ECD90565DEEB5C785E45195D46CE071F32D327684301F9560A8D2F7919CC5949B5F45B54D400929E006B7FDB61841E67ECBF0DD2905&guid=6761136926&uin=0&fromtag=66mp3"></audio>
 
-        <div class="col-md-3">
-            <p>hahhahaha</p>
-        </div>
-    </div>
-
-    <div class="row">
-
+<div class="wrap">
+    <div class="container">
+        <h1>Welcome</h1>
+        <form>
+            <input type="text" placeholder="user login"/>
+            <input type="password" placeholder="password"/>
+            <input type="button" placeholder="Login" value="Login" onclick="location='main.html'">
+        </form>
 
     </div>
-
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
 </div>
 
 </body>
-
-
-
 </html>
