@@ -78,6 +78,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jdo:jdo-api:3.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.transaction:jta:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.tlong:esign:0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.tlong:utils:0.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20140107" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.0" level="project" />
