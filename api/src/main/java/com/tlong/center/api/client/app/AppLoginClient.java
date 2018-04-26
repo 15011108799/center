@@ -1,4 +1,4 @@
-package com.tlong.center.api.client;
+package com.tlong.center.api.client.app;
 
 import com.tlong.center.api.app.AppLoginApi;
 import com.tlong.center.api.client.fallback.AppLoginClientFallback;
