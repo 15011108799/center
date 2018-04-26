@@ -61,7 +61,7 @@ public class ESignController {
 //    public static String projectSecret = "644a50a16628dcbfba0545525caddc7f";
 
 
-    @Autowired
+//    @Autowired
     private InformationMapper informationMapper;
 
     //字段数据转移接口
