@@ -25,6 +25,7 @@
 	</properties>
 
 	<dependencies>
+
         <!--Start Boot基础依赖-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,6 +58,8 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
         <!--End 当前子项目依赖 -->
+
+
 
         <!--Start quartz依赖-->
         <dependency>

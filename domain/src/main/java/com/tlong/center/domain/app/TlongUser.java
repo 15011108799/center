@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tlong_user")
 @DynamicUpdate
-public class AppUser extends BaseJpa {
+public class TlongUser extends BaseJpa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,10 +1,10 @@
 package com.tlong.center.common.fileUpAndDown;
 
+import com.tlong.center.api.common.UploadApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -16,10 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/file")
-public class FileController {
+public class FileController implements UploadApi{
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
-
 
     @RequestMapping("/greeting")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
@@ -30,8 +29,8 @@ public class FileController {
     /**
      * 文件上传方法
      */
-    @RequestMapping("/upload")
-    @ResponseBody
+    @Override
+    @PostMapping("/upload")
     public String uploadFile(@RequestParam MultipartFile file){
         if (file.isEmpty()){
             logger.error("上传文件为空");
@@ -47,6 +46,7 @@ public class FileController {
         logger.info("上传文件的后缀名为:"+suffixName );
 
         //文件上传后的路径
+        //TODO 自定义控制文件目录
         String filePath = "E://pic//";
 
         //解决中文问题,，liunx下中文路径，图片显示问题
@@ -71,7 +71,7 @@ public class FileController {
     /**
      * 文件下载相关
      */
-    @RequestMapping("/download")
+    @PostMapping("/download")
     public String downloadFile(HttpServletResponse response, @RequestParam String fileName) {
         //处理fileName确保能找到存储的文件的名字
         if (fileName == null) {
@@ -79,6 +79,7 @@ public class FileController {
 //            fileName = "NoNameFile";
         } else {
 //            ResourceUtils.getFile("file:temp")
+            //TODO 这里要设置图片的位置相对路径并且要找到对应的文件夹
             String realPath = "E://pic//";
             File file = new File(realPath, fileName);
             if (file.exists()) {
@@ -125,8 +126,8 @@ public class FileController {
     }
 
     //多文件上传
-    @RequestMapping(value = "/batch/upload", method = RequestMethod.POST)
-    @ResponseBody
+    @Override
+    @PostMapping(value = "/batchUpload")
     public String handleFileUpload(HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request)
                 .getFiles("file");
