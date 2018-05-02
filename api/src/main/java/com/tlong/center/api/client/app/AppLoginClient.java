@@ -8,8 +8,4 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 
 @FeignClient(value = "boot",path = "/api/app",fallback = AppLoginClientFallback.class)
 public interface AppLoginClient extends AppLoginApi {
-//    @Override
-//    public AppUserResponseDto appLogin(AppUserRequestDto requestDto) {
-//        return null;
-//    }
 }
