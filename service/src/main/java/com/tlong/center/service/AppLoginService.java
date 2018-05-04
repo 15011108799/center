@@ -3,7 +3,8 @@ package com.tlong.center.service;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.AppUserRequestDto;
 import com.tlong.center.api.dto.AppUserResponseDto;
-import com.tlong.center.domain.app.AppUser;
+import com.tlong.center.common.utils.MD5Util;
+import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.AppUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tlong.center.domain.app.QAppUser.appUser;
+import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 
 
 @Component
@@ -45,12 +46,12 @@ public class AppLoginService {
      */
     public AppUserResponseDto appLogin(AppUserRequestDto requestDto){
 
-        List<String> fetch = queryFactory.selectFrom(appUser).select(appUser.userName).where(appUser.userName.eq(requestDto.getUserName()))
+        List<String> fetch = queryFactory.selectFrom(tlongUser).select(tlongUser.userName).where(tlongUser.userName.eq(requestDto.getUserName()))
                 .fetch();
 
 
-        AppUser one = appUserRepository.findOne(appUser.userName.eq(requestDto.getUserName())
-                .and(appUser.password.eq(requestDto.getPassword())));
+        TlongUser one = appUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+                .and(tlongUser.password.eq(MD5Util.KL(MD5Util.MD5(requestDto.getPassword())))));
         if (Objects.isNull(one)){
             return new AppUserResponseDto(0,null);
         }
@@ -62,7 +63,7 @@ public class AppLoginService {
      * 添加用户
      */
     public Long addUser(AppUserRequestDto requestDto) {
-        AppUser appUser = new AppUser();
+        TlongUser appUser = new TlongUser();
         appUser.setUserName(requestDto.getUserName());
         appUser.setPassword(requestDto.getPassword());
         return appUserRepository.save(appUser).getId();

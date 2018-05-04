@@ -84,7 +84,7 @@ return s;
 public static String JM(String inStr) {   
 char[] a = inStr.toCharArray();   
 for (int i = 0; i < a.length; i++) {   
-a[i] = (char) (a[i] ^ 't');   
+a[i] = (char) (a[i]^ 't');
 }   
 String k = new String(a);   
 return k;   
