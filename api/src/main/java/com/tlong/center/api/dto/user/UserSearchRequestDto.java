@@ -19,6 +19,9 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("注册时间区间结束时间")
     private LocalDateTime endTime;
 
+    @ApiModelProperty("父级用户id")
+    private Long parentId;
+
     public String getUserName() {
         return userName;
     }
@@ -41,5 +44,13 @@ public class UserSearchRequestDto implements Serializable {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 }

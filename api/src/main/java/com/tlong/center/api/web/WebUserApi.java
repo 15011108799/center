@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Api("代理商供应商用户管理接口")
 public interface WebUserApi {
 
@@ -38,7 +40,7 @@ public interface WebUserApi {
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
     //TODO
-    UserSearchResponseDto searchUser(@RequestBody UserSearchRequestDto requestDto);
+    List<UserSearchResponseDto> searchUser(@RequestBody UserSearchRequestDto requestDto);
 
 
     @ApiOperation("用户认证(供应商代理商)")
@@ -46,5 +48,5 @@ public interface WebUserApi {
     Boolean authentication(@RequestParam Long id);
 
 
-    //TODO 代理商下级信息拉取
+    //TODO 代理商下级信息拉取  整合到用户搜索接口中
 }
