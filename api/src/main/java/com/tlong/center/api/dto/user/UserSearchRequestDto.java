@@ -16,7 +16,7 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("注册时间区间开始时间")
     private LocalDateTime startTime;
 
-    @ApiModelProperty("注册时间区间结束时间")
+    @ApiModelProperty("premises注册时间区间结束时间")
     private LocalDateTime endTime;
 
     @ApiModelProperty("父级用户id")

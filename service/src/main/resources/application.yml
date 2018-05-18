@@ -11,5 +11,43 @@ spring:
         url: jdbc:mysql://47.96.66.66:3306/tlong?useUnicode=true&characterEncoding=utf8
         username: root
         password: mypassword
+
+    #JPA配置
+    jpa:
+        database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+        database: MYSQL
+        open-in-view: false
+#   validate               加载hibernate时，验证创建数据库表结构
+#   create                  每次加载hibernate，重新创建数据库表结构，这就是导致数据库表数据丢失的原因。
+#   create-drop        加载hibernate时创建，退出是删除表结构
+#   update                 加载hibernate自动更新数据库结构
+        hibernate:
+            ddl-auto: none
+            naming:
+                physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+                implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        show-sql: true
+#        properties:
+#            hibernate.id.new_generator_mappings: true
+#            hibernate.cache.use_second_level_cache: true
+#            hibernate.cache.use_query_cache: false
+#            hibernate.generate_statistics: true
+#            hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
+#            hibernate.cache.hazelcast.instance_name: ${spring.application.name}
+#            hibernate.cache.use_minimal_puts: true
+#            hibernate.cache.hazelcast.use_lite_member: true
+
 server:
-    port: 8082
+    port: 8083
+
+#servers:
+#  url: https://localhost:8083
+
+feign:
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true

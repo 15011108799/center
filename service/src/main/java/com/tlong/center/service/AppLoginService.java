@@ -45,20 +45,18 @@ public class AppLoginService {
      */
     public AppUserResponseDto appLogin(AppUserRequestDto requestDto){
 
-        BooleanExpression eq = tlongUser.curState.eq(0);
-        queryFactory.select(tlongUser).from(tlongUser).where(tlongUser.id.eq(1L).and(eq));
+//        BooleanExpression eq = tlongUser.curState.eq(0);
+//        queryFactory.select(tlongUser).from(tlongUser).where(tlongUser.id.eq(1L).and(eq));
 
-
-//        List<String> fetch = queryFactory.selectFrom(appUser).select(appUser.userName).where(appUser.userName.eq(requestDto.getUserName()))
+//        List<String> fetch = queryFactory.selectFrom(tlongUser).select(tlongUser.userName).where(tlongUser.userName.eq(requestDto.getUserName()))
 //                .fetch();
-//
-//        TlongUser one = appUserRepository.findOne(appUser.userName.eq(requestDto.getUserName())
-//                .and(appUser.password.eq(requestDto.getPassword())));
-//        if (Objects.isNull(one)){
-//            return new AppUserResponseDto(0,null);
-//        }
-//        return new AppUserResponseDto(1,one.getId());
-        return null;
+
+        TlongUser one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+                .and(tlongUser.password.eq(requestDto.getPassword())));
+        if (Objects.isNull(one)){
+            return new AppUserResponseDto(0,null);
+        }
+        return new AppUserResponseDto(1,one.getId());
     }
 
 
