@@ -34,7 +34,7 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-core:4.3.9.RELEASE" />
           <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.25" />
           <element id="archive" name="center-api-0.0.1-SNAPSHOT.jar">
-            <element id="module-output" name="api" />
+            <element id="module-output" name="center-api" />
           </element>
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-data-jpa:1.5.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-aop:1.5.4.RELEASE" />

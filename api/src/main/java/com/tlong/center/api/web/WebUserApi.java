@@ -42,7 +42,7 @@ public interface WebUserApi {
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
     //TODO
-    List<UserSearchResponseDto> searchUser(@RequestBody UserSearchRequestDto requestDto);
+    UserSearchResponseDto searchUser(@RequestBody UserSearchRequestDto requestDto);
 
 
     @ApiOperation("用户认证(供应商代理商)")
