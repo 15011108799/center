@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Api("APP登录接口")
 public interface AppLoginApi {
 
-    @PostMapping("/login")
     @ApiOperation("测试登录")
+    @PostMapping("/login")
     AppUserResponseDto appLogin(@RequestBody AppUserRequestDto requestDto);
 }
