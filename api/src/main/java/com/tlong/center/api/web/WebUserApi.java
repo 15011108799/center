@@ -1,5 +1,6 @@
 package com.tlong.center.api.web;
 
+import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.user.AgentRegisterRequestDto;
 import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.center.api.dto.user.UserSearchRequestDto;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public interface WebUserApi {
     @ApiOperation("供应商注册接口")
     @PostMapping("/suppliersRegister")
     //TODO
-    Long suppliersRegister(@RequestBody SuppliersRegisterRequsetDto requsetDto);
+    Result suppliersRegister(@RequestParam MultipartFile file, SuppliersRegisterRequsetDto requsetDto);
 
     @ApiOperation("代理商注册接口")
     @PostMapping("/agentRegister")
