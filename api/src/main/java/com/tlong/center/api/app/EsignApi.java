@@ -34,5 +34,5 @@ public interface EsignApi {
 
     @ApiOperation("合同签署Api")
     @PostMapping("/signContrac")
-    Result eSign(@RequestParam String userid);
+    Result eSign(@RequestParam Long userid);
 }

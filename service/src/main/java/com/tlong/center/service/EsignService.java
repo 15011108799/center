@@ -443,7 +443,7 @@ public class EsignService {
      * @param userid
      * @return
      */
-    public Result eSign(String userid) {
+    public Result eSign(Long userid) {
         return eSignSignService.eSign(userid);
     }
 }

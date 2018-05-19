@@ -94,7 +94,7 @@ public class EsignAllController implements EsignApi{
      * 合同签署
      */
     @RequestMapping(value = "/signContract")
-    public Result eSign(@RequestParam String userid) {
+    public Result eSign(@RequestParam Long userid) {
         return esignService.eSign(userid);
     }
 

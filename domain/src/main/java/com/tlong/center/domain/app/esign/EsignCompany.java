@@ -60,6 +60,9 @@ public class EsignCompany implements Serializable {
     //...
     private Date timePay;
 
+    //企业类型
+    private Integer organType;
+
     public Long getId() {
         return id;
     }
@@ -186,5 +189,13 @@ public class EsignCompany implements Serializable {
 
     public void setTimePay(Date timePay) {
         this.timePay = timePay;
+    }
+
+    public Integer getOrganType() {
+        return organType;
+    }
+
+    public void setOrganType(Integer organType) {
+        this.organType = organType;
     }
 }
