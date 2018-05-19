@@ -18,7 +18,6 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static com.tlong.center.domain.app.esign.QEsignPerson.esignPerson;
 import static com.tlong.center.domain.app.esign.QEsignCompany.esignCompany;
@@ -33,13 +32,15 @@ public class EsignService {
     final EsignPersonRepository esignPersonRepository;
     final EsignCompanyRepository esignCompanyRepository;
     final TlongUserRepository tlongUserRepository;
+    final ESignSignService eSignSignService;
 
-    public EsignService(EntityManager entityManager, EsignRecordHistoryRepository esignRecordHistoryRepository, EsignPersonRepository esignPersonRepository, EsignCompanyRepository esignCompanyRepository, TlongUserRepository tlongUserRepository) {
+    public EsignService(EntityManager entityManager, EsignRecordHistoryRepository esignRecordHistoryRepository, EsignPersonRepository esignPersonRepository, EsignCompanyRepository esignCompanyRepository, TlongUserRepository tlongUserRepository, ESignSignService eSignSignService) {
         this.entityManager = entityManager;
         this.esignRecordHistoryRepository = esignRecordHistoryRepository;
         this.esignPersonRepository = esignPersonRepository;
         this.esignCompanyRepository = esignCompanyRepository;
         this.tlongUserRepository = tlongUserRepository;
+        this.eSignSignService = eSignSignService;
     }
 
     /**
@@ -103,8 +104,6 @@ public class EsignService {
                     one.setTime(new Date());
                     esignPersonRepository.saveAndFlush(one);
                 }
-
-
                 r.setFlag(1);
                 r.setMsg("验证码已发送");
             }else{
@@ -439,6 +438,12 @@ public class EsignService {
         esignRecordHistoryRepository.saveAndFlush(one);
     }
 
-
-
+    /**
+     * 合同签署
+     * @param userid
+     * @return
+     */
+    public Result eSign(String userid) {
+        return eSignSignService.eSign(userid);
+    }
 }

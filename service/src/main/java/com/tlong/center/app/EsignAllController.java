@@ -4,6 +4,7 @@ import com.tlong.center.api.app.EsignApi;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.service.EsignService;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,7 +28,8 @@ public class EsignAllController implements EsignApi{
      */
     @Override
     @RequestMapping(value = "/approvePersonStep1")
-    public Result approvePersonStep1(Long peopleid, String cardno, String mobile, String name, String idno) {
+    public Result approvePersonStep1(@RequestParam Long peopleid, @RequestParam String cardno, @RequestParam String mobile,
+                                     @RequestParam String name, @RequestParam String idno) {
         return esignService.approvePersonStep1( peopleid,cardno,  mobile,  name,  idno);
     }
 
@@ -45,7 +47,8 @@ public class EsignAllController implements EsignApi{
      */
     @Override
     @RequestMapping(value = "/approvePersonStep2")
-    public Result approvePersonStep2(Long peopleid, String cardno, String mobile, String name, String idno, String code) {
+    public Result approvePersonStep2(@RequestParam Long peopleid,@RequestParam String cardno, @RequestParam String mobile,
+                                     @RequestParam String name, @RequestParam String idno, @RequestParam String code) {
         return esignService.approvePersonStep2( peopleid,cardno,  mobile,  name,  idno, code);
     }
 
@@ -66,8 +69,11 @@ public class EsignAllController implements EsignApi{
      * @return
      */
     @RequestMapping(value = "/approveCompanyStep1")
-    public Result approveCompanyStep1(Long peopleid,String companyname, String codeorg, String codeusc, String legalname,String legalidno,
-                                      String name,String cardno,String subbranch,String bank,String province,String city) {
+    public Result approveCompanyStep1(@RequestParam Long peopleid,@RequestParam String companyname,
+                                      @RequestParam String codeorg, @RequestParam String codeusc,
+                                      @RequestParam String legalname,String legalidno,
+                                      @RequestParam String name, @RequestParam String cardno, @RequestParam String subbranch,
+                                      @RequestParam String bank, @RequestParam String province, @RequestParam String city) {
 
         return esignService.approveCompanyStep1( peopleid, companyname,  codeorg,  codeusc,  legalname, legalidno,
                 name, cardno, subbranch, bank, province, city);
@@ -80,8 +86,16 @@ public class EsignAllController implements EsignApi{
      * @return
      */
     @RequestMapping(value = "/approveCompanyStep2")
-    public Result approveCompanyStep2(Long peopleid,String cash) {
-
+    public Result approveCompanyStep2(@RequestParam Long peopleid, @RequestParam String cash) {
         return esignService.approveCompanyStep2( peopleid, cash);
     }
+
+    /**
+     * 合同签署
+     */
+    @RequestMapping(value = "/signContract")
+    public Result eSign(@RequestParam String userid) {
+        return esignService.eSign(userid);
+    }
+
 }

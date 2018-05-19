@@ -1,4 +1,4 @@
-package com.tlong.center.app;
+package com.tlong.center.service;
 
 import com.timevale.esign.sdk.tech.bean.result.AddAccountResult;
 import com.timevale.esign.sdk.tech.bean.result.AddSealResult;
@@ -8,12 +8,10 @@ import com.tlong.center.common.utils.AlgorithmHelper;
 import com.tlong.center.common.utils.FileHelper;
 import com.tlong.center.common.utils.HttpClientUtil;
 import com.tlong.center.common.utils.SignHelper;
-import com.tlong.center.service.InformationMapper;
 import org.json.JSONException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -39,9 +37,11 @@ import java.util.Map;
 //import cn.tsign.ching.utils.AlgorithmHelper;
 //import cn.tsign.ching.utils.FileHelper;
 
-@RestController
-@RequestMapping("pub/admin/eSign")
-public class ESignBackController {
+//@RestController
+//@RequestMapping("pub/admin/eSign")
+@Component
+@Transactional
+public class ESignSignService {
     private static String encoding = "UTF-8";
     private static String algorithm = "HmacSHA256";
     private static String mode = "package";
@@ -64,9 +64,10 @@ public class ESignBackController {
     private InformationMapper informationMapper;
 
     //字段数据转移接口
-    @RequestMapping(value = "/signContract.do")
-    @ResponseBody
-    public Object eSign(String userid) {
+//    @RequestMapping(value = "/signContract.do")
+//    @ResponseBody
+//    public Object eSign(String userid) {
+    public Result eSign(String userid) {
         Map<String, Object> map = new HashMap<String, Object>();
         /*
          * userType 客户端类型：0-代理商端，1-供应商端

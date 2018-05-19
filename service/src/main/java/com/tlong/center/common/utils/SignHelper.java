@@ -17,7 +17,7 @@ import com.timevale.tech.sdk.bean.ProjectConfig;
 import com.timevale.tech.sdk.bean.SignatureConfig;
 import com.timevale.tech.sdk.constants.AlgorithmType;
 import com.timevale.tech.sdk.constants.HttpType;
-import com.tlong.center.app.ESignBackController;
+import com.tlong.center.service.ESignSignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +40,11 @@ public class SignHelper {
 		ProjectConfig proCfg = new ProjectConfig();
 
 		// 项目ID(应用ID)
-		proCfg.setProjectId(ESignBackController.projectId);
+		proCfg.setProjectId(ESignSignService.projectId);
 		// 项目Secret(应用Secret)
-		proCfg.setProjectSecret(ESignBackController.projectSecret);
+		proCfg.setProjectSecret(ESignSignService.projectSecret);
 		// 开放平台地址
-		proCfg.setItsmApiUrl(ESignBackController.url_SDKinit);
+		proCfg.setItsmApiUrl(ESignSignService.url_SDKinit);
 
 		HttpConnectionConfig httpConCfg = new HttpConnectionConfig();
 		// 协议类型，默认https
