@@ -170,7 +170,7 @@ public class TlongUser extends BaseJpa {
     }
 
     public void setSex(String sex) {
-        this.sex = sex; 
+        this.sex = sex;
     }
 
     public Integer getUserType() {
