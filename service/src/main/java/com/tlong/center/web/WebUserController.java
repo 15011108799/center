@@ -11,9 +11,9 @@ import com.tlong.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/web/user")
@@ -24,8 +24,9 @@ public class WebUserController implements WebUserApi {
     private UserService userService;
 
     @Override
-    public Result suppliersRegister(@RequestParam MultipartFile file, SuppliersRegisterRequsetDto requsetDto) {
-        return userService.suppliersRegister(FileUploadUtils.upload(file), requsetDto);
+    public Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto) {
+        SuppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(SuppliersRegisterRequsetDto.getHeadImage1()));
+        return userService.suppliersRegister(SuppliersRegisterRequsetDto);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public Integer deleteUser(Long id) {
+    public Integer deleteUser(@RequestBody Long id) {
         return userService.deleteUserById(id);
     }
 
@@ -46,5 +47,33 @@ public class WebUserController implements WebUserApi {
     @Override
     public Boolean authentication(Long id) {
         return userService.authentication(id);
+    }
+
+    @Override
+    public List<SuppliersRegisterRequsetDto> findAllSuppliers() {
+        return userService.findAllSuppliers();
+    }
+
+    @Override
+    public List<SuppliersRegisterRequsetDto> findAllAgents() {
+        return userService.findAllAgents();
+    }
+
+    @Override
+    public SuppliersRegisterRequsetDto findSupplierById(@RequestBody Long id) {
+        return userService.findOne(id);
+    }
+
+    @Override
+    public Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto) {
+        if (suppliersRegisterRequsetDto.getHeadImage1() != null&&!suppliersRegisterRequsetDto.getHeadImage1().equals(""))
+            suppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getHeadImage1()));
+        if (suppliersRegisterRequsetDto.getIdcardReverse1() != null)
+            suppliersRegisterRequsetDto.setIdcardReverse1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getIdcardReverse1()));
+        if (suppliersRegisterRequsetDto.getBusinessLicense1() != null)
+            suppliersRegisterRequsetDto.setBusinessLicense1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getBusinessLicense1()));
+        if (suppliersRegisterRequsetDto.getIdcardFront1() != null)
+            suppliersRegisterRequsetDto.setIdcardFront1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getIdcardFront1()));
+        return userService.update(suppliersRegisterRequsetDto);
     }
 }

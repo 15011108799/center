@@ -63,7 +63,7 @@
         <repository>
             <id>snapshots</id>
             <name>tlong-snapshot</name>
-            <url>http://192.168.1.54:8081/repository/tlong-snapshot/</url>
+            <url>http://192.168.1.192:8081/repository/tlong-snapshot/</url>
         </repository>
         <!--<snapshotRepository>-->
         <!--<id>releases</id>-->
@@ -74,7 +74,7 @@
         <repository>
             <id>snapshots</id>
             <name>tlong-snapshot</name>
-            <url>http://192.168.1.54:8081/repository/tlong-snapshot/</url>
+            <url>http://192.168.1.192:8081/repository/tlong-snapshot/</url>
         </repository>
     </repositories>
 </project>

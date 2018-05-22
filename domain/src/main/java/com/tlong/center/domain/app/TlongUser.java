@@ -4,7 +4,7 @@ import com.tlong.core.base.BaseJpa;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tlong_user")
@@ -33,9 +33,6 @@ public class TlongUser extends BaseJpa {
     //创建人原始用户名
     private String orginPhone;
 
-    //用户编号
-    private String userCode;
-
     //性别
     private String sex;
 
@@ -46,10 +43,13 @@ public class TlongUser extends BaseJpa {
     private Integer esgin;
 
     //加入时间
-    private Date joinTime;
+    private LocalDateTime joinTime;
 
     //是否为集团类型(1 是  0 不是)
     private Integer isCompany;
+
+    //是否免检(1 免检  0 不是)
+    private Integer isExemption;
 
     //头像地址
     private String headImage;
@@ -72,6 +72,82 @@ public class TlongUser extends BaseJpa {
     //微信
     private String wx;
 
+    //昵称
+    private String nickName;
+
+    //服务热线
+    private String serviceHotline;
+
+    //后台认证
+    private String authentication;
+
+   //父级代理id
+    private Long parentId;
+
+    //代理人等级
+    private Integer level;
+
+    //经营地
+    private String premises;
+
+    //所属部门
+    private String orgId;
+
+    //用户编号
+    private String userCode;
+
+    //组织机构代码
+    private String organizationCode;
+
+    //社会统一信用代码
+    private String succ;
+
+    //法人姓名
+    private String  legalPersonName;
+
+    //营业执照照片
+    private String businessLicense;
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getOrganizationCode() {
+        return organizationCode;
+    }
+
+    public void setOrganizationCode(String organizationCode) {
+        this.organizationCode = organizationCode;
+    }
+
+    public String getSucc() {
+        return succ;
+    }
+
+    public void setSucc(String succ) {
+        this.succ = succ;
+    }
+
+    public String getLegalPersonName() {
+        return legalPersonName;
+    }
+
+    public void setLegalPersonName(String legalPersonName) {
+        this.legalPersonName = legalPersonName;
+    }
+
+    public String getBusinessLicense() {
+        return businessLicense;
+    }
+
+    public void setBusinessLicense(String businessLicense) {
+        this.businessLicense = businessLicense;
+    }
+
     public String getRealName() {
         return realName;
     }
@@ -86,14 +162,6 @@ public class TlongUser extends BaseJpa {
 
     public void setOrginPhone(String orginPhone) {
         this.orginPhone = orginPhone;
-    }
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
     }
 
     public String getSex() {
@@ -118,14 +186,6 @@ public class TlongUser extends BaseJpa {
 
     public void setEsgin(Integer esgin) {
         this.esgin = esgin;
-    }
-
-    public Date getJoinTime() {
-        return joinTime;
-    }
-
-    public void setJoinTime(Date joinTime) {
-        this.joinTime = joinTime;
     }
 
     public Integer getIsCompany() {
@@ -230,5 +290,77 @@ public class TlongUser extends BaseJpa {
 
     public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public LocalDateTime getJoinTime() {
+        return joinTime;
+    }
+
+    public void setJoinTime(LocalDateTime joinTime) {
+        this.joinTime = joinTime;
+    }
+
+    public Integer getIsExemption() {
+        return isExemption;
+    }
+
+    public void setIsExemption(Integer isExemption) {
+        this.isExemption = isExemption;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getServiceHotline() {
+        return serviceHotline;
+    }
+
+    public void setServiceHotline(String serviceHotline) {
+        this.serviceHotline = serviceHotline;
+    }
+
+    public String getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public String getPremises() {
+        return premises;
+    }
+
+    public void setPremises(String premises) {
+        this.premises = premises;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 }
