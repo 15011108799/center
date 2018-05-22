@@ -4,7 +4,7 @@ import com.tlong.core.base.BaseJpa;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tlong_user")
@@ -329,5 +329,77 @@ public class TlongUser extends BaseJpa {
 
     public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public LocalDateTime getJoinTime() {
+        return joinTime;
+    }
+
+    public void setJoinTime(LocalDateTime joinTime) {
+        this.joinTime = joinTime;
+    }
+
+    public Integer getIsExemption() {
+        return isExemption;
+    }
+
+    public void setIsExemption(Integer isExemption) {
+        this.isExemption = isExemption;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getServiceHotline() {
+        return serviceHotline;
+    }
+
+    public void setServiceHotline(String serviceHotline) {
+        this.serviceHotline = serviceHotline;
+    }
+
+    public String getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public String getPremises() {
+        return premises;
+    }
+
+    public void setPremises(String premises) {
+        this.premises = premises;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 }
