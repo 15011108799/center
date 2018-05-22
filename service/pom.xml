@@ -38,6 +38,17 @@
 		</dependency>
         <!--End Boot基础依赖-->
 
+
+		<!-- 使用Shiro认证 -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
+
+
+
 		<!--Start 数据库连接池依赖 -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -85,7 +96,7 @@
 		<repository>
 			<id>snapshots</id>
 			<name>tlong-snapshot</name>
-			<url>http://192.168.1.54:8081/repository/tlong-snapshot/</url>
+			<url>http://192.168.1.192:8081/repository/tlong-snapshot/</url>
 		</repository>
 		<!--<snapshotRepository>-->
 		<!--<id>releases</id>-->
