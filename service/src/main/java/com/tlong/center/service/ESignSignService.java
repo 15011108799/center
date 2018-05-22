@@ -1,4 +1,4 @@
-package com.tlong.center.app;
+package com.tlong.center.service;
 
 import com.timevale.esign.sdk.tech.bean.result.AddAccountResult;
 import com.timevale.esign.sdk.tech.bean.result.AddSealResult;
@@ -8,41 +8,30 @@ import com.tlong.center.common.utils.AlgorithmHelper;
 import com.tlong.center.common.utils.FileHelper;
 import com.tlong.center.common.utils.HttpClientUtil;
 import com.tlong.center.common.utils.SignHelper;
-import com.tlong.center.service.InformationMapper;
+import com.tlong.center.domain.app.TlongUser;
+import com.tlong.center.domain.app.esign.EsignCompany;
+import com.tlong.center.domain.app.esign.EsignPerson;
+import com.tlong.center.domain.repository.EsignCompanyRepository;
+import com.tlong.center.domain.repository.EsignPersonRepository;
+import com.tlong.center.domain.repository.TlongUserRepository;
 import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-//import org.apache.commons.httpclient.HttpClient;
-//import org.apache.commons.httpclient.HttpException;
-//import org.apache.commons.httpclient.NameValuePair;
-//import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-//import org.apache.commons.httpclient.methods.PutMethod;
-//import org.apache.commons.httpclient.methods.RequestEntity;
-//import org.apache.commons.httpclient.params.HttpMethodParams;
-//import com.timevale.esign.sdk.tech.bean.result.AddAccountResult;
-//import com.timevale.esign.sdk.tech.bean.result.AddSealResult;
-//import com.timevale.esign.sdk.tech.bean.result.FileDigestSignResult;
-//import com.zjxx.jp.appFunction.webservice.util.HttpClientUtil;
-//import com.zjxx.jp.biz.dao.InformationMapper;
-//import com.zjxx.jp.hybFunction.pojo.Result;
-//import cn.tsign.ching.eSign.SignHelper;
-//import cn.tsign.ching.utils.AlgorithmHelper;
-//import cn.tsign.ching.utils.FileHelper;
-
-@RestController
-@RequestMapping("pub/admin/eSign")
-public class ESignController {
+//@RestController
+//@RequestMapping("pub/admin/eSign")
+@Component
+@Transactional
+public class ESignSignService {
     private static String encoding = "UTF-8";
     private static String algorithm = "HmacSHA256";
     private static String mode = "package";
@@ -61,36 +50,49 @@ public class ESignController {
 //    public static String projectSecret = "644a50a16628dcbfba0545525caddc7f";
 
 
-//    @Autowired
-    private InformationMapper informationMapper;
+    final EntityManager entityManager;
+    final EsignCompanyRepository esignCompanyRepository;
+    final TlongUserRepository tlongUserRepository;
+    final EsignPersonRepository esignPersonRepository;
 
-    //字段数据转移接口
-    @RequestMapping(value = "/signContract.do")
-    @ResponseBody
-    public Object eSign(String userid) {
+
+    public ESignSignService(EntityManager entityManager, EsignCompanyRepository esignCompanyRepository, TlongUserRepository tlongUserRepository, EsignPersonRepository esignPersonRepository) {
+        this.entityManager = entityManager;
+        this.esignCompanyRepository = esignCompanyRepository;
+        this.tlongUserRepository = tlongUserRepository;
+        this.esignPersonRepository = esignPersonRepository;
+    }
+
+
+//    @Autowired
+//    private InformationMapper informationMapper;
+
+    /**
+     * 字段数据转移接口
+     * userType 客户端类型：0-代理商端，1-供应商端
+     * scene 签约客户类型：0-个人客户，1-企业客户
+     *
+     * ----< 个人用户参数 >----
+     * name_per 个人客户姓名
+     * idNo 身份证号/护照号
+     * personArea 个人归属地：0-大陆，1-香港，2-澳门，3-台湾，4-外籍
+     *
+     * ----< 企业用户参数 >----
+     * name_org 企业名称 companyname
+     * organType 单位类型：0-普通企业，1-社会团体，2-事业单位，3-民办非企业单位，4-党政及国家机构
+     * regType 企业注册类型：0-组织机构代码号，1-多证合一，传递社会信用代码号,2-企业工商注册码
+     * organCode 组织机构代码号、社会信用代码号或工商注册号
+     * userType 注册类型：1-代理人注册，2-法人注册
+     * agentName 代理人姓名，当注册类型为1时必填
+     * agentIdNo 代理人身份证号，当注册类型为1时必填
+     * legalName 法定代表姓名，当注册类型为2时必填
+     * legalArea 法定代表人归属地：0-大陆，1-香港，2-澳门，3-台湾，4-外籍，当注册类型为2时必填
+     * legalIdNo 法定代表身份证号/护照号，当注册类型为2时必填
+     * personServiceId 用户实名认证后的serviceId
+     **/
+    public Result eSign(Long userid) {
         Map<String, Object> map = new HashMap<String, Object>();
-        /*
-         * userType 客户端类型：0-代理商端，1-供应商端
-         * scene 签约客户类型：0-个人客户，1-企业客户
-         *
-         * ----< 个人用户参数 >----
-         * name_per 个人客户姓名
-         * idNo 身份证号/护照号
-         * personArea 个人归属地：0-大陆，1-香港，2-澳门，3-台湾，4-外籍
-         *
-         * ----< 企业用户参数 >----
-         * name_org 企业名称 companyname
-         * organType 单位类型：0-普通企业，1-社会团体，2-事业单位，3-民办非企业单位，4-党政及国家机构
-         * regType 企业注册类型：0-组织机构代码号，1-多证合一，传递社会信用代码号,2-企业工商注册码
-         * organCode 组织机构代码号、社会信用代码号或工商注册号
-         * userType 注册类型：1-代理人注册，2-法人注册
-         * agentName 代理人姓名，当注册类型为1时必填
-         * agentIdNo 代理人身份证号，当注册类型为1时必填
-         * legalName 法定代表姓名，当注册类型为2时必填
-         * legalArea 法定代表人归属地：0-大陆，1-香港，2-澳门，3-台湾，4-外籍，当注册类型为2时必填
-         * legalIdNo 法定代表身份证号/护照号，当注册类型为2时必填
-         * personServiceId 用户实名认证后的serviceId
-         */
+
         int appType = -1;
         int scene = -1;
         String name_per = "";
@@ -108,20 +110,25 @@ public class ESignController {
         String legalIdNo = "";
         String personServiceId = "";
         Result result = new Result();
-        String sql = String.format("select * from zjxx_people where id = '%s'", userid);
-        map.put("sql", sql);
-        List<Map<String, Object>> peopleInfoList = informationMapper.runSql(map);
-        if (peopleInfoList.size() > 0) {
-            Map<String, Object> peopleInfo = peopleInfoList.get(0);
+
+        TlongUser user = tlongUserRepository.findOne(userid);
+//        String sql = String.format("select * from zjxx_people where id = '%s'", userid);
+//        map.put("sql", sql);
+//        List<Map<String, Object>> peopleInfoList = informationMapper.runSql(map);
+
+//        if (peopleInfoList.size() > 0) {
+        if (Objects.nonNull(user)){
+//            Map<String, Object> peopleInfo = peopleInfoList.get(0);
             //判断是代理商还是供应商
-            String ptype = peopleInfo.get("ptype").toString();
-            switch (ptype) {
-                case "0":
+//            String ptype = peopleInfo.get("ptype").toString();
+
+            switch (user.getUserType()) {
+                case 0:
                     appType = 1;
                     break;
-                case "1":
-                case "2":
-                case "3":
+                case 1:
+                case 2:
+                case 3:
                     appType = 0;
                     break;
                 default:
@@ -130,19 +137,20 @@ public class ESignController {
                     return result;
             }
             //判断是个人还是企业
-            String iscompany = peopleInfo.get("iscompany").toString();
-            switch (iscompany) {
-                case "0":
+            Integer isCompany = user.getIsCompany();
+            switch (isCompany) {
+                case 0:
                     scene = 0;
                     //<-- 获取个人信息 -->
-                    sql = String.format("select * from tsign_person where peopleid = '%s'", userid);
-                    map.put("sql", sql);
-                    peopleInfoList = informationMapper.runSql(map);
-                    if (peopleInfoList.size() > 0) {
-                        peopleInfo = peopleInfoList.get(0);
-                        idNo = peopleInfo.get("idcard").toString();
-                        name_per = peopleInfo.get("realname").toString();
-                        personServiceId = peopleInfo.get("serviceid").toString();
+                    EsignPerson user1 = esignPersonRepository.findOne(userid);
+//                    sql = String.format("select * from tsign_person where peopleid = '%s'", userid);
+//                    map.put("sql", sql);
+//                    peopleInfoList = informationMapper.runSql(map);
+                    if (Objects.nonNull(user1)) {
+//                        peopleInfo = peopleInfoList.get(0);
+                        idNo = user1.getIdCard();
+                        name_per = user1.getRealName();
+                        personServiceId = user1.getServiceId();
                         if (idNo.isEmpty()) {
                             result.setFlag(-1);
                             result.setMsg("个人用户身份证为空");
@@ -166,11 +174,13 @@ public class ESignController {
                         return result;
                     }
                     break;
-                case "1":
+                case 1:
+
+                    EsignCompany user2 = esignCompanyRepository.findOne(userid);
                     scene = 1;
                     try {
-                        String ot = peopleInfo.get("organType").toString();
-                        organType = Integer.parseInt(ot);
+                        organType = user2.getOrganType();
+//                        organType = Integer.parseInt(ot);
                     } catch (Exception e) {
                         e.printStackTrace();
                         organType = -1;
@@ -181,24 +191,28 @@ public class ESignController {
                         return result;
                     }
                     //<-- 获取企业信息 -->
-                    sql = String.format("select * from tsign_company where peopleid = '%s'", userid);
-                    map.put("sql", sql);
-                    peopleInfoList = informationMapper.runSql(map);
-                    if (peopleInfoList.size() > 0) {
-                        peopleInfo = peopleInfoList.get(0);
-                        name_org = peopleInfo.get("companyname").toString();
+//                    sql = String.format("select * from tsign_company where peopleid = '%s'", userid);
+//                    map.put("sql", sql);
+//                    peopleInfoList = informationMapper.runSql(map);
+                    if (Objects.nonNull(user2)) {
+//                        peopleInfo = peopleInfoList.get(0);
+                        name_org = user2.getCompanyName();
                         //默认单位类型为0-普通企业
                         organType = 0;
                         //默认企业注册类型为1-多证合一，传递社会信用代码号
                         regType = 1;
-                        organCode = peopleInfo.get("codeusc").toString();
+//                        organCode = peopleInfo.get("codeusc").toString();
+                        organCode = user2.getCodeUsc();
                         //默认注册类型为2-法人注册
                         userType = 2;
-                        legalName = peopleInfo.get("legalname").toString();
+//                        legalName = peopleInfo.get("legalname").toString();
+                        legalName = user2.getLegalName();
                         //默认法人代表归属地为0-大陆
                         legalArea = 0;
-                        legalIdNo = peopleInfo.get("legalidno").toString();
-                        personServiceId = peopleInfo.get("serviceid").toString();
+//                        legalIdNo = peopleInfo.get("legalidno").toString();
+                        legalIdNo = user2.getLegalidNo();
+//                        personServiceId = peopleInfo.get("serviceid").toString();
+                        personServiceId = user2.getServiceId();
                         if (name_org.isEmpty()) {
                             result.setFlag(-1);
                             result.setMsg("企业名称为空");
@@ -318,9 +332,13 @@ public class ESignController {
 //						result.setTtime(param);
 //						result.setUserId(HMACSHA256(param));
                         result.setMsg(evid);
-                        sql = String.format("update zjxx_people set evid = '%s' , echecktype = '2' where id = '%s'", evid, userid);
-                        map.put("sql", sql);
-                        informationMapper.runSqlOperate(map);
+                        TlongUser one = tlongUserRepository.findOne(userid);
+                        one.setEvId(evid);
+                        one.setEsgin(2);
+                        tlongUserRepository.saveAndFlush(one);
+//                        sql = String.format("update zjxx_people set evid = '%s' , echecktype = '2' where id = '%s'", evid, userid);
+//                        map.put("sql", sql);
+//                        informationMapper.runSqlOperate(map);
                     } else {
 //						result.setTtime(param);
 //						result.setUserId(HMACSHA256(param));
