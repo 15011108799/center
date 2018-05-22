@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public interface WebUserApi {
     @ApiOperation("供应商注册接口")
     @PostMapping("/suppliersRegister")
     //TODO
-    Result suppliersRegister(@RequestParam MultipartFile file, SuppliersRegisterRequsetDto requsetDto);
+    Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto);
 
     @ApiOperation("代理商注册接口")
     @PostMapping("/agentRegister")
@@ -49,6 +48,24 @@ public interface WebUserApi {
     @PutMapping("/authentication")
     Boolean authentication(@RequestParam Long id);
 
+    @ApiOperation("查询所有用户供货商")
+    @PostMapping("/findAllSuppliers")
+        //TODO
+    List<SuppliersRegisterRequsetDto> findAllSuppliers();
 
-    //TODO 代理商下级信息拉取  整合到用户搜索接口中
+    @ApiOperation("查询所有用户代理商")
+    @PostMapping("/findAllAgents")
+        //TODO
+    List<SuppliersRegisterRequsetDto> findAllAgents();
+
+    @ApiOperation("根据id查询用户")
+    @PutMapping("/findSupplierById")
+        //TODO
+    SuppliersRegisterRequsetDto findSupplierById(@RequestParam Long id);
+
+    @ApiOperation("修改用户信息")
+    @PutMapping("/updateUserInfo")
+        //TODO
+    Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto);
+    //TODO 代理商下级信息拉取
 }
