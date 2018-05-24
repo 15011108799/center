@@ -53,7 +53,7 @@ public class MessageService {
     public Result delMessage(Long id) {
         Message message = appMessageRepository.findOne(id);
         if (message == null)
-            return new Result(0, "删除用户失败");
+            return new Result(0, "删除信息失败");
         appMessageRepository.delete(id);
         return new Result(1,"删除成功");
     }
