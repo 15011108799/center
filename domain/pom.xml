@@ -36,6 +36,12 @@
 		</dependency>
 		<!--End Jpa依赖 -->
 
+		<dependency>
+			<groupId>com.tlong</groupId>
+			<artifactId>center-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!--Start query dsl依赖 -->
 		<dependency>
 			<groupId>com.querydsl</groupId>

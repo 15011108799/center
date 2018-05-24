@@ -1,9 +1,11 @@
 package com.tlong.center.web;
 
 import com.tlong.center.api.dto.AppUserRequestDto;
-import com.tlong.center.api.dto.AppUserResponseDto;
+import com.tlong.center.api.dto.web.WebLoginRequestDto;
+import com.tlong.center.api.dto.web.WebLoginResponseDto;
 import com.tlong.center.api.web.WebLoginApi;
 import com.tlong.center.service.AppLoginService;
+import com.tlong.center.service.WebLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,12 +18,16 @@ public class WebLoginController implements WebLoginApi {
 
     @Autowired
     AppLoginService appLoginService;
+
+    @Autowired
+    WebLoginService webLoginService;
+
     /**
      * App登录方法
      */
     @Override
-    public AppUserResponseDto webLogin(@RequestBody AppUserRequestDto requestDto) {
-        return appLoginService.appLogin(requestDto);
+    public WebLoginResponseDto webLogin(@RequestBody WebLoginRequestDto requestDto) {
+        return webLoginService.webLogin(requestDto);
     }
 
     /**
