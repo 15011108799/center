@@ -17,13 +17,21 @@ public class TlongPowerDto implements Serializable {
     @ApiModelProperty("权限级别(0左侧一级菜单 1左侧二级菜单 2右侧细分功能)")
     private Integer powerLevel;
 
+    @ApiModelProperty("权限父id")
+    private Integer pid;
+
+    @ApiModelProperty("url")
+    private String url;
+
     public TlongPowerDto() {
     }
 
-    public TlongPowerDto(Long id, String powerName, Integer powerLevel) {
+    public TlongPowerDto(Long id, String powerName, Integer powerLevel,Integer pid,String url) {
         this.id = id;
         this.powerName = powerName;
         this.powerLevel = powerLevel;
+        this.pid=pid;
+        this.url=url;
     }
 
     public Long getId() {
@@ -48,5 +56,21 @@ public class TlongPowerDto implements Serializable {
 
     public void setPowerLevel(Integer powerLevel) {
         this.powerLevel = powerLevel;
+    }
+
+    public Integer getPid() {
+        return pid;
+    }
+
+    public void setPid(Integer pid) {
+        this.pid = pid;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

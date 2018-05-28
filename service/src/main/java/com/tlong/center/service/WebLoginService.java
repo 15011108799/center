@@ -76,9 +76,36 @@ public class WebLoginService {
         //首先验证账号密码
 //        String password = MD5Util.KL(MD5Util.MD5(requestDto.getPassword()));
         TlongUser findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
-                .and(tlongUser.password.eq(requestDto.getPassword())));
+                .and(tlongUser.password.eq(MD5Util.KL(MD5Util.MD5(requestDto.getPassword())))));
         if (Objects.nonNull(findResult)){
             logger.info("user"+ requestDto.getUserName() + "Login Success!");
+            List<Tuple> tuples = queryFactory.select(tlongPower.id, tlongPower.powerName, tlongPower.powerLevel,tlongPower.pid,tlongPower.url)
+                    .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)
+                    .where(tlongUser.id.eq(tlongUserRole.userId)
+                            .and(tlongRole.id.eq(tlongUserRole.roleId))
+                            .and(tlongRole.id.eq(tlongRolePower.roleId))
+                            .and(tlongPower.id.eq(tlongRolePower.powerId))
+                            .and(tlongUser.id.eq(findResult.getId())))
+                    .fetch();
+            WebLoginResponseDto webLoginResponseDto = new WebLoginResponseDto();
+            List<TlongPowerDto> powerLevelOne = new ArrayList<>();
+            List<TlongPowerDto> powerLevelTwo = new ArrayList<>();
+            List<TlongPowerDto> powerLevelThree = new ArrayList<>();
+            tuples.stream().forEach(one ->{
+                TlongPowerDto dto = new TlongPowerDto(one.get(tlongPower.id), one.get(tlongPower.powerName), one.get(tlongPower.powerLevel),one.get(tlongPower.pid),one.get(tlongPower.url));
+                if (one.get(tlongPower.powerLevel) == 0){
+                    powerLevelOne.add(dto);
+                }else if (one.get(tlongPower.powerLevel) == 1){
+                    powerLevelTwo.add(dto);
+                }else if (one.get(tlongPower.powerLevel) == 2){
+                    powerLevelThree.add(dto);
+                }
+            });
+            webLoginResponseDto.setPowersLevelOne(powerLevelOne);
+            webLoginResponseDto.setPowersLevelTwo(powerLevelTwo);
+            webLoginResponseDto.setPowersLevelThree(powerLevelThree);
+            webLoginResponseDto.setUserName(requestDto.getUserName());
+            return webLoginResponseDto;
         }else {
             return new WebLoginResponseDto(1,"账户名或密码不正确");
         }
@@ -93,34 +120,6 @@ public class WebLoginService {
 //                .leftJoin(tlongPower).on(tlongPower.id.eq(tlongRolePower.powerId))
 //                .where(tlongUser.id.eq(findResult.getId()))
 //                .fetch();
-
-        List<Tuple> tuples = queryFactory.select(tlongPower.id, tlongPower.powerName, tlongPower.powerLevel)
-                .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)
-                .where(tlongUser.id.eq(tlongUserRole.userId)
-                        .and(tlongRole.id.eq(tlongUserRole.roleId))
-                        .and(tlongRole.id.eq(tlongRolePower.roleId))
-                        .and(tlongPower.id.eq(tlongRolePower.powerId))
-                        .and(tlongUser.id.eq(findResult.getId())))
-                .fetch();
-
-        WebLoginResponseDto webLoginResponseDto = new WebLoginResponseDto();
-        List<TlongPowerDto> powerLevelOne = new ArrayList<>();
-        List<TlongPowerDto> powerLevelTwo = new ArrayList<>();
-        List<TlongPowerDto> powerLevelThree = new ArrayList<>();
-        tuples.stream().forEach(one ->{
-            TlongPowerDto dto = new TlongPowerDto(one.get(tlongPower.id), one.get(tlongPower.powerName), one.get(tlongPower.powerLevel));
-            if (one.get(tlongPower.powerLevel) == 0){
-                powerLevelOne.add(dto);
-            }else if (one.get(tlongPower.powerLevel) == 1){
-                powerLevelTwo.add(dto);
-            }else if (one.get(tlongPower.powerLevel) == 2){
-                powerLevelThree.add(dto);
-            }
-        });
-        webLoginResponseDto.setPowersLevelOne(powerLevelOne);
-        webLoginResponseDto.setPowersLevelTwo(powerLevelTwo);
-        webLoginResponseDto.setPowersLevelThree(powerLevelThree);
-        return webLoginResponseDto;
     }
 
 }
