@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@ApiModel("用户查询信息返回模型")
+@ApiModel("信息请求模型")
 public class MessageRequestDto implements Serializable {
 
     @ApiModelProperty("id")

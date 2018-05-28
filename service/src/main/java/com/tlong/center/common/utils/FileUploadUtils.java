@@ -73,7 +73,10 @@ public class FileUploadUtils {
                 suffix = ".gif";
             } else if ("data:image/png;".equalsIgnoreCase(dataPrix)) {//data:image/png;base64,base64编码的png图片数据
                 suffix = ".png";
-            } else {
+            }else if ("data:video/mp4;".equalsIgnoreCase(dataPrix)) {//data:image/png;base64,base64编码的png图片数据
+                suffix = ".mp4";
+            }
+            else {
                 throw new Exception("上传图片格式不合法");
             }
             tempFileName = UUID.randomUUID().toString() + suffix;
