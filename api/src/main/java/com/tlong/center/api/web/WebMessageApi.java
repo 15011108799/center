@@ -1,7 +1,9 @@
 package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.user.PageResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,7 @@ public interface WebMessageApi {
 
     @ApiOperation("查询所有信息接口")
     @PostMapping("/findAllMessage")
-    List<MessageRequestDto> findAllMessage();
-
+    PageResponseDto<MessageRequestDto> findAllMessage(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("删除信息接口")
     @PutMapping("/delMessage")
@@ -31,6 +32,9 @@ public interface WebMessageApi {
     @PostMapping("/updateMessage")
     Result updateMessage(@RequestBody MessageRequestDto requestDto);
 
+    @ApiOperation("修改信息状态")
+    @PostMapping("/updateMessageState")
+    void updateMessageState(@RequestBody Long id);
 
     @ApiOperation("查找单条信息接口")
     @PutMapping("/findMessageById")

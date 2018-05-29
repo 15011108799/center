@@ -1,7 +1,9 @@
 package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.web.WebMessageApi;
 import com.tlong.center.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,15 @@ public class WebMessageController implements WebMessageApi {
 
     @Autowired
     private MessageService messageService;
+
     @Override
     public Result addMessage(@RequestBody MessageRequestDto requestDto) {
         return messageService.addMessage(requestDto);
     }
 
     @Override
-    public List<MessageRequestDto> findAllMessage() {
-        return messageService.findAllMessage();
+    public PageResponseDto<MessageRequestDto> findAllMessage(@RequestBody PageAndSortRequestDto requestDto) {
+        return messageService.findAllMessage(requestDto);
     }
 
     @Override
@@ -35,6 +38,11 @@ public class WebMessageController implements WebMessageApi {
     @Override
     public Result updateMessage(@RequestBody MessageRequestDto requestDto) {
         return messageService.updateMessage(requestDto);
+    }
+
+    @Override
+    public void updateMessageState(@RequestBody Long id) {
+        messageService.updateMessageState(id);
     }
 
     @Override
