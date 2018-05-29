@@ -37,6 +37,8 @@ public class UserService {
         if (requsetDto.getUserName() == null)
             return new Result(0, "用户名不能为空");
         tlongUser.setUserName(requsetDto.getUserName());
+
+        //TODO
         if (requsetDto.getPassword() == null || requsetDto.getPassword().length() <= 6)
             return new Result(0, "密码格式不正确");
         tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));

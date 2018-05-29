@@ -1,20 +1,17 @@
 package com.tlong.center.service;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.web.TlongPowerDto;
 import com.tlong.center.api.dto.web.WebLoginRequestDto;
 import com.tlong.center.api.dto.web.WebLoginResponseDto;
-import com.tlong.center.common.utils.MD5Util;
+import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.TlongPowerRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
-import com.tlong.center.domain.web.TlongPower;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +21,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 import static com.tlong.center.domain.web.QTlongUserRole.tlongUserRole;
@@ -41,6 +37,7 @@ public class WebLoginService {
     final EntityManager entityManager;
     final TlongUserRepository tlongUserRepository;
     final TlongPowerRepository tlongPowerRepository;
+    final CodeUtil codeUtil;
 
     JPAQueryFactory queryFactory;
 
@@ -49,10 +46,11 @@ public class WebLoginService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public WebLoginService(EntityManager entityManager, TlongUserRepository tlongUserRepository, TlongPowerRepository tlongPowerRepository) {
+    public WebLoginService(EntityManager entityManager, TlongUserRepository tlongUserRepository, TlongPowerRepository tlongPowerRepository, CodeUtil codeUtil) {
         this.entityManager = entityManager;
         this.tlongUserRepository = tlongUserRepository;
         this.tlongPowerRepository = tlongPowerRepository;
+        this.codeUtil = codeUtil;
     }
 
 
@@ -76,7 +74,7 @@ public class WebLoginService {
         //首先验证账号密码
 //        String password = MD5Util.KL(MD5Util.MD5(requestDto.getPassword()));
         TlongUser findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
-                .and(tlongUser.password.eq(MD5Util.KL(MD5Util.MD5(requestDto.getPassword())))));
+                .and(tlongUser.password.eq(requestDto.getPassword())));
         if (Objects.nonNull(findResult)){
             logger.info("user"+ requestDto.getUserName() + "Login Success!");
             List<Tuple> tuples = queryFactory.select(tlongPower.id, tlongPower.powerName, tlongPower.powerLevel,tlongPower.pid,tlongPower.url)
