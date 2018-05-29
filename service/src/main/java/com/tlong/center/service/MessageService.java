@@ -1,17 +1,27 @@
 package com.tlong.center.service;
 
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.user.PageResponseDto;
+import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
+import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.Message;
+import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.AppMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 
 @Component
 @Transactional
@@ -34,8 +44,10 @@ public class MessageService {
         return new Result(1, "添加成功");
     }
 
-    public List<MessageRequestDto> findAllMessage() {
-        List<Message> messages = appMessageRepository.findAll();
+    public PageResponseDto<MessageRequestDto> findAllMessage(PageAndSortRequestDto requestDto) {
+        PageResponseDto<MessageRequestDto> messageRequestDtoPageResponseDto=new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<Message> messages = appMessageRepository.findAll(pageRequest);
         List<MessageRequestDto> requestDtos = new ArrayList<>();
         messages.forEach(message -> {
             MessageRequestDto messageRequestDto = new MessageRequestDto();
@@ -47,7 +59,14 @@ public class MessageService {
             messageRequestDto.setPublishTime(message.getPublishTime());
             requestDtos.add(messageRequestDto);
         });
-        return requestDtos;
+        messageRequestDtoPageResponseDto.setList(requestDtos);
+        final int[] count = {0};
+        Iterable<Message> messages1 = appMessageRepository.findAll();
+        messages1.forEach(message -> {
+            count[0]++;
+        });
+        messageRequestDtoPageResponseDto.setCount(count[0]);
+        return messageRequestDtoPageResponseDto;
     }
 
     public Result delMessage(Long id) {
@@ -55,11 +74,11 @@ public class MessageService {
         if (message == null)
             return new Result(0, "删除信息失败");
         appMessageRepository.delete(id);
-        return new Result(1,"删除成功");
+        return new Result(1, "删除成功");
     }
 
-    public Result updateMessage(@RequestBody  MessageRequestDto requestDto) {
-        Message message=new Message();
+    public Result updateMessage(@RequestBody MessageRequestDto requestDto) {
+        Message message = new Message();
         message.setId(requestDto.getId());
         message.setTitle(requestDto.getTitle());
         message.setContent(requestDto.getContent());
@@ -67,7 +86,7 @@ public class MessageService {
         message.setUserName(requestDto.getUserName());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
         message.setPublishTime(simpleDateFormat.format(new Date()));
-        Message message1=appMessageRepository.save(message);
+        Message message1 = appMessageRepository.save(message);
         if (message1 == null) {
             return new Result(0, "修改失败");
         }
@@ -82,5 +101,14 @@ public class MessageService {
         requestDto.setState(message.getState());
         requestDto.setUserName(message.getUserName());
         return requestDto;
+    }
+
+    public void updateMessageState(Long id) {
+        Message message = appMessageRepository.findOne(id);
+        if (message.getState() == 0)
+            message.setState(1);
+        else
+            message.setState(0);
+        appMessageRepository.save(message);
     }
 }

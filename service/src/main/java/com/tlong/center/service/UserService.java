@@ -1,6 +1,8 @@
 package com.tlong.center.service;
 
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.center.api.dto.user.UserSearchRequestDto;
 import com.tlong.center.api.dto.user.UserSearchResponseDto;
@@ -124,8 +126,10 @@ public class UserService {
      *
      * @return
      */
-    public List<SuppliersRegisterRequsetDto> findAllSuppliers() {
-        Iterable<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1));
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto=new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1),pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -140,7 +144,14 @@ public class UserService {
             registerRequsetDto.setNickName(tlongUser1.getNickName());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
-        return suppliersRegisterRequsetDtos;
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1));
+        tlongUser3.forEach(tlongUser1 -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
     }
 
     public SuppliersRegisterRequsetDto findOne(Long id) {
