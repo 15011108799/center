@@ -1,10 +1,8 @@
 package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
-import com.tlong.center.api.dto.user.AgentRegisterRequestDto;
-import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
-import com.tlong.center.api.dto.user.UserSearchRequestDto;
-import com.tlong.center.api.dto.user.UserSearchResponseDto;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,7 +49,7 @@ public interface WebUserApi {
     @ApiOperation("查询所有用户供货商")
     @PostMapping("/findAllSuppliers")
         //TODO
-    List<SuppliersRegisterRequsetDto> findAllSuppliers();
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
