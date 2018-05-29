@@ -1,10 +1,8 @@
 package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
-import com.tlong.center.api.dto.user.AgentRegisterRequestDto;
-import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
-import com.tlong.center.api.dto.user.UserSearchRequestDto;
-import com.tlong.center.api.dto.user.UserSearchResponseDto;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.user.*;
 import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.UserService;
@@ -50,8 +48,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public List<SuppliersRegisterRequsetDto> findAllSuppliers() {
-        return userService.findAllSuppliers();
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findAllSuppliers(requestDto);
     }
 
     @Override
