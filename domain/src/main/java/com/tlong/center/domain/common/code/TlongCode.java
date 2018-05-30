@@ -1,4 +1,4 @@
-package com.tlong.center.domain.common;
+package com.tlong.center.domain.common.code;
 
 import com.tlong.core.base.BaseJpa;
 import org.hibernate.annotations.DynamicUpdate;

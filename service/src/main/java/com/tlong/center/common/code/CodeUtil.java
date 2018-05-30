@@ -1,8 +1,8 @@
 package com.tlong.center.common.code;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tlong.center.domain.common.TlongCode;
-import com.tlong.center.domain.common.TlongCodeRule;
+import com.tlong.center.domain.common.code.TlongCode;
+import com.tlong.center.domain.common.code.TlongCodeRule;
 import com.tlong.center.domain.repository.TlongCodeRepository;
 import com.tlong.center.domain.repository.TlongCodeRuleRepository;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tlong.center.domain.common.QTlongCode.tlongCode;
-import static com.tlong.center.domain.common.QTlongCodeRule.tlongCodeRule;
+import static com.tlong.center.domain.common.code.QTlongCode.tlongCode;
+import static com.tlong.center.domain.common.code.QTlongCodeRule.tlongCodeRule;
 
 
 @Component
@@ -44,11 +44,13 @@ public class CodeUtil {
 
 
     /**
-     * 上货商品编码生成
+     * 商品编码生成规则
      */
     public String goodsCode(Integer codeType,Integer userType){
         String content;
         String code;
+        Integer totalLength1 = 6;
+        String placeholder1 = "0";
         List<String> codes = queryFactory.select(tlongCode.code)
                 .from(tlongCode,tlongCodeRule)
                 .where(tlongCode.ruleId.eq(tlongCodeRule.id)
@@ -76,7 +78,10 @@ public class CodeUtil {
             //获取总长度
         int totalLength = content.length() + headContent.length();
             //对比长度
-        if (tlongCodeRule1.getTotalLength() < totalLength){
+        if (tlongCodeRule1.getTotalLength() != null) {
+            totalLength1 = tlongCodeRule1.getTotalLength();
+        }
+        if (totalLength1 < totalLength){
             logger.error("编码长度过长请修改规则");
             return "ERROR";
         }else {
@@ -84,9 +89,17 @@ public class CodeUtil {
             int i = tlongCodeRule1.getTotalLength() - totalLength;
             //组装code
             StringBuilder placeholder = new StringBuilder();
-            for(int j=0;j<i;j++){
-                placeholder.append(tlongCodeRule1.getPlaceholder());
+            if (tlongCodeRule1.getPlaceholder() != null){
+                for(int j=0;j<i;j++){
+                    placeholder.append(tlongCodeRule1.getPlaceholder());
+                }
+            }else {
+                for(int j=0;j<i;j++){
+                    placeholder.append(placeholder1);
+                }
             }
+
+
             code = headContent + placeholder + content;
             //存储生成记录到code表
             TlongCode code1 = new TlongCode();
@@ -97,5 +110,9 @@ public class CodeUtil {
         }
         return code;
     }
+
+    /**
+     * 用户编码生成规则
+     */
 
 }

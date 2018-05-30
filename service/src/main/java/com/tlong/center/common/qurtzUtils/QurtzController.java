@@ -68,7 +68,7 @@ public class QurtzController {
      * 创建商品上锁30分钟后自动解锁的定时任务
      */
     public JobDetail creatGoodsLockJob(){
-        //定义工作并将其与我们的MyJob类联系起来
+        //定义工作并将其与我们的GoodsLockJob类联系起来
         return newJob(GoodsLockJob.class)
                 .withIdentity("goodsLockJob","GoodsLockGroup")
                 .build();
@@ -95,6 +95,8 @@ public class QurtzController {
      * 解除商品上锁
      */
     public Long unLockGoods(Long goodsId){
+        //修改商品的状态 TODO
+
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
     }
