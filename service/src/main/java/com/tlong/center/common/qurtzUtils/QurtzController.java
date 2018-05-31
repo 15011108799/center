@@ -35,7 +35,7 @@ public class QurtzController {
         //创建默认定时任务对象
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-        JobDetail jobDetail = this.creatGoodsLockJob();
+        JobDetail jobDetail = this.creatGoodsLockJob(requestDto.getGoodsId());
         Trigger trigger = this.creatGoodsLockTrigger();
 
         scheduler.scheduleJob(jobDetail,trigger);
@@ -67,11 +67,13 @@ public class QurtzController {
     /**
      * 创建商品上锁30分钟后自动解锁的定时任务
      */
-    public JobDetail creatGoodsLockJob(){
+    public JobDetail creatGoodsLockJob(Long goodsId){
         //定义工作并将其与我们的GoodsLockJob类联系起来
-        return newJob(GoodsLockJob.class)
-                .withIdentity("goodsLockJob","GoodsLockGroup")
+        JobDetail build = newJob(GoodsLockJob.class)
+                .withIdentity("goodsLockJob", "GoodsLockGroup")
                 .build();
+        build.getJobDataMap().put("goodsId",goodsId);
+        return build;
     }
 
     public Trigger creatGoodsLockTrigger(){
