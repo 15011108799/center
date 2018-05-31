@@ -4,9 +4,11 @@ import com.tlong.center.web.WebUserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.List;
 import java.util.UUID;
 
 public class FileUploadUtils {
@@ -39,7 +41,7 @@ public class FileUploadUtils {
         }
         try {
             file.transferTo(newFile);
-            return "http://localhost:8080/tlongPic/" + fileName;
+            return fileName + ",";
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -73,10 +75,9 @@ public class FileUploadUtils {
                 suffix = ".gif";
             } else if ("data:image/png;".equalsIgnoreCase(dataPrix)) {//data:image/png;base64,base64编码的png图片数据
                 suffix = ".png";
-            }else if ("data:video/mp4;".equalsIgnoreCase(dataPrix)) {//data:image/png;base64,base64编码的png图片数据
+            } else if ("data:video/mp4;".equalsIgnoreCase(dataPrix)) {//data:image/png;base64,base64编码的png图片数据
                 suffix = ".mp4";
-            }
-            else {
+            } else {
                 throw new Exception("上传图片格式不合法");
             }
             tempFileName = UUID.randomUUID().toString() + suffix;
@@ -99,5 +100,19 @@ public class FileUploadUtils {
 
         }
         return tempFileName;
+    }
+
+    public static String handleFileUpload(List<MultipartFile> files) {
+        StringBuilder picUrl = new StringBuilder();
+        if (!CollectionUtils.isEmpty(files)) {
+            for (MultipartFile file : files) {
+                try {
+                    picUrl.append(upload(file));
+                } catch (Exception e) {
+                    return "上传失败";
+                }
+            }
+        }
+        return picUrl.toString();
     }
 }
