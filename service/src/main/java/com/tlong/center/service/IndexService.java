@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.goods.AppIndexGoodsDetailResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.AppCategory;
 import com.tlong.center.domain.app.goods.AppGoods;
+import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.app.AppSlideshow;
 import com.tlong.center.domain.repository.AppCategoryRepository;
 import com.tlong.center.domain.repository.AppGoodsRepository;
@@ -66,7 +67,7 @@ public class IndexService {
         Iterable<AppCategory> all = appCategoryRepository.findAll(appCategory.curState.ne(0));
         List returnList = new ArrayList();
 
-        all.forEach(one-> returnList.add(one.getCategoryName()));
+        all.forEach(one -> returnList.add(one.getCategoryName()));
 
         AppCategoryResponseDto responseDto = new AppCategoryResponseDto();
         responseDto.setCategoryList(returnList);
@@ -80,7 +81,7 @@ public class IndexService {
         //处理分页排序逻辑
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
 
-        Page<AppGoods> all = appGoodsRepository.findAll(appGoods.curState.eq(1), pageRequest);
+        /*Page<AppGoods> all = appGoodsRepository.findAll(appGoods.curState.eq(1), pageRequest);
 
         //变换
         return all.map(one->{
@@ -92,22 +93,21 @@ public class IndexService {
             List<String> picUrls = this.stringToList(one.getPicUrls());
             responseDto.setPicUrls(picUrls);
             return responseDto;
-        });
+        });*/
+        return null;
     }
 
 
     //字符串拆分为集合
-    public List<String> stringToList(String str){
+    public List<String> stringToList(String str) {
         List list = new ArrayList();
-        if (str != null && str.contains(",")){
+        if (str != null && str.contains(",")) {
             String[] split = str.split(",");
             Arrays.asList(split);
         }
         list.add(str);
         return list;
     }
-
-
 
 
 }
