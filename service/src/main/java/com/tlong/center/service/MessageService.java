@@ -4,10 +4,8 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
-import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.Message;
-import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.AppMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.tlong.center.domain.app.QTlongUser.tlongUser;
-
 @Component
 @Transactional
 public class MessageService {
@@ -30,6 +26,8 @@ public class MessageService {
     private AppMessageRepository appMessageRepository;
 
     public Result addMessage(MessageRequestDto requestDto) {
+        if (requestDto.getTitle() == null || requestDto.getContent() == null || requestDto.getTitle().equals("") || requestDto.getContent().equals(""))
+            return new Result(0, "输入信息不能为空");
         Message message = new Message();
         message.setTitle(requestDto.getTitle());
         message.setContent(requestDto.getContent());
@@ -45,7 +43,7 @@ public class MessageService {
     }
 
     public PageResponseDto<MessageRequestDto> findAllMessage(PageAndSortRequestDto requestDto) {
-        PageResponseDto<MessageRequestDto> messageRequestDtoPageResponseDto=new PageResponseDto<>();
+        PageResponseDto<MessageRequestDto> messageRequestDtoPageResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<Message> messages = appMessageRepository.findAll(pageRequest);
         List<MessageRequestDto> requestDtos = new ArrayList<>();
