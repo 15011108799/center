@@ -80,6 +80,29 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     @ApiModelProperty("身份证号")
     private String idcardNumber;
 
+    @ApiModelProperty("后台认证状态")
+    private String authentication;
+
+    @ApiModelProperty("e签宝认证状态")
+    private Integer esgin;
+
+
+    public String getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
+    }
+
+    public Integer getEsgin() {
+        return esgin;
+    }
+
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
+    }
+
     public String getIdcardFront1() {
         return idcardFront1;
     }
