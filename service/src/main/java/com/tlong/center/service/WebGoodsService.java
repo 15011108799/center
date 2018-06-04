@@ -244,7 +244,10 @@ public class WebGoodsService {
      */
     public void updateState(Long goodsId, int state) {
         WebGoods webGoods = repository.findOne(goodsId);
-        webGoods.setState(state);
+        if (webGoods.getState() == 0)
+            webGoods.setState(0);
+        else
+            webGoods.setState(state);
         repository.save(webGoods);
     }
 }

@@ -51,7 +51,7 @@ public class QurtzController {
             //这里去调用业务的技术逻辑
             Long goodsId = null;
             if (requestDto.getGoodsId() != null) {
-                goodsId = this.unLockGoods(requestDto.getGoodsId(), false);
+                goodsId = this.unLockGoods(requestDto.getGoodsId());
             }
             if (goodsId != null) {
                 logger.info("商品id为" + goodsId + "的商品已被成功解除锁定");
@@ -71,7 +71,7 @@ public class QurtzController {
         //定义工作并将其与我们的GoodsLockJob类联系起来
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("goodsId", requestDto.getGoodsId());
-        jobDataMap.put("service",webGoodsService);
+        jobDataMap.put("service", webGoodsService);
         return newJob(GoodsLockJob.class)
                 .withIdentity("goodsLockJob", "GoodsLockGroup")
                 .setJobData(jobDataMap)
@@ -98,12 +98,9 @@ public class QurtzController {
     /**
      * 解除商品上锁
      */
-    public Long unLockGoods(Long goodsId, boolean isShelves) {
+    public Long unLockGoods(Long goodsId) {
         //修改商品的状态 TODO
-        if (isShelves)
-            webGoodsService.updateState(goodsId, 3);
-        else
-            webGoodsService.updateState(goodsId, 1);
+        webGoodsService.updateState(goodsId, 3);
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
     }
