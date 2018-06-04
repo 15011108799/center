@@ -1,10 +1,8 @@
 package com.tlong.center.common.qurtzUtils;
 
 import com.tlong.center.api.dto.quertz.QuartzRequestDto;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import com.tlong.center.service.WebGoodsService;
+import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,32 +27,34 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class QurtzController {
 
     private final Logger logger = LoggerFactory.getLogger(QurtzController.class);
+    final WebGoodsService webGoodsService;
+
+    public QurtzController(WebGoodsService webGoodsService) {
+        this.webGoodsService = webGoodsService;
+    }
 
     @PostMapping("/main")
     public void testSchedulerTask(@RequestBody QuartzRequestDto requestDto) throws SchedulerException {
         //创建默认定时任务对象
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-        JobDetail jobDetail = this.creatGoodsLockJob();
+        JobDetail jobDetail = this.creatGoodsLockJob(requestDto);
         Trigger trigger = this.creatGoodsLockTrigger();
-
-        scheduler.scheduleJob(jobDetail,trigger);
-
+        scheduler.scheduleJob(jobDetail, trigger);
         scheduler.start();
-
         try {
             Long laterTime = 18000L;
-            if (requestDto.getLaterTime() != null){
+            if (requestDto.getLaterTime() != null) {
                 laterTime = requestDto.getLaterTime();
             }
             Thread.sleep(laterTime);
             //这里去调用业务的技术逻辑
             Long goodsId = null;
             if (requestDto.getGoodsId() != null) {
-                goodsId = this.unLockGoods(requestDto.getGoodsId());
+                goodsId = this.unLockGoods(requestDto.getGoodsId(), false);
             }
-            if (goodsId != null){
-                logger.info("商品id为" + goodsId + "的商品已被成功解除锁定" );
+            if (goodsId != null) {
+                logger.info("商品id为" + goodsId + "的商品已被成功解除锁定");
             }
             scheduler.shutdown(true);
             logger.info("某个定时任务被关闭");
@@ -67,22 +67,26 @@ public class QurtzController {
     /**
      * 创建商品上锁30分钟后自动解锁的定时任务
      */
-    public JobDetail creatGoodsLockJob(){
+    public JobDetail creatGoodsLockJob(QuartzRequestDto requestDto) {
         //定义工作并将其与我们的GoodsLockJob类联系起来
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("goodsId", requestDto.getGoodsId());
+        jobDataMap.put("service",webGoodsService);
         return newJob(GoodsLockJob.class)
-                .withIdentity("goodsLockJob","GoodsLockGroup")
+                .withIdentity("goodsLockJob", "GoodsLockGroup")
+                .setJobData(jobDataMap)
                 .build();
     }
 
-    public Trigger creatGoodsLockTrigger(){
+    public Trigger creatGoodsLockTrigger() {
         return newTrigger()
-                .withIdentity("trigger1","GoodsLockGroup")
+                .withIdentity("trigger1", "GoodsLockGroup")
                 .startAt(this.localDateTimeToDate(LocalDateTime.now()))
                 .endAt(this.localDateTimeToDate(LocalDateTime.now().plusMinutes(30)))
                 .build();
     }
 
-    public Date localDateTimeToDate(LocalDateTime localDateTime){
+    public Date localDateTimeToDate(LocalDateTime localDateTime) {
         ZoneId zoneId = ZoneId.systemDefault();
         ZonedDateTime zdt = localDateTime.atZone(zoneId);
         Date date = Date.from(zdt.toInstant());
@@ -94,9 +98,12 @@ public class QurtzController {
     /**
      * 解除商品上锁
      */
-    public Long unLockGoods(Long goodsId){
+    public Long unLockGoods(Long goodsId, boolean isShelves) {
         //修改商品的状态 TODO
-
+        if (isShelves)
+            webGoodsService.updateState(goodsId, 3);
+        else
+            webGoodsService.updateState(goodsId, 1);
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
     }
