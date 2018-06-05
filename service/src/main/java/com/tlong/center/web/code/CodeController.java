@@ -26,5 +26,10 @@ public class CodeController implements CodeApi{
         this.codeService.updateCodeRule(req);
     }
 
+    @Override
+    public TlongUserSettingsRequestDto findParam() {
+        return codeService.findParam();
+    }
+
 
 }
