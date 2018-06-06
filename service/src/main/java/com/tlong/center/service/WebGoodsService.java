@@ -236,4 +236,18 @@ public class WebGoodsService {
         else
             return new Result(0, "修改失败");
     }
+
+    /**
+     * 修改商品状态（锁定，解除锁定，结缘）
+     *
+     * @param goodsId
+     */
+    public void updateState(Long goodsId, int state) {
+        WebGoods webGoods = repository.findOne(goodsId);
+        if (webGoods.getState() == 0)
+            webGoods.setState(0);
+        else
+            webGoods.setState(state);
+        repository.save(webGoods);
+    }
 }
