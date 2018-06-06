@@ -1,5 +1,6 @@
 package com.tlong.center.web;
 
+import com.tlong.center.api.dto.GoodsTypeResponseDto;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/web/goodsClass")
@@ -39,5 +42,10 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     @Override
     public Result updateGoodsType(@RequestBody WebGoodsClassRequestDto requestDto) {
         return goodsClassService.updateGoodsType(requestDto);
+    }
+
+    @Override
+    public List<GoodsTypeResponseDto> findGoodsClass() {
+        return goodsClassService.findGoodsClass();
     }
 }

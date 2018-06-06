@@ -104,6 +104,8 @@ public class WebGoodsService {
         webGoods.setIsCheck(0);
         if (reqDto.getState() != null && !reqDto.getState().equals(""))
             webGoods.setState(Integer.valueOf(reqDto.getState()));
+        if (reqDto.getGoodsClassId() != null && !reqDto.getGoodsClassId().equals(""))
+            webGoods.setGoodsClassId(Long.valueOf(reqDto.getGoodsClassId()));
         if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals(""))
             webGoods.setRealStar(Integer.valueOf(reqDto.getRealStar()));
         if (reqDto.getPicType() != null && !reqDto.getPicType().equals(""))
@@ -162,6 +164,8 @@ public class WebGoodsService {
         WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
         if (webGoods1.getRealStar() != null)
             webGoodsDetailResponseDto.setRealStar(webGoods1.getRealStar() + "");
+        if (webGoods1.getGoodsClassId() != null)
+            webGoodsDetailResponseDto.setGoodsClassId(webGoods1.getGoodsClassId() + "");
         if (webGoods1.getPicType() != null)
             webGoodsDetailResponseDto.setPicType(webGoods1.getPicType() + "");
         if (webGoods1.getCircle() != null)
@@ -210,6 +214,8 @@ public class WebGoodsService {
         webGoods.setId(Long.valueOf(reqDto.getId()));
         if (reqDto.getState() != null && !reqDto.getState().equals("null"))
             webGoods.setState(Integer.valueOf(reqDto.getState()));
+        if (reqDto.getGoodsClassId() != null && !reqDto.getGoodsClassId().equals("null"))
+            webGoods.setGoodsClassId(Long.valueOf(reqDto.getGoodsClassId()));
         if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals("null"))
             webGoods.setRealStar(Integer.valueOf(reqDto.getRealStar()));
         if (reqDto.getPicType() != null && !reqDto.getPicType().equals("null"))
