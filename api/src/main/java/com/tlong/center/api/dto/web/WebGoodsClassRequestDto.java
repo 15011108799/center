@@ -19,9 +19,6 @@ public class WebGoodsClassRequestDto implements Serializable {
     @ApiModelProperty("父分类id")
     private Long parentClassId;
 
-    @ApiModelProperty("价格倍率")
-    private Double radio;
-
     @ApiModelProperty("价格区间上限")
     private Double intervalUp;
 
@@ -43,7 +40,7 @@ public class WebGoodsClassRequestDto implements Serializable {
     @ApiModelProperty("发布时间")
     private String publishTime;
 
-    public WebGoodsClassRequestDto(Long id, String className, Integer classLevel, Long parentClassId, Double originatorRatio, Double lagshipRatio, Double storeRatio, Double factoryRatio, String publishTime, Double radio, Double intervalUp,Double intervalDown) {
+    public WebGoodsClassRequestDto(Long id, String className, Integer classLevel, Long parentClassId, Double originatorRatio, Double lagshipRatio, Double storeRatio, Double factoryRatio, String publishTime, Double intervalUp,Double intervalDown) {
         this.id = id;
         this.className = className;
         this.classLevel = classLevel;
@@ -53,7 +50,6 @@ public class WebGoodsClassRequestDto implements Serializable {
         this.storeRatio = storeRatio;
         this.factoryRatio = factoryRatio;
         this.publishTime = publishTime;
-        this.radio=radio;
         this.intervalUp=intervalUp;
         this.intervalDown=intervalDown;
     }
@@ -131,14 +127,6 @@ public class WebGoodsClassRequestDto implements Serializable {
 
     public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
-    }
-
-    public Double getRadio() {
-        return radio;
-    }
-
-    public void setRadio(Double radio) {
-        this.radio = radio;
     }
 
     public Double getIntervalUp() {

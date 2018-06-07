@@ -49,7 +49,7 @@ public class GoodsClassService {
      */
     public GoodsClassRequestDto findAllGoodsClass() {
         List<Tuple> tuples = queryFactory.select(appGoodsclass.id, appGoodsclass.goodsClassName, appGoodsclass.goodsClassLevel, appGoodsclass.goodsClassIdParent,
-                appGoodsPriceSystem.factoryRatio, appGoodsPriceSystem.lagshipRatio, appGoodsPriceSystem.originatorRatio, appGoodsPriceSystem.storeRatio, appGoodsclass.publishTime, appGoodsPriceSystem.radio, appGoodsPriceSystem.intervalUp, appGoodsPriceSystem.intervalDown)
+                appGoodsPriceSystem.factoryRatio, appGoodsPriceSystem.lagshipRatio, appGoodsPriceSystem.originatorRatio, appGoodsPriceSystem.storeRatio, appGoodsclass.publishTime, appGoodsPriceSystem.intervalUp, appGoodsPriceSystem.intervalDown)
                 .from(appGoodsclass, appGoodsPriceSystem)
                 .where(appGoodsclass.id.eq(appGoodsPriceSystem.goodsClassId))
                 .fetch();
@@ -58,7 +58,7 @@ public class GoodsClassService {
         tuples.stream().forEach(one -> {
             WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
                     , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
-                    one.get(appGoodsclass.publishTime), one.get(appGoodsPriceSystem.radio), one.get(appGoodsPriceSystem.intervalUp), one.get(appGoodsPriceSystem.intervalDown));
+                    one.get(appGoodsclass.publishTime), one.get(appGoodsPriceSystem.intervalUp), one.get(appGoodsPriceSystem.intervalDown));
             if (one.get(appGoodsclass.goodsClassLevel) == 0)
                 requestOne.add(requestDto);
             else if (one.get(appGoodsclass.goodsClassLevel) == 1) {
@@ -89,7 +89,6 @@ public class GoodsClassService {
         AppGoodsclass appGoodsclass1 = repository.save(appGoodsclass);
         AppGoodsPriceSystem appGoodsPriceSystem = new AppGoodsPriceSystem();
         appGoodsPriceSystem.setGoodsClassId(appGoodsclass1.getId());
-        appGoodsPriceSystem.setRadio(requestDto.getRadio());
         appGoodsPriceSystem.setIntervalDown(requestDto.getIntervalDown());
         appGoodsPriceSystem.setIntervalUp(requestDto.getIntervalUp());
         appGoodsPriceSystem.setFactoryRatio(requestDto.getFactoryRatio());

@@ -39,9 +39,6 @@ public class AppGoodsPriceSystem {
     //价格区间下限
     private Double intervalDown;
 
-    //价格倍率
-    private Double radio;
-
     //创始人倍率
     private Double originatorRatio;
 
@@ -118,11 +115,4 @@ public class AppGoodsPriceSystem {
         this.factoryRatio = factoryRatio;
     }
 
-    public Double getRadio() {
-        return radio;
-    }
-
-    public void setRadio(Double radio) {
-        this.radio = radio;
-    }
 }
