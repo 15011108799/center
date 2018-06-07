@@ -54,7 +54,7 @@ public interface WebUserApi {
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
         //TODO
-    List<SuppliersRegisterRequsetDto> findAllAgents();
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("根据id查询用户")
     @PutMapping("/findSupplierById")
@@ -66,4 +66,8 @@ public interface WebUserApi {
         //TODO
     Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto);
     //TODO 代理商下级信息拉取
+
+    @ApiOperation("修改供应商状态")
+    @PostMapping("/updateUserAuthentication")
+    void updateUserAuthentication(@RequestBody Long id);
 }
