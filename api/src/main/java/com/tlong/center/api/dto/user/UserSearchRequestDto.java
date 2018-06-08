@@ -17,38 +17,17 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("用户名")
     private String userName;
 
-    @ApiModelProperty("注册时间区间开始时间")
-    private LocalDateTime startTime;
+    @ApiModelProperty("用户编号")
+    private String userCode;
 
-    @ApiModelProperty("注册时间区间结束时间")
-    private LocalDateTime endTime;
+    @ApiModelProperty("e签宝认证状态")
+    private Integer esign;
 
-    @ApiModelProperty("用户类型")
-    private Integer  pType;
+    @ApiModelProperty("后台认证状态")
+    private Integer authentication;
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+    @ApiModelProperty("身份类型")
+    private Integer ptype;
 
     public PageAndSortRequestDto getPageAndSortRequestDto() {
         return pageAndSortRequestDto;
@@ -58,11 +37,43 @@ public class UserSearchRequestDto implements Serializable {
         this.pageAndSortRequestDto = pageAndSortRequestDto;
     }
 
-    public Integer getpType() {
-        return pType;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setpType(Integer pType) {
-        this.pType = pType;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public Integer getEsign() {
+        return esign;
+    }
+
+    public void setEsign(Integer esign) {
+        this.esign = esign;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
+    }
+
+    public Integer getPtype() {
+        return ptype;
+    }
+
+    public void setPtype(Integer ptype) {
+        this.ptype = ptype;
     }
 }

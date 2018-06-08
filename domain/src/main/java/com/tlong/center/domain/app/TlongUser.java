@@ -111,6 +111,17 @@ public class TlongUser extends BaseJpa {
 
     private String registDate;
 
+    //商品发布个数
+    private Integer goodsPublishNum;
+
+    public Integer getGoodsPublishNum() {
+        return goodsPublishNum;
+    }
+
+    public void setGoodsPublishNum(Integer goodsPublishNum) {
+        this.goodsPublishNum = goodsPublishNum;
+    }
+
     public String getRegistDate() {
         return registDate;
     }

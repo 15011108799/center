@@ -38,7 +38,7 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public UserSearchResponseDto searchUser(@RequestBody UserSearchRequestDto requestDto) {
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto) {
         return userService.searchUser(requestDto);
     }
 
@@ -78,5 +78,15 @@ public class WebUserController implements WebUserApi {
     @Override
     public void updateUserAuthentication(@RequestBody Long id) {
         userService.updateUserAuthentication(id);
+    }
+
+    @Override
+    public Integer findUserPublishNumm( @RequestBody Long id) {
+        return userService.findUserPublishNumm(id);
+    }
+
+    @Override
+    public void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto) {
+        userService.updateUserPublishNumm(registerRequsetDto);
     }
 }

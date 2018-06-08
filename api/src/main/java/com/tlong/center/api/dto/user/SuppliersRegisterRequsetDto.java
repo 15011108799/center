@@ -89,6 +89,17 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     @ApiModelProperty("注册时间")
     private String registDate;
 
+    @ApiModelProperty("商品发布个数")
+    private Integer goodsPublishNum;
+
+    public Integer getGoodsPublishNum() {
+        return goodsPublishNum;
+    }
+
+    public void setGoodsPublishNum(Integer goodsPublishNum) {
+        this.goodsPublishNum = goodsPublishNum;
+    }
+
     public String getRegistDate() {
         return registDate;
     }

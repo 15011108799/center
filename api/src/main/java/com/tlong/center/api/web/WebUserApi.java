@@ -38,8 +38,7 @@ public interface WebUserApi {
 
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
-    //TODO
-    UserSearchResponseDto searchUser(@RequestBody UserSearchRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto);
 
 
     @ApiOperation("用户认证(供应商代理商)")
@@ -48,26 +47,30 @@ public interface WebUserApi {
 
     @ApiOperation("查询所有用户供货商")
     @PostMapping("/findAllSuppliers")
-        //TODO
     PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
-        //TODO
     PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("根据id查询用户")
     @PutMapping("/findSupplierById")
-        //TODO
     SuppliersRegisterRequsetDto findSupplierById(@RequestParam Long id);
 
     @ApiOperation("修改用户信息")
     @PutMapping("/updateUserInfo")
-        //TODO
     Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto);
     //TODO 代理商下级信息拉取
 
     @ApiOperation("修改供应商状态")
     @PostMapping("/updateUserAuthentication")
     void updateUserAuthentication(@RequestBody Long id);
+
+    @ApiOperation("查找供应商发布商品数量")
+    @PostMapping("/findUserPublishNum")
+    Integer findUserPublishNumm(@RequestBody Long id);
+
+    @ApiOperation("修改供应商发布商品数量")
+    @PostMapping("/updateUserPublishNum")
+    void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto);
 }
