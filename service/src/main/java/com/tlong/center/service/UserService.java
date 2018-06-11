@@ -142,6 +142,8 @@ public class UserService {
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
             registerRequsetDto.setNickName(tlongUser1.getNickName());
+            registerRequsetDto.setEsgin(tlongUser1.getEsgin());
+            registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
@@ -195,6 +197,8 @@ public class UserService {
         tlongUser.setSex(requsetDto.getSex());
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setWx(requsetDto.getWx());
+        tlongUser.setEsgin(0);
+        tlongUser.setAuthentication("0");
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
         TlongUser tlongUser1=appUserRepository.findOne(requsetDto.getId());
         if (requsetDto.getHeadImage1()!=null&& !requsetDto.getHeadImage1().equals("")) {
@@ -246,6 +250,8 @@ public class UserService {
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
             registerRequsetDto.setNickName(tlongUser1.getNickName());
+            registerRequsetDto.setEsgin(tlongUser1.getEsgin());
+            registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         return suppliersRegisterRequsetDtos;

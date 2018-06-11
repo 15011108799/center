@@ -1,6 +1,5 @@
 package com.tlong.center.common.user;
 
-import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.user.settings.TlongUserSettingsRequestDto;
 import com.tlong.center.domain.common.user.TlongUserSettings;
 import com.tlong.center.domain.repository.TlongUserSettingsRepository;
@@ -38,9 +37,9 @@ public class UserSettingsSerivce {
             createTlongUserSettings(req,0);
         }
         if(Objects.nonNull(two)){
-            one.setGoodsReleaseNumber(req.getCompanyReleaseNumber());
-            one.setGoodsReReleaseNumber(req.getCompanyReReleaseNumber());
-            repository.save(one);
+            two.setGoodsReleaseNumber(req.getCompanyReleaseNumber());
+            two.setGoodsReReleaseNumber(req.getCompanyReReleaseNumber());
+            repository.save(two);
         }else {
             createTlongUserSettings(req,1);
         }
