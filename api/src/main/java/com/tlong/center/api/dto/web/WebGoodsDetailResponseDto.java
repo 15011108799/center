@@ -108,8 +108,19 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("发布人电话")
     private String publishPhone;
 
+    @ApiModelProperty("发布人部门")
+    private String orgId;
+
     @ApiModelProperty("是否审核")
     private String isCheck;
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getIsCheck() {
         return isCheck;

@@ -107,7 +107,7 @@ public class UserService {
         if (requestDto.getPtype() == 1)
             pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
         else if (requestDto.getPtype() == 2)
-            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3)).or(tlongUser.userType.intValue().eq(4)));
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2));
         if (StringUtils.isNotEmpty(requestDto.getUserName()))
             pre = ExpressionUtils.and(pre, tlongUser.userName.eq(requestDto.getUserName()));
         if (StringUtils.isNotEmpty(requestDto.getUserCode()))
@@ -133,6 +133,8 @@ public class UserService {
             registerRequsetDto.setNickName(tlongUser1.getNickName());
             registerRequsetDto.setEsgin(tlongUser1.getEsgin());
             registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
+            registerRequsetDto.setOrgId(tlongUser1.getOrgId());
+            registerRequsetDto.setPremises(tlongUser1.getPremises());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         responseDto.setSuppliersRegisterRequsetDtos(suppliersRegisterRequsetDtos);
@@ -181,6 +183,8 @@ public class UserService {
             registerRequsetDto.setNickName(tlongUser1.getNickName());
             registerRequsetDto.setEsgin(tlongUser1.getEsgin());
             registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
+            registerRequsetDto.setOrgId(tlongUser1.getOrgId());
+            registerRequsetDto.setPremises(tlongUser1.getPremises());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
@@ -275,7 +279,7 @@ public class UserService {
     public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(PageAndSortRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3).or(tlongUser.userType.intValue().eq(4))), pageRequest);
+        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -296,7 +300,7 @@ public class UserService {
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
         final int[] count = {0};
-        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3).or(tlongUser.userType.intValue().eq(4))));
+        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2));
         tlongUser3.forEach(tlongUser1 -> {
             count[0]++;
         });
@@ -337,5 +341,17 @@ public class UserService {
         TlongUser tlongUser = appUserRepository.findOne(registerRequsetDto.getId());
         tlongUser.setGoodsPublishNum(registerRequsetDto.getGoodsPublishNum());
         appUserRepository.save(tlongUser);
+    }
+
+    /**
+     * 查询 认证通过的人数
+     */
+    public Integer findCount(int type) {
+        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(type).and(tlongUser.esgin.intValue().eq(1).and(tlongUser.authentication.intValue().eq(1))));
+        final int[] count = {0};
+        tlongUser3.forEach(tlongUser1 -> {
+            count[0]++;
+        });
+        return count[0];
     }
 }

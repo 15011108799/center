@@ -75,6 +75,7 @@ public class WebGoodsService {
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
+                webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
             requestDtos.add(webGoodsDetailResponseDto);

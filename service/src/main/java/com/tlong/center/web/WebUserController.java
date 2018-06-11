@@ -89,4 +89,9 @@ public class WebUserController implements WebUserApi {
     public void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto) {
         userService.updateUserPublishNumm(registerRequsetDto);
     }
+
+    @Override
+    public Integer findCount(@RequestBody Integer type) {
+        return userService.findCount(type);
+    }
 }
