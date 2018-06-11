@@ -6,28 +6,32 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tlong_goodsclass")
+@Table(name = "tlong_goods_class")
 @DynamicUpdate
 public class AppGoodsclass extends BaseJpa {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     //商品分类名称
-    private String className;
+    private String goodsClassName;
 
     //商品分类级别(1 一级 2二级)
-    private Integer classLevel;
+    private Integer goodsClassLevel;
+
+    //发布时间
+    private String publishTime;
 
     //父分类id
-    private Long parentClassId;
+    private Long goodsClassIdParent;
 
-    //当前状态(1启用 0禁用)
+  /*  //当前状态(1启用 0禁用)
     private Integer curState = 1;
 
     //是否已删除(1已删除 0未删除)
-    private Integer isDeleted = 0;
+    private Integer isDeleted = 0;*/
 
     public Long getId() {
         return id;
@@ -37,31 +41,31 @@ public class AppGoodsclass extends BaseJpa {
         this.id = id;
     }
 
-    public String getClassName() {
-        return className;
+    public String getGoodsClassName() {
+        return goodsClassName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGoodsClassName(String goodsClassName) {
+        this.goodsClassName = goodsClassName;
     }
 
-    public Integer getClassLevel() {
-        return classLevel;
+    public Integer getGoodsClassLevel() {
+        return goodsClassLevel;
     }
 
-    public void setClassLevel(Integer classLevel) {
-        this.classLevel = classLevel;
+    public void setGoodsClassLevel(Integer goodsClassLevel) {
+        this.goodsClassLevel = goodsClassLevel;
     }
 
-    public Long getParentClassId() {
-        return parentClassId;
+    public Long getGoodsClassIdParent() {
+        return goodsClassIdParent;
     }
 
-    public void setParentClassId(Long parentClassId) {
-        this.parentClassId = parentClassId;
+    public void setGoodsClassIdParent(Long goodsClassIdParent) {
+        this.goodsClassIdParent = goodsClassIdParent;
     }
 
-    public Integer getCurState() {
+   /* public Integer getCurState() {
         return curState;
     }
 
@@ -75,5 +79,13 @@ public class AppGoodsclass extends BaseJpa {
 
     public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
+    }*/
+
+    public String getPublishTime() {
+        return publishTime;
+    }
+
+    public void setPublishTime(String publishTime) {
+        this.publishTime = publishTime;
     }
 }

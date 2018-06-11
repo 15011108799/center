@@ -81,17 +81,38 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     private String idcardNumber;
 
     @ApiModelProperty("后台认证状态")
-    private String authentication;
+    private Integer authentication;
 
     @ApiModelProperty("e签宝认证状态")
     private Integer esgin;
 
+    @ApiModelProperty("注册时间")
+    private String registDate;
 
-    public String getAuthentication() {
+    @ApiModelProperty("商品发布个数")
+    private Integer goodsPublishNum;
+
+    public Integer getGoodsPublishNum() {
+        return goodsPublishNum;
+    }
+
+    public void setGoodsPublishNum(Integer goodsPublishNum) {
+        this.goodsPublishNum = goodsPublishNum;
+    }
+
+    public String getRegistDate() {
+        return registDate;
+    }
+
+    public void setRegistDate(String registDate) {
+        this.registDate = registDate;
+    }
+
+    public Integer getAuthentication() {
         return authentication;
     }
 
-    public void setAuthentication(String authentication) {
+    public void setAuthentication(Integer authentication) {
         this.authentication = authentication;
     }
 

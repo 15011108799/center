@@ -1,6 +1,8 @@
 package com.tlong.center.domain.app.goods;
 
 
+import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -9,6 +11,20 @@ import javax.persistence.*;
 @Table(name = "tlong_goods_price_system")
 @DynamicUpdate
 public class AppGoodsPriceSystem {
+
+    public AppGoodsPriceSystem() {
+
+    }
+
+    public AppGoodsPriceSystem(WebGoodsClassRequestDto dto) {
+        PropertyUtils.copyPropertiesOfNotNull(dto, this);
+    }
+
+    public WebGoodsClassRequestDto toDto() {
+        WebGoodsClassRequestDto dto = new WebGoodsClassRequestDto();
+        PropertyUtils.copyPropertiesOfNotNull(this, dto);
+        return dto;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -98,4 +114,5 @@ public class AppGoodsPriceSystem {
     public void setFactoryRatio(Double factoryRatio) {
         this.factoryRatio = factoryRatio;
     }
+
 }

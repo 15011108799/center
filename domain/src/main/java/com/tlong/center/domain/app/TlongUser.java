@@ -80,7 +80,7 @@ public class TlongUser extends BaseJpa {
     private String serviceHotline;
 
     //后台认证
-    private String authentication;
+    private Integer authentication;
 
     //父级代理id
     private Long parentId;
@@ -108,6 +108,27 @@ public class TlongUser extends BaseJpa {
 
     //营业执照照片
     private String businessLicense;
+
+    private String registDate;
+
+    //商品发布个数
+    private Integer goodsPublishNum;
+
+    public Integer getGoodsPublishNum() {
+        return goodsPublishNum;
+    }
+
+    public void setGoodsPublishNum(Integer goodsPublishNum) {
+        this.goodsPublishNum = goodsPublishNum;
+    }
+
+    public String getRegistDate() {
+        return registDate;
+    }
+
+    public void setRegistDate(String registDate) {
+        this.registDate = registDate;
+    }
 
     public String getUserCode() {
         return userCode;
@@ -325,11 +346,11 @@ public class TlongUser extends BaseJpa {
         this.serviceHotline = serviceHotline;
     }
 
-    public String getAuthentication() {
+    public Integer getAuthentication() {
         return authentication;
     }
 
-    public void setAuthentication(String authentication) {
+    public void setAuthentication(Integer authentication) {
         this.authentication = authentication;
     }
 
