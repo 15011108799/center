@@ -1,5 +1,7 @@
 package com.tlong.center.service;
 
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
@@ -9,15 +11,19 @@ import com.tlong.center.api.dto.user.UserSearchResponseDto;
 import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.TlongUser;
+import com.tlong.center.domain.common.user.QTlongUserSettings;
 import com.tlong.center.domain.repository.AppUserRepository;
+import com.tlong.center.domain.repository.TlongUserSettingsRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
@@ -27,6 +33,8 @@ import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 public class UserService {
     @Autowired
     private AppUserRepository appUserRepository;
+    @Autowired
+    private TlongUserSettingsRepository settingsRepository;
 
     /**
      * 供应商注册
@@ -45,6 +53,9 @@ public class UserService {
             return new Result(0, "密码格式不正确");
         tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));
         tlongUser.setUserType(requsetDto.getUserType());
+        if (requsetDto.getUserType() == 1) {
+            tlongUser.setGoodsPublishNum(settingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(0)).getGoodsReleaseNumber());
+        }
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setRealName(requsetDto.getRealName());
         tlongUser.setAge(requsetDto.getAge());
@@ -52,11 +63,14 @@ public class UserService {
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
         tlongUser.setHeadImage(requsetDto.getHeadImage1());
-        tlongUser.setCreateDate(LocalDateTime.now());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        tlongUser.setRegistDate(simpleDateFormat.format(new Date()));
         tlongUser.setPremises(requsetDto.getPremises());
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setNickName(requsetDto.getNickName());
         tlongUser.setIsExemption(requsetDto.getIsExemption());
+        tlongUser.setEsgin(0);
+        tlongUser.setAuthentication(0);
         TlongUser user = appUserRepository.save(tlongUser);
         if (user == null) {
             return new Result(0, "注册失败");
@@ -85,29 +99,51 @@ public class UserService {
      * @param requestDto
      * @return
      */
-    public UserSearchResponseDto searchUser(UserSearchRequestDto requestDto) {
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(UserSearchRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<TlongUser> tlongUsers;
-        if (requestDto.getpType() == 0)
-            tlongUsers = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(1)).and(tlongUser.userName.like("%" + (requestDto.getUserName() == null ? "" : requestDto.getUserName()) + "%")), pageRequest);
-        else
-            tlongUsers = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getpType()).and(tlongUser.userName.like("%" + (requestDto.getUserName() == null ? "" : requestDto.getUserName()) + "%")), pageRequest);
+        Predicate pre = tlongUser.id.isNotNull();
+        if (requestDto.getPtype() == 1)
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+        else if (requestDto.getPtype() == 2)
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3)).or(tlongUser.userType.intValue().eq(4)));
+        if (StringUtils.isNotEmpty(requestDto.getUserName()))
+            pre = ExpressionUtils.and(pre, tlongUser.userName.eq(requestDto.getUserName()));
+        if (StringUtils.isNotEmpty(requestDto.getUserCode()))
+            pre = ExpressionUtils.and(pre, tlongUser.userCode.eq(requestDto.getUserCode()));
+        if (requestDto.getEsign() == 0 || requestDto.getEsign() == 1)
+            pre = ExpressionUtils.and(pre, tlongUser.esgin.intValue().eq(requestDto.getEsign()));
+        if (requestDto.getAuthentication() == 0 || requestDto.getAuthentication() == 1)
+            pre = ExpressionUtils.and(pre, tlongUser.authentication.intValue().eq(requestDto.getAuthentication()));
+        tlongUsers = appUserRepository.findAll(pre, pageRequest);
         UserSearchResponseDto responseDto = new UserSearchResponseDto();
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUsers.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+            registerRequsetDto.setId(tlongUser1.getId());
+            registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
             registerRequsetDto.setUserName(tlongUser1.getUserName());
-            registerRequsetDto.setPassword(MD5Util.KL(MD5Util.MD5(tlongUser1.getPassword())));
             registerRequsetDto.setUserType(tlongUser1.getUserType());
             registerRequsetDto.setIsCompany(tlongUser1.getIsCompany());
             registerRequsetDto.setRealName(tlongUser1.getRealName());
             registerRequsetDto.setAge(tlongUser1.getAge());
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
+            registerRequsetDto.setNickName(tlongUser1.getNickName());
+            registerRequsetDto.setEsgin(tlongUser1.getEsgin());
+            registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         responseDto.setSuppliersRegisterRequsetDtos(suppliersRegisterRequsetDtos);
-        return responseDto;
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(pre);
+        tlongUser3.forEach(tlongUser1 -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
     }
 
     /**
@@ -127,13 +163,14 @@ public class UserService {
      * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(PageAndSortRequestDto requestDto) {
-        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto=new PageResponseDto<>();
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1),pageRequest);
+        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
             registerRequsetDto.setId(tlongUser1.getId());
+            registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
             registerRequsetDto.setUserName(tlongUser1.getUserName());
             registerRequsetDto.setUserType(tlongUser1.getUserType());
             registerRequsetDto.setIsCompany(tlongUser1.getIsCompany());
@@ -198,31 +235,31 @@ public class UserService {
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setEsgin(0);
-        tlongUser.setAuthentication("0");
+        tlongUser.setAuthentication(0);
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
-        TlongUser tlongUser1=appUserRepository.findOne(requsetDto.getId());
-        if (requsetDto.getHeadImage1()!=null&& !requsetDto.getHeadImage1().equals("")) {
+        TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
+        if (requsetDto.getHeadImage1() != null && !requsetDto.getHeadImage1().equals("")) {
             tlongUser.setHeadImage(requsetDto.getHeadImage1());
-        }else {
+        } else {
             tlongUser.setHeadImage(tlongUser1.getHeadImage());
         }
-        if (requsetDto.getIdcardFront1()!=null&&!requsetDto.getIdcardFront1() .equals("")) {
+        if (requsetDto.getIdcardFront1() != null && !requsetDto.getIdcardFront1().equals("")) {
             tlongUser.setIdcardFront(requsetDto.getIdcardFront1());
-        }else
+        } else
             tlongUser.setIdcardFront(tlongUser1.getIdcardFront());
         tlongUser.setPhone(requsetDto.getPhone());
-        if (!requsetDto.getIdcardReverse1() .equals(""))
+        if (!requsetDto.getIdcardReverse1().equals(""))
             tlongUser.setIdcardReverse(requsetDto.getIdcardReverse1());
         else
             tlongUser.setIdcardReverse(tlongUser1.getIdcardReverse());
         tlongUser.setOrganizationCode(requsetDto.getOrganizationCode());
         tlongUser.setSucc(requsetDto.getSucc());
         tlongUser.setLegalPersonName(requsetDto.getLegalPersonName());
-        if (!requsetDto.getBusinessLicense1() .equals(""))
+        if (!requsetDto.getBusinessLicense1().equals(""))
             tlongUser.setBusinessLicense(requsetDto.getBusinessLicense1());
         else
             tlongUser.setBusinessLicense(tlongUser1.getBusinessLicense());
-        tlongUser.setCreateDate(LocalDateTime.now());
+        tlongUser.setRegistDate(tlongUser1.getRegistDate());
         tlongUser.setPremises(requsetDto.getPremises());
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setNickName(requsetDto.getNickName());
@@ -235,8 +272,10 @@ public class UserService {
 
     }
 
-    public List<SuppliersRegisterRequsetDto> findAllAgents() {
-        Iterable<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3).or(tlongUser.userType.intValue().eq(4))));
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3).or(tlongUser.userType.intValue().eq(4))), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -252,8 +291,51 @@ public class UserService {
             registerRequsetDto.setNickName(tlongUser1.getNickName());
             registerRequsetDto.setEsgin(tlongUser1.getEsgin());
             registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
+            registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
-        return suppliersRegisterRequsetDtos;
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3).or(tlongUser.userType.intValue().eq(4))));
+        tlongUser3.forEach(tlongUser1 -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
+    }
+
+    /**
+     * 修改认证状态
+     *
+     * @param id
+     */
+    public void updateUserAuthentication(Long id) {
+        TlongUser tlongUser = appUserRepository.findOne(id);
+        if (tlongUser.getAuthentication() == 0)
+            tlongUser.setAuthentication(1);
+        else
+            tlongUser.setAuthentication(0);
+        appUserRepository.save(tlongUser);
+    }
+
+    /**
+     * 查询发布商品数量
+     *
+     * @param id
+     */
+    public Integer findUserPublishNumm(Long id) {
+        TlongUser tlongUser = appUserRepository.findOne(id);
+        return tlongUser.getGoodsPublishNum();
+    }
+
+    /**
+     * 修改发布商品数量
+     *
+     * @param registerRequsetDto
+     */
+    public void updateUserPublishNumm(SuppliersRegisterRequsetDto registerRequsetDto) {
+        TlongUser tlongUser = appUserRepository.findOne(registerRequsetDto.getId());
+        tlongUser.setGoodsPublishNum(registerRequsetDto.getGoodsPublishNum());
+        appUserRepository.save(tlongUser);
     }
 }
