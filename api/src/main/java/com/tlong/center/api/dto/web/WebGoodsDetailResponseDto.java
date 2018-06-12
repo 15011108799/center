@@ -30,6 +30,9 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("商品分类")
     private String goodsClassId;
 
+    @ApiModelProperty("商品分类父id")
+    private Long parentClassId;
+
     @ApiModelProperty("当前状态")
     private String state;
 
@@ -392,5 +395,13 @@ public class WebGoodsDetailResponseDto implements Serializable {
 
     public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
+    }
+
+    public Long getParentClassId() {
+        return parentClassId;
+    }
+
+    public void setParentClassId(Long parentClassId) {
+        this.parentClassId = parentClassId;
     }
 }

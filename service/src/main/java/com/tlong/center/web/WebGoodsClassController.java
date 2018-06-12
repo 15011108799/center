@@ -48,4 +48,9 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     public List<GoodsTypeResponseDto> findGoodsClass() {
         return goodsClassService.findGoodsClass();
     }
+
+    @Override
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody Long id) {
+        return goodsClassService.findGoodsTwoClass(id);
+    }
 }

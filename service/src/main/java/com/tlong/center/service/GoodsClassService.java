@@ -130,6 +130,7 @@ public class GoodsClassService {
         WebGoodsClassRequestDto webGoodsClassRequestDto = system.toDto();
         webGoodsClassRequestDto.setId(appGoodsclass.getId());
         webGoodsClassRequestDto.setClassName(appGoodsclass.getGoodsClassName());
+        webGoodsClassRequestDto.setParentClassId(appGoodsclass.getGoodsClassIdParent());
         return webGoodsClassRequestDto;
     }
 
@@ -152,9 +153,29 @@ public class GoodsClassService {
         return new Result(0, "修改失败");
     }
 
+    /**
+     * 查询一级分类
+     * @return
+     */
     public List<GoodsTypeResponseDto> findGoodsClass() {
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        List<AppGoodsclass> goodsclasses = repository.findAll();
+        Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
+        for (AppGoodsclass goodsclass : goodsclasses) {
+            GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+            goodsTypeResponseDto.setId(goodsclass.getId());
+            goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+            goodsTypeResponseDtos.add(goodsTypeResponseDto);
+        }
+        return goodsTypeResponseDtos;
+    }
+
+    /**
+     * 查询二级分类
+     * @return
+     */
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id) {
+        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+        Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
         for (AppGoodsclass goodsclass : goodsclasses) {
             GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
             goodsTypeResponseDto.setId(goodsclass.getId());

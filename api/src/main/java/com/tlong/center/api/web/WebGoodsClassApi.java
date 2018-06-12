@@ -34,7 +34,11 @@ public interface WebGoodsClassApi {
     @PostMapping("/updateGoodsType")
     Result updateGoodsType(@RequestBody WebGoodsClassRequestDto requestDto);
 
-    @ApiOperation("查询分类接口")
+    @ApiOperation("查询一级分类接口")
     @PostMapping("/findGoodsClass")
     List<GoodsTypeResponseDto> findGoodsClass();
+
+    @ApiOperation("查询二级分类接口")
+    @PostMapping("/findGoodsTwoClass")
+    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id);
 }
