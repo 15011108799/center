@@ -30,6 +30,9 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("商品分类")
     private String goodsClassId;
 
+    @ApiModelProperty("商品分类父id")
+    private Long parentClassId;
+
     @ApiModelProperty("当前状态")
     private String state;
 
@@ -108,8 +111,19 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("发布人电话")
     private String publishPhone;
 
+    @ApiModelProperty("发布人部门")
+    private String orgId;
+
     @ApiModelProperty("是否审核")
     private String isCheck;
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getIsCheck() {
         return isCheck;
@@ -381,5 +395,13 @@ public class WebGoodsDetailResponseDto implements Serializable {
 
     public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
+    }
+
+    public Long getParentClassId() {
+        return parentClassId;
+    }
+
+    public void setParentClassId(Long parentClassId) {
+        this.parentClassId = parentClassId;
     }
 }

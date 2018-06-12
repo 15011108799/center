@@ -6,6 +6,8 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
+import com.tlong.center.domain.app.TlongUser;
+import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.OrderRepository;
 import com.tlong.center.domain.web.WebOrder;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,7 @@ import static com.tlong.center.domain.web.QWebOrder.webOrder;
 public class OrderService {
     final OrderRepository repository;
     final EntityManager entityManager;
+    final AppUserRepository appUserRepository;
     JPAQueryFactory queryFactory;
 
     @PostConstruct
@@ -34,9 +37,10 @@ public class OrderService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public OrderService(EntityManager entityManager, OrderRepository repository) {
+    public OrderService(EntityManager entityManager, OrderRepository repository,AppUserRepository appUserRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
+        this.appUserRepository=appUserRepository;
     }
 
     /**
@@ -51,7 +55,7 @@ public class OrderService {
         Page<WebOrder> orders = repository.findAll(pageRequest);
         List<OrderRequestDto> requestDtos = new ArrayList<>();
         orders.forEach(order -> {
-            List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userType, webGoods.goodsPic, webGoods.star,
+            List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userType, webGoods.goodsPic,webGoods.publishUserId, webGoods.star,
                     webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
                     webOrder.state, webOrder.placeOrderTime)
                     .from(tlongUser, webGoods, webOrder)
@@ -73,6 +77,11 @@ public class OrderService {
                 orderRequestDto.setGoodsStar(one.get(webGoods.star));
                 orderRequestDto.setGoodsPrice(userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
                 orderRequestDto.setPlaceOrderTime(one.get(webOrder.placeOrderTime));
+                if (one.get(webGoods.publishUserId)!= null) {
+                    TlongUser tlongUser = appUserRepository.findOne(one.get(webGoods.publishUserId));
+                    orderRequestDto.setPublishName(tlongUser.getRealName());
+                    orderRequestDto.setPublishPhone(tlongUser.getPhone());
+                }
                 requestDtos.add(orderRequestDto);
             });
         });
