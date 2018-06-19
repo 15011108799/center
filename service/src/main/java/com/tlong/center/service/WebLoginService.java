@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -69,13 +70,14 @@ public class WebLoginService {
     /**
      * 后台登录接口
      */
-    public WebLoginResponseDto webLogin(WebLoginRequestDto requestDto) {
+    public WebLoginResponseDto webLogin(WebLoginRequestDto requestDto, HttpSession session) {
 
         //首先验证账号密码
 //        String password = MD5Util.KL(MD5Util.MD5(requestDto.getPassword()));
         TlongUser findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                 .and(tlongUser.password.eq(requestDto.getPassword())));
         if (Objects.nonNull(findResult)){
+            session.setAttribute("tlongUser",findResult);
             logger.info("user"+ requestDto.getUserName() + "Login Success!");
             List<Tuple> tuples = queryFactory.select(tlongPower.id, tlongPower.powerName, tlongPower.powerLevel,tlongPower.pid,tlongPower.url)
                     .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)
@@ -88,7 +90,7 @@ public class WebLoginService {
             WebLoginResponseDto webLoginResponseDto = new WebLoginResponseDto();
             List<TlongPowerDto> powerLevelOne = new ArrayList<>();
             List<TlongPowerDto> powerLevelTwo = new ArrayList<>();
-            List<TlongPowerDto> powerLevelThree = new ArrayList<>();
+            List<String> powerLevelThree = new ArrayList<>();
             tuples.stream().forEach(one ->{
                 TlongPowerDto dto = new TlongPowerDto(one.get(tlongPower.id), one.get(tlongPower.powerName), one.get(tlongPower.powerLevel),one.get(tlongPower.pid),one.get(tlongPower.url));
                 if (one.get(tlongPower.powerLevel) == 0){
@@ -96,7 +98,7 @@ public class WebLoginService {
                 }else if (one.get(tlongPower.powerLevel) == 1){
                     powerLevelTwo.add(dto);
                 }else if (one.get(tlongPower.powerLevel) == 2){
-                    powerLevelThree.add(dto);
+                    powerLevelThree.add(dto.getPowerName());
                 }
             });
             webLoginResponseDto.setPowersLevelOne(powerLevelOne);

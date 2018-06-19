@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -48,8 +49,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findAllSuppliers(requestDto);
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
+        return userService.findAllSuppliers(requestDto,session);
     }
 
     @Override

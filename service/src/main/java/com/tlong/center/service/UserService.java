@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -164,10 +165,15 @@ public class UserService {
      *
      * @return
      */
-    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(PageAndSortRequestDto requestDto) {
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(PageAndSortRequestDto requestDto, HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        Page<TlongUser> tlongUser2;
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<TlongUser> tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1), pageRequest);
+        if (user.getIsCompany() == 0)
+            tlongUser2 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()), pageRequest);
+        else
+            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.eq(user.getOrgId())), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -189,7 +195,11 @@ public class UserService {
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
         final int[] count = {0};
-        Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1));
+        Iterable<TlongUser> tlongUser3;
+        if (user.getIsCompany() == 0)
+            tlongUser3 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()));
+        else
+            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.eq(user.getOrgId())));
         tlongUser3.forEach(tlongUser1 -> {
             count[0]++;
         });

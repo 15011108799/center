@@ -17,7 +17,7 @@ public class WebLoginResponseDto extends TlongResultDto implements Serializable{
     private List<TlongPowerDto> powersLevelTwo;
 
     @ApiModelProperty("三级权限列表")
-    private List<TlongPowerDto> powersLevelThree;
+    private List<String> powersLevelThree;
 
     @ApiModelProperty("用户姓名")
     private String userName;
@@ -45,11 +45,11 @@ public class WebLoginResponseDto extends TlongResultDto implements Serializable{
         this.powersLevelTwo = powersLevelTwo;
     }
 
-    public List<TlongPowerDto> getPowersLevelThree() {
+    public List<String> getPowersLevelThree() {
         return powersLevelThree;
     }
 
-    public void setPowersLevelThree(List<TlongPowerDto> powersLevelThree) {
+    public void setPowersLevelThree(List<String> powersLevelThree) {
         this.powersLevelThree = powersLevelThree;
     }
 
