@@ -55,7 +55,7 @@ public class OrderService {
         Page<WebOrder> orders = repository.findAll(pageRequest);
         List<OrderRequestDto> requestDtos = new ArrayList<>();
         orders.forEach(order -> {
-            List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userType, webGoods.goodsPic,webGoods.publishUserId, webGoods.star,
+            List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userType,webGoods.goodsHead, webGoods.goodsPic,webGoods.publishUserId, webGoods.star,
                     webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
                     webOrder.state, webOrder.placeOrderTime)
                     .from(tlongUser, webGoods, webOrder)
@@ -68,6 +68,7 @@ public class OrderService {
             tuples.stream().forEach(one -> {
                 int userType = one.get(tlongUser.userType);
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
+                orderRequestDto.setGoodsName(one.get(webGoods.goodsHead));
                 orderRequestDto.setUserName(one.get(tlongUser.realName));
                 orderRequestDto.setUserType(one.get(tlongUser.userType));
                 orderRequestDto.setGoodsUrl(one.get(webGoods.goodsPic).split(",")[0]);
