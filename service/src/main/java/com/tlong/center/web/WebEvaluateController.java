@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/web/evaluate")
 public class WebEvaluateController implements WebEvaluateApi {
@@ -20,7 +22,7 @@ public class WebEvaluateController implements WebEvaluateApi {
     private EvaluateService evaluateService;
 
     @Override
-    public PageResponseDto<EvaluateRequestDto> findAllEvaluate(PageAndSortRequestDto requestDto) {
-        return evaluateService.findAllEvaluate(requestDto);
+    public PageResponseDto<EvaluateRequestDto> findAllEvaluate(PageAndSortRequestDto requestDto, HttpSession session) {
+        return evaluateService.findAllEvaluate(requestDto,session);
     }
 }

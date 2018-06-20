@@ -8,11 +8,13 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpSession;
+
 @Api("订单管理接口")
 public interface WebOrderApi {
 
     @ApiOperation("查询所有订单接口")
     @PostMapping("/findAllOrders")
-    PageResponseDto<OrderRequestDto> findAllOrders(@RequestBody PageAndSortRequestDto requestDto);
+    PageResponseDto<OrderRequestDto> findAllOrders(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
 
 }

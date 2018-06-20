@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -25,13 +26,13 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(PageAndSortRequestDto requestDto) {
-        return webGoodsService.findAllGoodsByPage(requestDto);
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(PageAndSortRequestDto requestDto, HttpSession session) {
+        return webGoodsService.findAllGoodsByPage(requestDto,session);
     }
 
     @Override
-    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto) {
-        return webGoodsService.add(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session) {
+        return webGoodsService.add(FileUploadUtils.handleFileUpload(file), reqDto,session);
     }
 
     @Override

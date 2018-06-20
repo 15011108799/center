@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/web/order")
 public class WebOrderController implements WebOrderApi {
@@ -17,7 +19,7 @@ public class WebOrderController implements WebOrderApi {
     private OrderService orderService;
 
     @Override
-    public PageResponseDto<OrderRequestDto> findAllOrders(PageAndSortRequestDto requestDto) {
-        return orderService.findAllOrders(requestDto);
+    public PageResponseDto<OrderRequestDto> findAllOrders(PageAndSortRequestDto requestDto, HttpSession session) {
+        return orderService.findAllOrders(requestDto,session);
     }
 }

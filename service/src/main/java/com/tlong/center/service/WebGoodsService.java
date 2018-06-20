@@ -1,5 +1,7 @@
 package com.tlong.center.service;
 
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
@@ -8,6 +10,7 @@ import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsclass;
+import com.tlong.center.domain.app.goods.QWebGoods;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.GoodsClassRepository;
@@ -17,11 +20,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 
 @Component
 @Transactional
@@ -44,10 +50,21 @@ public class WebGoodsService {
      * @param requestDto
      * @return
      */
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(PageAndSortRequestDto requestDto) {
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(PageAndSortRequestDto requestDto, HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<WebGoods> webGoods = repository.findAll(pageRequest);
+        Page<WebGoods> webGoods;
+        if (user.getIsCompany()==0)
+            webGoods= repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()), pageRequest);
+        else {
+            final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+            tlongUser3.forEach(one->{
+                pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+            });
+            webGoods= repository.findAll(pre[0], pageRequest);
+        }
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         webGoods.forEach(webGoods1 -> {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
@@ -90,8 +107,18 @@ public class WebGoodsService {
         });
         responseDto.setList(requestDtos);
         final int[] count = {0};
-        Iterable<WebGoods> appGoods1 = repository.findAll();
-        appGoods1.forEach(message -> {
+        Iterable<WebGoods> appGoods1;
+        if (user.getIsCompany()==0)
+            appGoods1= repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
+        else {
+            final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+            tlongUser3.forEach(one->{
+                pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+            });
+            appGoods1= repository.findAll(pre[0]);
+        }
+        appGoods1.forEach(goods -> {
             count[0]++;
         });
         responseDto.setCount(count[0]);
@@ -103,7 +130,7 @@ public class WebGoodsService {
      *
      * @return
      */
-    public Result add(String s, WebGoodsDetailResponseDto reqDto) {
+    public Result add(String s, WebGoodsDetailResponseDto reqDto,HttpSession session) {
         reqDto.setGoodsPic(s.substring(0, s.length() - 1));
         reqDto.setCertificate(FileUploadUtils.readFile(reqDto.getCertificate()));
         reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
@@ -135,6 +162,7 @@ public class WebGoodsService {
             webGoods.setPublishPrice(Double.valueOf(reqDto.getPublishPrice()));
         if (reqDto.getStorePrice() != null && !reqDto.getStorePrice().equals(""))
             webGoods.setStorePrice(Double.valueOf(reqDto.getStorePrice()));
+        webGoods.setPublishUserId(((TlongUser) session.getAttribute("tlongUser")).getId());
         WebGoods webGoods1 = repository.save(webGoods);
         if (webGoods1 != null)
             return new Result(1, "添加成功");

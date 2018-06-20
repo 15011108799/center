@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Api("商品增删改查接口")
@@ -17,11 +18,11 @@ public interface WebGoodsApi {
 
     @ApiOperation("获取商品列表")
     @PostMapping("/findAllGoods")
-    PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto);
+    PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
 
     @ApiModelProperty("新增商品")
     @PostMapping("/addGoods")
-    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto);
+    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session);
 
     @ApiModelProperty("删除商品")
     @PutMapping("/delGoods")

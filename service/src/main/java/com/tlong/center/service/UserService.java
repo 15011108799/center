@@ -199,7 +199,7 @@ public class UserService {
         if (user.getIsCompany() == 0)
             tlongUser3 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()));
         else
-            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.eq(user.getOrgId())));
+            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
         tlongUser3.forEach(tlongUser1 -> {
             count[0]++;
         });
