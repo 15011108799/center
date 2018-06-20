@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiModel("天珑权限数据模型")
 public class TlongPowerDto implements Serializable {
@@ -22,6 +24,9 @@ public class TlongPowerDto implements Serializable {
 
     @ApiModelProperty("url")
     private String url;
+
+    @ApiModelProperty("三级权限名称")
+    private List<String> threeLevel=new ArrayList<>();
 
     public TlongPowerDto() {
     }
@@ -72,5 +77,13 @@ public class TlongPowerDto implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<String> getThreeLevel() {
+        return threeLevel;
+    }
+
+    public void setThreeLevel(List<String> threeLevel) {
+        this.threeLevel = threeLevel;
     }
 }

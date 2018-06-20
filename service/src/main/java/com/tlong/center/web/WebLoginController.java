@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/web/user")
 public class WebLoginController implements WebLoginApi {
@@ -26,8 +28,8 @@ public class WebLoginController implements WebLoginApi {
      * App登录方法
      */
     @Override
-    public WebLoginResponseDto webLogin(@RequestBody WebLoginRequestDto requestDto) {
-        return webLoginService.webLogin(requestDto);
+    public WebLoginResponseDto webLogin(@RequestBody WebLoginRequestDto requestDto, HttpSession session) {
+        return webLoginService.webLogin(requestDto,session);
     }
 
     /**

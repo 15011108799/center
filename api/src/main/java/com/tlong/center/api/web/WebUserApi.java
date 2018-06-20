@@ -5,11 +5,9 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Api("代理商供应商用户管理接口")
@@ -47,7 +45,7 @@ public interface WebUserApi {
 
     @ApiOperation("查询所有用户供货商")
     @PostMapping("/findAllSuppliers")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
 
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
@@ -73,4 +71,8 @@ public interface WebUserApi {
     @ApiOperation("修改供应商发布商品数量")
     @PostMapping("/updateUserPublishNum")
     void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto);
+
+    @ApiOperation("查找供应商认证通过人数")
+    @PostMapping("/findCount")
+    Integer findCount(@RequestBody Integer type);
 }

@@ -7,8 +7,10 @@ import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.TlongUser;
+import com.tlong.center.domain.app.goods.AppGoodsclass;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
+import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,11 +29,13 @@ public class WebGoodsService {
     final EntityManager entityManager;
     final GoodsRepository repository;
     final AppUserRepository appUserRepository;
+    final GoodsClassRepository goodsClassRepository;
 
-    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository) {
+    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository,GoodsClassRepository goodsClassRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
+        this.goodsClassRepository=goodsClassRepository;
     }
 
     /**
@@ -75,7 +79,12 @@ public class WebGoodsService {
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
+                webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
+            }
+            if (webGoods1.getGoodsClassId()!=null){
+                AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+                webGoodsDetailResponseDto.setGoodsClassId(appGoodsclass.getGoodsClassName());
             }
             requestDtos.add(webGoodsDetailResponseDto);
         });
@@ -162,6 +171,8 @@ public class WebGoodsService {
     public WebGoodsDetailResponseDto findGoodsById(Long id) {
         WebGoods webGoods1 = repository.findOne(id);
         WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
+        AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+        webGoodsDetailResponseDto.setParentClassId(appGoodsclass.getGoodsClassIdParent());
         if (webGoods1.getRealStar() != null)
             webGoodsDetailResponseDto.setRealStar(webGoods1.getRealStar() + "");
         if (webGoods1.getGoodsClassId() != null)
