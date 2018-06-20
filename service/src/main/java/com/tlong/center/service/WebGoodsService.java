@@ -82,6 +82,10 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
+            if (webGoods1.getGoodsClassId()!=null){
+                AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+                webGoodsDetailResponseDto.setGoodsClassId(appGoodsclass.getGoodsClassName());
+            }
             requestDtos.add(webGoodsDetailResponseDto);
         });
         responseDto.setList(requestDtos);

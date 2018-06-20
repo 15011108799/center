@@ -19,6 +19,9 @@ public class OrderRequestDto implements Serializable {
     @ApiModelProperty("用户类型")
     private Integer userType;
 
+    @ApiModelProperty("商品名称")
+    private String goodsName;
+
     @ApiModelProperty("商品图片")
     private String goodsUrl;
 
@@ -137,5 +140,13 @@ public class OrderRequestDto implements Serializable {
 
     public void setPublishPhone(String publishPhone) {
         this.publishPhone = publishPhone;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 }
