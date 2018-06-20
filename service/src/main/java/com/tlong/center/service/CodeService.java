@@ -7,15 +7,17 @@ import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.domain.common.code.TlongCodeRule;
 import com.tlong.center.domain.repository.TlongCodeRepository;
 import com.tlong.center.domain.repository.TlongCodeRuleRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tlong.center.domain.common.QTlongCode.tlongCode;
+import static com.tlong.center.domain.common.code.QTlongCode.tlongCode;
 import static com.tlong.center.domain.common.code.QTlongCodeRule.tlongCodeRule;
 import static com.tlong.center.domain.common.user.QTlongUserSettings.tlongUserSettings;
 
