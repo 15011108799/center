@@ -9,7 +9,10 @@ import com.tlong.center.api.dto.web.WebLoginResponseDto;
 import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.TlongPowerRepository;
+import com.tlong.center.domain.repository.TlongRolePowerRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
+import com.tlong.center.domain.web.TlongPower;
+import com.tlong.center.domain.web.TlongRolePower;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,11 +36,13 @@ import static com.tlong.center.domain.web.QTlongPower.tlongPower;
 @Transactional
 public class WebLoginService {
 
-    private static Logger  logger = LoggerFactory.getLogger(WebLoginService.class);
+    private static Logger logger = LoggerFactory.getLogger(WebLoginService.class);
 
     final EntityManager entityManager;
     final TlongUserRepository tlongUserRepository;
     final TlongPowerRepository tlongPowerRepository;
+    final TlongRolePowerRepository tlongRolePowerRepository;
+
     final CodeUtil codeUtil;
 
     JPAQueryFactory queryFactory;
@@ -47,23 +52,24 @@ public class WebLoginService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public WebLoginService(EntityManager entityManager, TlongUserRepository tlongUserRepository, TlongPowerRepository tlongPowerRepository, CodeUtil codeUtil) {
+    public WebLoginService(EntityManager entityManager, TlongUserRepository tlongUserRepository, TlongPowerRepository tlongPowerRepository, CodeUtil codeUtil, TlongRolePowerRepository tlongRolePowerRepository) {
         this.entityManager = entityManager;
         this.tlongUserRepository = tlongUserRepository;
         this.tlongPowerRepository = tlongPowerRepository;
         this.codeUtil = codeUtil;
+        this.tlongRolePowerRepository = tlongRolePowerRepository;
     }
 
 
     /**
      * 登录时自动验证账号名是否存在
      */
-    public TlongResultDto checkUserName(String userName){
+    public TlongResultDto checkUserName(String userName) {
         Iterable<TlongUser> all = tlongUserRepository.findAll(tlongUser.userName.eq(userName));
-        if (all == null){
-            return new TlongResultDto(1,"用户名不存在");
-        }else {
-            return new TlongResultDto(0,"用户名正常");
+        if (all == null) {
+            return new TlongResultDto(1, "用户名不存在");
+        } else {
+            return new TlongResultDto(0, "用户名正常");
         }
     }
 
@@ -76,10 +82,10 @@ public class WebLoginService {
 //        String password = MD5Util.KL(MD5Util.MD5(requestDto.getPassword()));
         TlongUser findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                 .and(tlongUser.password.eq(requestDto.getPassword())));
-        if (Objects.nonNull(findResult)){
-            session.setAttribute("tlongUser",findResult);
-            logger.info("user"+ requestDto.getUserName() + "Login Success!");
-            List<Tuple> tuples = queryFactory.select(tlongPower.id, tlongPower.powerName, tlongPower.powerLevel,tlongPower.pid,tlongPower.url)
+        if (Objects.nonNull(findResult)) {
+            session.setAttribute("tlongUser", findResult);
+            logger.info("user" + requestDto.getUserName() + "Login Success!");
+            List<Tuple> tuples = queryFactory.select(tlongRolePower.roleId, tlongRolePower.powerId, tlongPower.id, tlongPower.powerName, tlongPower.powerLevel, tlongPower.pid, tlongPower.url)
                     .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)
                     .where(tlongUser.id.eq(tlongUserRole.userId)
                             .and(tlongRole.id.eq(tlongUserRole.roleId))
@@ -90,24 +96,28 @@ public class WebLoginService {
             WebLoginResponseDto webLoginResponseDto = new WebLoginResponseDto();
             List<TlongPowerDto> powerLevelOne = new ArrayList<>();
             List<TlongPowerDto> powerLevelTwo = new ArrayList<>();
-            List<String> powerLevelThree = new ArrayList<>();
-            tuples.stream().forEach(one ->{
-                TlongPowerDto dto = new TlongPowerDto(one.get(tlongPower.id), one.get(tlongPower.powerName), one.get(tlongPower.powerLevel),one.get(tlongPower.pid),one.get(tlongPower.url));
-                if (one.get(tlongPower.powerLevel) == 0){
+            tuples.stream().forEach(one -> {
+                TlongPowerDto dto = new TlongPowerDto(one.get(tlongPower.id), one.get(tlongPower.powerName), one.get(tlongPower.powerLevel), one.get(tlongPower.pid), one.get(tlongPower.url));
+                if (one.get(tlongPower.powerLevel) == 0) {
                     powerLevelOne.add(dto);
-                }else if (one.get(tlongPower.powerLevel) == 1){
+                } else if (one.get(tlongPower.powerLevel) == 1) {
+                    Iterable<TlongPower> tlongPowers = tlongPowerRepository.findAll(tlongPower.powerLevel.intValue().eq(2).and(tlongPower.pid.intValue().eq(dto.getId().intValue())));
+                    Iterable<TlongRolePower> tlongRolePowers = tlongRolePowerRepository.findAll(tlongRolePower.roleId.longValue().eq(one.get(tlongRolePower.roleId)));
+                    tlongPowers.forEach(three -> {
+                        tlongRolePowers.forEach(tlongRolePower1 -> {
+                            if (three.getId().intValue() == tlongRolePower1.getPowerId().intValue())
+                                dto.getThreeLevel().add(three.getPowerName());
+                        });
+                    });
                     powerLevelTwo.add(dto);
-                }else if (one.get(tlongPower.powerLevel) == 2){
-                    powerLevelThree.add(dto.getPowerName());
                 }
             });
             webLoginResponseDto.setPowersLevelOne(powerLevelOne);
             webLoginResponseDto.setPowersLevelTwo(powerLevelTwo);
-            webLoginResponseDto.setPowersLevelThree(powerLevelThree);
             webLoginResponseDto.setUserName(requestDto.getUserName());
             return webLoginResponseDto;
-        }else {
-            return new WebLoginResponseDto(1,"账户名或密码不正确");
+        } else {
+            return new WebLoginResponseDto(1, "账户名或密码不正确");
         }
 
         //获取权限列表

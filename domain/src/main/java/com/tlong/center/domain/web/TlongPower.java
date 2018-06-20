@@ -12,6 +12,9 @@ import javax.persistence.*;
 @Table(name = "tlong_power")
 @DynamicUpdate
 public class TlongPower extends BaseJpa {
+    public TlongPower(){
+
+    }
     public TlongPower(TlongPowerDto dto) {
         PropertyUtils.copyPropertiesOfNotNull(dto,this);
     }
