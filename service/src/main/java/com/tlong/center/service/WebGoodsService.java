@@ -69,6 +69,8 @@ public class WebGoodsService {
         webGoods.forEach(webGoods1 -> {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
             webGoodsDetailResponseDto.setIsCheck(webGoods1.getIsCheck() + "");
+            if (webGoods1.getId() != null)
+                webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
             if (webGoods1.getRealStar() != null)
                 webGoodsDetailResponseDto.setRealStar(webGoods1.getStar() + "");
             if (webGoods1.getId() != null)
@@ -201,6 +203,8 @@ public class WebGoodsService {
         WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
         AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
         webGoodsDetailResponseDto.setParentClassId(appGoodsclass.getGoodsClassIdParent());
+        if (webGoods1.getId() != null)
+            webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
         if (webGoods1.getRealStar() != null)
             webGoodsDetailResponseDto.setRealStar(webGoods1.getRealStar() + "");
         if (webGoods1.getGoodsClassId() != null)
@@ -275,6 +279,7 @@ public class WebGoodsService {
             webGoods.setPublishPrice(Double.valueOf(reqDto.getPublishPrice()));
         if (reqDto.getStorePrice() != null && !reqDto.getStorePrice().equals("null"))
             webGoods.setStorePrice(Double.valueOf(reqDto.getStorePrice()));
+        webGoods.setPublishUserId(webGoods1.getPublishUserId());
         WebGoods webGoods2 = repository.save(webGoods);
         if (webGoods2 != null)
             return new Result(1, "修改成功");
