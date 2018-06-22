@@ -49,7 +49,7 @@ public interface WebUserApi {
 
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto,HttpSession session);
 
     @ApiOperation("根据id查询用户")
     @PutMapping("/findSupplierById")
@@ -74,5 +74,5 @@ public interface WebUserApi {
 
     @ApiOperation("查找供应商认证通过人数")
     @PostMapping("/findCount")
-    Integer findCount(@RequestBody Integer type);
+    Integer findCount(@RequestBody Integer type,HttpSession session);
 }

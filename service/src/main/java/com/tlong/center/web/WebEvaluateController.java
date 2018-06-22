@@ -9,6 +9,7 @@ import com.tlong.center.api.web.WebOrderApi;
 import com.tlong.center.service.EvaluateService;
 import com.tlong.center.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class WebEvaluateController implements WebEvaluateApi {
     private EvaluateService evaluateService;
 
     @Override
-    public PageResponseDto<EvaluateRequestDto> findAllEvaluate(PageAndSortRequestDto requestDto, HttpSession session) {
+    public PageResponseDto<EvaluateRequestDto> findAllEvaluate(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
         return evaluateService.findAllEvaluate(requestDto,session);
     }
 }

@@ -54,8 +54,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findAllAgents(requestDto);
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto,HttpSession session) {
+        return userService.findAllAgents(requestDto,session);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public Integer findCount(@RequestBody Integer type) {
-        return userService.findCount(type);
+    public Integer findCount(@RequestBody Integer type,HttpSession session) {
+        return userService.findCount(type,session);
     }
 }

@@ -26,7 +26,7 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(PageAndSortRequestDto requestDto, HttpSession session) {
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
         return webGoodsService.findAllGoodsByPage(requestDto,session);
     }
 

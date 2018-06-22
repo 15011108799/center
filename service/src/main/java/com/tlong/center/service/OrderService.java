@@ -60,7 +60,7 @@ public class OrderService {
     public PageResponseDto<OrderRequestDto> findAllOrders(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         Iterable<WebGoods> appGoods1;
-        if (user.getUserType()!=null&&user.getUserType()==1) {
+        if (user.getUserType() != null && user.getUserType() == 1) {
             if (user.getIsCompany() == 0)
                 appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
@@ -80,11 +80,21 @@ public class OrderService {
         });
         PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<WebOrder> orders;
         final Predicate[] pre = {webOrder.id.isNull()};
+        final Predicate[] pre2 = {webOrder.id.isNull()};
         ids.forEach(one -> {
             pre[0] = ExpressionUtils.or(pre[0], webOrder.goodsId.longValue().eq(one));
         });
-        Page<WebOrder> orders = repository.findAll(pre[0], pageRequest);
+        if (user.getUserType() != null && user.getUserType() != 1) {
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
+            tlongUser3.forEach(one->{
+                pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(one.getId()));
+            });
+            orders = repository.findAll(pre2[0], pageRequest);
+        } else {
+            orders = repository.findAll(pre[0], pageRequest);
+        }
         List<OrderRequestDto> requestDtos = new ArrayList<>();
         orders.forEach(order -> {
             List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
@@ -122,10 +132,20 @@ public class OrderService {
         orderRequestDtoPageResponseDto.setList(requestDtos);
         final int[] count = {0};
         final Predicate[] pre1 = {webOrder.id.isNull()};
+        final Predicate[] pre3 = {webOrder.id.isNull()};
         ids.forEach(one -> {
             pre1[0] = ExpressionUtils.or(pre1[0], webOrder.goodsId.longValue().eq(one));
         });
-        Iterable<WebOrder> orders1 = repository.findAll(pre1[0]);
+        Iterable<WebOrder> orders1;
+        if (user.getUserType() != null && user.getUserType() != 1) {
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
+            tlongUser3.forEach(one->{
+                pre3[0] = ExpressionUtils.or(pre3[0], webOrder.userId.longValue().eq(one.getId()));
+            });
+            orders1 = repository.findAll(pre3[0], pageRequest);
+        } else {
+            orders1 = repository.findAll(pre[0]);
+        }
         orders1.forEach(order -> {
             count[0]++;
         });

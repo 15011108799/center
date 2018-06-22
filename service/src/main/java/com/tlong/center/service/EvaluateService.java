@@ -46,11 +46,11 @@ public class EvaluateService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public EvaluateService(EntityManager entityManager, WebEvaluateRepository repository, AppUserRepository appUserRepository,GoodsRepository repository1) {
+    public EvaluateService(EntityManager entityManager, WebEvaluateRepository repository, AppUserRepository appUserRepository, GoodsRepository repository1) {
         this.entityManager = entityManager;
         this.repository = repository;
-        this.appUserRepository=appUserRepository;
-        this.repository1=repository1;
+        this.appUserRepository = appUserRepository;
+        this.repository1 = repository1;
     }
 
     /**
@@ -62,53 +62,76 @@ public class EvaluateService {
     public PageResponseDto<EvaluateRequestDto> findAllEvaluate(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         Iterable<WebGoods> appGoods1;
-        if (user.getIsCompany()==0)
-            appGoods1= repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
-        else {
-            final Predicate[] pre = { QWebGoods.webGoods.id.isNull()};
-            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
-            tlongUser3.forEach(one->{
-                pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
-            });
-            appGoods1= repository1.findAll(pre[0]);
-        }
-        List<Long> ids=new ArrayList<>();
+        if (user.getUserType() != null && user.getUserType() == 1) {
+            if (user.getIsCompany() == 0)
+                appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
+            else {
+                final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                tlongUser3.forEach(one -> {
+                    pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+                });
+                appGoods1 = repository1.findAll(pre[0]);
+            }
+        } else
+            appGoods1 = repository1.findAll();
+        List<Long> ids = new ArrayList<>();
         appGoods1.forEach(goods -> {
             ids.add(goods.getId());
         });
         PageResponseDto<EvaluateRequestDto> evaluateRequestDtoPageResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<WebEvaluate> evaluates;
         final Predicate[] pre = {webEvaluate.id.isNull()};
-        ids.forEach(one->{
+        final Predicate[] pre2 = {webEvaluate.id.isNull()};
+        ids.forEach(one -> {
             pre[0] = ExpressionUtils.or(pre[0], webEvaluate.goodsId.longValue().eq(one));
         });
-        Page<WebEvaluate> evaluates = repository.findAll(pre[0],pageRequest);
+        if (user.getUserType() != null && user.getUserType() != 1) {
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
+            tlongUser3.forEach(one->{
+                pre2[0] = ExpressionUtils.or(pre2[0], webEvaluate.userId.longValue().eq(one.getId()));
+            });
+            evaluates = repository.findAll(pre2[0], pageRequest);
+        } else {
+            evaluates = repository.findAll(pre[0], pageRequest);
+        }
         List<EvaluateRequestDto> requestDtos = new ArrayList<>();
         evaluates.forEach(evaluate -> {
-            List<Tuple> tuples = queryFactory.select(webEvaluate.id,webGoods.goodsHead,webGoods.goodsCode,webGoods.goodsPic,webEvaluate.content,webEvaluate.pics,webEvaluate.star,webEvaluate.time)
+            List<Tuple> tuples = queryFactory.select(webEvaluate.id, webGoods.goodsHead, webGoods.goodsCode, webGoods.goodsPic, webEvaluate.content, webEvaluate.pics, webEvaluate.star, webEvaluate.time)
                     .from(webEvaluate, webGoods)
                     .where(webGoods.id.eq(webEvaluate.goodsId).and(webGoods.id.longValue().eq(evaluate.getGoodsId())))
                     .fetch();
             tuples.stream().forEach(one -> {
-                 EvaluateRequestDto evaluateRequestDto=new EvaluateRequestDto();
-                 evaluateRequestDto.setId(one.get(webEvaluate.id));
-                 evaluateRequestDto.setGoodsName(one.get(webGoods.goodsHead));
-                 evaluateRequestDto.setGoodsCode(one.get(webGoods.goodsCode));
-                 evaluateRequestDto.setGoodsUrls(one.get(webGoods.goodsPic));
-                 evaluateRequestDto.setContent(one.get(webEvaluate.content));
-                 evaluateRequestDto.setPics(one.get(webEvaluate.pics));
-                 evaluateRequestDto.setStar(one.get(webEvaluate.star));
-                 evaluateRequestDto.setTime(one.get(webEvaluate.time));
+                EvaluateRequestDto evaluateRequestDto = new EvaluateRequestDto();
+                evaluateRequestDto.setId(one.get(webEvaluate.id));
+                evaluateRequestDto.setGoodsName(one.get(webGoods.goodsHead));
+                evaluateRequestDto.setGoodsCode(one.get(webGoods.goodsCode));
+                evaluateRequestDto.setGoodsUrls(one.get(webGoods.goodsPic));
+                evaluateRequestDto.setContent(one.get(webEvaluate.content));
+                evaluateRequestDto.setPics(one.get(webEvaluate.pics));
+                evaluateRequestDto.setStar(one.get(webEvaluate.star));
+                evaluateRequestDto.setTime(one.get(webEvaluate.time));
                 requestDtos.add(evaluateRequestDto);
             });
         });
         evaluateRequestDtoPageResponseDto.setList(requestDtos);
         final int[] count = {0};
         final Predicate[] pre1 = {webEvaluate.id.isNull()};
-        ids.forEach(one->{
+        ids.forEach(one -> {
             pre1[0] = ExpressionUtils.or(pre1[0], webEvaluate.goodsId.longValue().eq(one));
         });
-        Iterable<WebEvaluate> evaluates1 = repository.findAll(pre1[0]);
+        Iterable<WebEvaluate> evaluates1;
+        final Predicate[] pre3 = {webEvaluate.id.isNull()};
+        if (user.getUserType() != null && user.getUserType() != 1) {
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
+            tlongUser3.forEach(one->{
+                pre3[0] = ExpressionUtils.or(pre3[0], webEvaluate.userId.longValue().eq(one.getId()));
+            });
+            evaluates1 = repository.findAll(pre3[0], pageRequest);
+        } else {
+            evaluates1 = repository.findAll(pre[0]);
+        }
         evaluates1.forEach(order -> {
             count[0]++;
         });
