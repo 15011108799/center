@@ -53,7 +53,6 @@ public class WebGoodsService {
     public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
-        System.out.println("+++++++++++++page"+requestDto.getPage());
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<WebGoods> webGoods=null;
         if (user.getUserType()!=null&&user.getUserType()==1) {
@@ -68,7 +67,6 @@ public class WebGoodsService {
                 webGoods = repository.findAll(pre[0], pageRequest);
             }
         }else {
-            System.out.println("++++++"+pageRequest.getPageNumber());
             webGoods=repository.findAll(pageRequest);
         }
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
@@ -193,14 +191,11 @@ public class WebGoodsService {
     }
 
     /**
-     * 修改商品审核状态
+     * 修改商品为审核通过状态
      */
     public void updateGoodsState(Long id) {
         WebGoods webGoods = repository.findOne(id);
-        if (webGoods.getIsCheck() == 0)
-            webGoods.setIsCheck(1);
-        else
-            webGoods.setIsCheck(0);
+        webGoods.setIsCheck(1);
         repository.save(webGoods);
     }
 
@@ -307,6 +302,16 @@ public class WebGoodsService {
             webGoods.setState(0);
         else
             webGoods.setState(state);
+        repository.save(webGoods);
+    }
+
+    /**
+     * 设置审核驳回
+     * @param id
+     */
+    public void updateGoodsStateReject(Long id) {
+        WebGoods webGoods = repository.findOne(id);
+        webGoods.setIsCheck(2);
         repository.save(webGoods);
     }
 }

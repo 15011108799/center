@@ -32,9 +32,13 @@ public interface WebGoodsApi {
     @PostMapping("/updateGoods")
     Result updateGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto);
 
-    @ApiOperation("修改商品状态")
+    @ApiOperation("修改商品为通过状态")
     @PostMapping("/updateGoodsState")
-    void updateGoodsState(@RequestBody String id);
+    void updateGoodsState(@RequestBody Long id);
+
+    @ApiOperation("修改商品为驳回状态")
+    @PostMapping("/updateGoodsStateReject")
+    void updateGoodsStateReject(@RequestBody Long id);
 
     @ApiOperation("根据id查询商品")
     @PutMapping("/findGoodsById")

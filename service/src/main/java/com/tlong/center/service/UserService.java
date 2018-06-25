@@ -302,7 +302,7 @@ public class UserService {
         }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
-            if (user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
+            if (user.getOrgId()==null||user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
                 SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                 registerRequsetDto.setId(tlongUser1.getId());
                 registerRequsetDto.setUserName(tlongUser1.getUserName());
@@ -329,7 +329,7 @@ public class UserService {
             tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like("%" + user.getOrgId() + "%")));
         }
         tlongUser3.forEach(tlongUser1 -> {
-            if (user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
+            if (user.getOrgId()==null||user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
                 count[0]++;
             }
         });
