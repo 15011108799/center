@@ -55,6 +55,7 @@ public class GoodsClassService {
                 .fetch();
         List<WebGoodsClassRequestDto> requestOne = new ArrayList<>();
         List<WebGoodsClassRequestDto> requestTwo = new ArrayList<>();
+        final String[] tag = {""};
         tuples.stream().forEach(one -> {
             WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
                     , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
@@ -62,6 +63,9 @@ public class GoodsClassService {
             if (one.get(appGoodsclass.goodsClassLevel) == 0)
                 requestOne.add(requestDto);
             else if (one.get(appGoodsclass.goodsClassLevel) == 1) {
+                if (tag[0].indexOf(requestDto.getClassName()) > -1)
+                    return;
+                tag[0] += requestDto.getClassName();
                 requestTwo.add(requestDto);
             }
         });
@@ -124,9 +128,9 @@ public class GoodsClassService {
      *
      * @return
      */
-    public WebGoodsClassRequestDto findGoodsTypeById(Long id) {
-        AppGoodsclass appGoodsclass = repository.findOne(id);
-        AppGoodsPriceSystem system = systemRepository.findOne(appGoodsPriceSystem.goodsClassId.longValue().eq(id));
+    public WebGoodsClassRequestDto findGoodsTypeById(WebGoodsClassRequestDto requestDto) {
+        AppGoodsclass appGoodsclass = repository.findOne(requestDto.getId());
+        AppGoodsPriceSystem system = systemRepository.findOne(appGoodsPriceSystem.goodsClassId.longValue().eq(requestDto.getId()).and(appGoodsPriceSystem.intervalUp.doubleValue().eq(requestDto.getIntervalUp())));
         WebGoodsClassRequestDto webGoodsClassRequestDto = system.toDto();
         webGoodsClassRequestDto.setId(appGoodsclass.getId());
         webGoodsClassRequestDto.setClassName(appGoodsclass.getGoodsClassName());
@@ -155,6 +159,7 @@ public class GoodsClassService {
 
     /**
      * 查询一级分类
+     *
      * @return
      */
     public List<GoodsTypeResponseDto> findGoodsClass() {
@@ -171,6 +176,7 @@ public class GoodsClassService {
 
     /**
      * 查询二级分类
+     *
      * @return
      */
     public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id) {
@@ -183,5 +189,23 @@ public class GoodsClassService {
             goodsTypeResponseDtos.add(goodsTypeResponseDto);
         }
         return goodsTypeResponseDtos;
+    }
+
+    public GoodsClassRequestDto findAllGoodsClassByName(String goodsClassName) {
+        List<Tuple> tuples = queryFactory.select(appGoodsclass.id, appGoodsclass.goodsClassName, appGoodsclass.goodsClassLevel, appGoodsclass.goodsClassIdParent,
+                appGoodsPriceSystem.factoryRatio, appGoodsPriceSystem.lagshipRatio, appGoodsPriceSystem.originatorRatio, appGoodsPriceSystem.storeRatio, appGoodsclass.publishTime, appGoodsPriceSystem.intervalUp, appGoodsPriceSystem.intervalDown)
+                .from(appGoodsclass, appGoodsPriceSystem)
+                .where(appGoodsclass.id.eq(appGoodsPriceSystem.goodsClassId).and(appGoodsclass.goodsClassName.eq(goodsClassName)))
+                .fetch();
+        List<WebGoodsClassRequestDto> requestOne = new ArrayList<>();
+        tuples.stream().forEach(one -> {
+            WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
+                    , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
+                    one.get(appGoodsclass.publishTime), one.get(appGoodsPriceSystem.intervalUp), one.get(appGoodsPriceSystem.intervalDown));
+            requestOne.add(requestDto);
+        });
+        GoodsClassRequestDto goodsClassRequestDto = new GoodsClassRequestDto();
+        goodsClassRequestDto.setGoodsClassOneDtos(requestOne);
+        return goodsClassRequestDto;
     }
 }

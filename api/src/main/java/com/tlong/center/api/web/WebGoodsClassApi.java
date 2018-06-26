@@ -18,6 +18,10 @@ public interface WebGoodsClassApi {
     @PostMapping("/findAllGoodsClass")
     GoodsClassRequestDto findAllGoodsClass();
 
+    @ApiOperation("查询所有价格倍率分类接口")
+    @PostMapping("/findAllGoodsClassByName")
+    GoodsClassRequestDto findAllGoodsClassByName(@RequestBody String goodsClassName);
+
     @ApiOperation("添加分类")
     @PostMapping("/addGoodsClass")
     Result addGoodsClass(@RequestBody WebGoodsClassRequestDto requestDto);
@@ -28,7 +32,7 @@ public interface WebGoodsClassApi {
 
     @ApiOperation("查找单个分类")
     @PostMapping("/findGoodsTypeById")
-    WebGoodsClassRequestDto findGoodsTypeById(@RequestBody Long id);
+    WebGoodsClassRequestDto findGoodsTypeById(@RequestBody WebGoodsClassRequestDto requestDto);
 
     @ApiOperation("修改分类接口")
     @PostMapping("/updateGoodsType")

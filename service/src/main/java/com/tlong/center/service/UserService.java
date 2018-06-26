@@ -105,10 +105,7 @@ public class UserService {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<TlongUser> tlongUsers;
         Predicate pre = tlongUser.id.isNotNull();
-        if (requestDto.getPtype() == 1)
-            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
-        else if (requestDto.getPtype() == 2)
-            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2));
+        pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(requestDto.getPtype()));
         if (StringUtils.isNotEmpty(requestDto.getUserName()))
             pre = ExpressionUtils.and(pre, tlongUser.userName.eq(requestDto.getUserName()));
         if (StringUtils.isNotEmpty(requestDto.getUserCode()))
@@ -117,6 +114,12 @@ public class UserService {
             pre = ExpressionUtils.and(pre, tlongUser.esgin.intValue().eq(requestDto.getEsign()));
         if (requestDto.getAuthentication() == 0 || requestDto.getAuthentication() == 1)
             pre = ExpressionUtils.and(pre, tlongUser.authentication.intValue().eq(requestDto.getAuthentication()));
+        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.lt(requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.gt(requestDto.getStartTime() + " 00:00:00"));
         tlongUsers = appUserRepository.findAll(pre, pageRequest);
         UserSearchResponseDto responseDto = new UserSearchResponseDto();
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
@@ -193,6 +196,7 @@ public class UserService {
             registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
             registerRequsetDto.setOrgId(tlongUser1.getOrgId());
             registerRequsetDto.setPremises(tlongUser1.getPremises());
+            registerRequsetDto.setWx(tlongUser1.getWx());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
@@ -302,7 +306,7 @@ public class UserService {
         }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
-            if (user.getOrgId()==null||user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
+            if (user.getOrgId() == null || user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
                 SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                 registerRequsetDto.setId(tlongUser1.getId());
                 registerRequsetDto.setUserName(tlongUser1.getUserName());
@@ -329,7 +333,7 @@ public class UserService {
             tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like("%" + user.getOrgId() + "%")));
         }
         tlongUser3.forEach(tlongUser1 -> {
-            if (user.getOrgId()==null||user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
+            if (user.getOrgId() == null || user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
                 count[0]++;
             }
         });
@@ -380,11 +384,11 @@ public class UserService {
         Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(type).and(tlongUser.esgin.intValue().eq(1).and(tlongUser.authentication.intValue().eq(1))));
         final int[] count = {0};
         tlongUser3.forEach(tlongUser1 -> {
-            if (user.getUserType()!=1) {
+            if (user.getUserType() != 1) {
                 if (user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
                     count[0]++;
                 }
-            }else
+            } else
                 count[0]++;
         });
         return count[0];

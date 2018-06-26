@@ -25,6 +25,11 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     }
 
     @Override
+    public GoodsClassRequestDto findAllGoodsClassByName(@RequestBody String goodsClassName) {
+        return goodsClassService.findAllGoodsClassByName(goodsClassName);
+    }
+
+    @Override
     public Result addGoodsClass(@RequestBody WebGoodsClassRequestDto requestDto) {
         return goodsClassService.addGoodsClass(requestDto);
     }
@@ -35,8 +40,8 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     }
 
     @Override
-    public WebGoodsClassRequestDto findGoodsTypeById(@RequestBody Long id) {
-        return goodsClassService.findGoodsTypeById(id);
+    public WebGoodsClassRequestDto findGoodsTypeById(@RequestBody WebGoodsClassRequestDto requestDto) {
+        return goodsClassService.findGoodsTypeById(requestDto);
     }
 
     @Override

@@ -29,6 +29,12 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("身份类型")
     private Integer ptype;
 
+    @ApiModelProperty("开始时间")
+    private String startTime;
+
+    @ApiModelProperty("结束时间")
+    private String endTime;
+
     public PageAndSortRequestDto getPageAndSortRequestDto() {
         return pageAndSortRequestDto;
     }
@@ -75,5 +81,21 @@ public class UserSearchRequestDto implements Serializable {
 
     public void setPtype(Integer ptype) {
         this.ptype = ptype;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }
