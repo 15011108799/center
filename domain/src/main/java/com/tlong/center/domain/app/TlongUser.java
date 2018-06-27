@@ -114,6 +114,28 @@ public class TlongUser extends BaseJpa {
     //商品发布个数
     private Integer goodsPublishNum;
 
+    //出生年月
+    private String birthday;
+
+    //企业名称
+    private String companyName;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
     public Integer getGoodsPublishNum() {
         return goodsPublishNum;
     }

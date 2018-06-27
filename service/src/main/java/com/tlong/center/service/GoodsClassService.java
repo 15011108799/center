@@ -147,7 +147,7 @@ public class GoodsClassService {
         AppGoodsclass appGoodsclass = repository.findOne(requestDto.getId());
         appGoodsclass.setGoodsClassName(requestDto.getClassName());
         AppGoodsclass appGoodsclass1 = repository.save(appGoodsclass);
-        AppGoodsPriceSystem system = systemRepository.findOne(appGoodsPriceSystem.goodsClassId.longValue().eq(requestDto.getId()));
+        AppGoodsPriceSystem system = systemRepository.findOne(appGoodsPriceSystem.goodsClassId.longValue().eq(requestDto.getId()).and(appGoodsPriceSystem.intervalUp.doubleValue().eq(requestDto.getIntervalUp())));
         AppGoodsPriceSystem system1 = new AppGoodsPriceSystem(requestDto);
         system1.setId(system.getId());
         system1.setGoodsClassId(system.getGoodsClassId());

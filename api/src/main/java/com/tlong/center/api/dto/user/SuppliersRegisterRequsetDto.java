@@ -92,6 +92,20 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     @ApiModelProperty("商品发布个数")
     private Integer goodsPublishNum;
 
+    @ApiModelProperty("出生年月")
+    private String birthday;
+
+    @ApiModelProperty("企业名称")
+    private String companyName;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
     public Integer getGoodsPublishNum() {
         return goodsPublishNum;
     }
@@ -318,5 +332,13 @@ public class SuppliersRegisterRequsetDto implements Serializable{
 
     public void setIdcardReverse1(String idcardReverse1) {
         this.idcardReverse1 = idcardReverse1;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 }

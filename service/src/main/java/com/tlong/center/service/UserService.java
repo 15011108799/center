@@ -59,7 +59,7 @@ public class UserService {
         }
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setRealName(requsetDto.getRealName());
-        tlongUser.setAge(requsetDto.getAge());
+        tlongUser.setBirthday(requsetDto.getBirthday());
         tlongUser.setSex(requsetDto.getSex());
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
@@ -131,7 +131,7 @@ public class UserService {
             registerRequsetDto.setUserType(tlongUser1.getUserType());
             registerRequsetDto.setIsCompany(tlongUser1.getIsCompany());
             registerRequsetDto.setRealName(tlongUser1.getRealName());
-            registerRequsetDto.setAge(tlongUser1.getAge());
+            registerRequsetDto.setBirthday(tlongUser1.getBirthday());
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
             registerRequsetDto.setNickName(tlongUser1.getNickName());
@@ -188,7 +188,7 @@ public class UserService {
             registerRequsetDto.setUserType(tlongUser1.getUserType());
             registerRequsetDto.setIsCompany(tlongUser1.getIsCompany());
             registerRequsetDto.setRealName(tlongUser1.getRealName());
-            registerRequsetDto.setAge(tlongUser1.getAge());
+            registerRequsetDto.setBirthday(tlongUser1.getBirthday());
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
             registerRequsetDto.setNickName(tlongUser1.getNickName());
@@ -223,8 +223,9 @@ public class UserService {
         registerRequsetDto.setUserType(tlongUser.getUserType());
         registerRequsetDto.setIsCompany(tlongUser.getIsCompany());
         registerRequsetDto.setRealName(tlongUser.getRealName());
-        registerRequsetDto.setAge(tlongUser.getAge());
+        registerRequsetDto.setBirthday(tlongUser.getBirthday());
         registerRequsetDto.setSex(tlongUser.getSex());
+        registerRequsetDto.setCompanyName(tlongUser.getCompanyName());
         registerRequsetDto.setHeadImage1(tlongUser.getHeadImage());
         registerRequsetDto.setIdcardFront1(tlongUser.getIdcardFront());
         registerRequsetDto.setPhone(tlongUser.getPhone());
@@ -240,6 +241,7 @@ public class UserService {
         registerRequsetDto.setOrgId(tlongUser.getOrgId());
         registerRequsetDto.setNickName(tlongUser.getNickName());
         registerRequsetDto.setIsExemption(tlongUser.getIsExemption());
+        registerRequsetDto.setUserCode(tlongUser.getUserCode());
         return registerRequsetDto;
     }
 
@@ -252,13 +254,14 @@ public class UserService {
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setIdcardNumber(requsetDto.getIdcardNumber());
         tlongUser.setRealName(requsetDto.getRealName());
-        tlongUser.setAge(requsetDto.getAge());
+        tlongUser.setBirthday(requsetDto.getBirthday());
         tlongUser.setSex(requsetDto.getSex());
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setEsgin(0);
         tlongUser.setAuthentication(0);
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
+        tlongUser.setCompanyName(requsetDto.getCompanyName());
         TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
         if (requsetDto.getHeadImage1() != null && !requsetDto.getHeadImage1().equals("")) {
             tlongUser.setHeadImage(requsetDto.getHeadImage1());
@@ -314,7 +317,7 @@ public class UserService {
                 registerRequsetDto.setIsCompany(tlongUser1.getIsCompany());
                 registerRequsetDto.setOrgId(tlongUser1.getOrgId());
                 registerRequsetDto.setRealName(tlongUser1.getRealName());
-                registerRequsetDto.setAge(tlongUser1.getAge());
+                registerRequsetDto.setBirthday(tlongUser1.getBirthday());
                 registerRequsetDto.setSex(tlongUser1.getSex());
                 registerRequsetDto.setWx(tlongUser1.getWx());
                 registerRequsetDto.setNickName(tlongUser1.getNickName());
