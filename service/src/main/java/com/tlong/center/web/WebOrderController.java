@@ -2,6 +2,7 @@ package com.tlong.center.web;
 
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
+import com.tlong.center.api.dto.order.OrderSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.web.WebOrderApi;
 import com.tlong.center.service.OrderService;
@@ -22,5 +23,10 @@ public class WebOrderController implements WebOrderApi {
     @Override
     public PageResponseDto<OrderRequestDto> findAllOrders(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
         return orderService.findAllOrders(requestDto,session);
+    }
+
+    @Override
+    public PageResponseDto<OrderRequestDto> searchOrders(@RequestBody OrderSearchRequestDto requestDto, HttpSession session) {
+        return orderService.searchOrders(requestDto,session);
     }
 }
