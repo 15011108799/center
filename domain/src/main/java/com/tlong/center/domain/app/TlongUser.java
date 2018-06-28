@@ -19,6 +19,9 @@ public class TlongUser extends BaseJpa {
     //账户
     private String userName;
 
+    //父id
+    private Long pid;
+
     //密码
     private String password;
 
@@ -406,5 +409,13 @@ public class TlongUser extends BaseJpa {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
     }
 }

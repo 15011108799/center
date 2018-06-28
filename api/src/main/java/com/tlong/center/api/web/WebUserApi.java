@@ -36,7 +36,7 @@ public interface WebUserApi {
 
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
-    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto,HttpSession session);
 
 
     @ApiOperation("用户认证(供应商代理商)")

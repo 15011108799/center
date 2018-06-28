@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.http.HTTPBinding;
 import java.util.List;
 
 @RestController
@@ -39,8 +40,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto) {
-        return userService.searchUser(requestDto);
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
+        return userService.searchUser(requestDto,session);
     }
 
     @Override
