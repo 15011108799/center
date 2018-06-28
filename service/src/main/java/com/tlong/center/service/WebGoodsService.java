@@ -324,6 +324,7 @@ public class WebGoodsService {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<WebGoods> webGoods = null;
         final Predicate[] pre = {QWebGoods.webGoods.id.isNotNull()};
+        final Predicate[] pre1 = {QWebGoods.webGoods.id.isNull()};
         if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
             TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
             if (tlongUser1 != null) {
@@ -347,11 +348,30 @@ public class WebGoodsService {
                 pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
                 webGoods = repository.findAll(pre[0], pageRequest);
             } else {
+
                 Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
-                    pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+                    pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
-                webGoods = repository.findAll(pre[0], pageRequest);
+                if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
+                    TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
+                    if (tlongUser1 != null) {
+                        pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
+                    }
+                }
+                if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
+                if (requestDto.getGoodsState() != 5)
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.state.eq(requestDto.getGoodsState()));
+                if (requestDto.getCheckState() != 3)
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.isCheck.eq(requestDto.getCheckState()));
+                if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+                else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+                else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+                webGoods = repository.findAll(pre1[0], pageRequest);
             }
         } else {
             webGoods = repository.findAll(pre[0], pageRequest);
@@ -401,7 +421,10 @@ public class WebGoodsService {
         responseDto.setList(requestDtos);
         final int[] count = {0};
         Iterable<WebGoods> appGoods1;
-        appGoods1 = repository.findAll(pre[0]);
+        if (user.getUserType() != null && user.getUserType() == 1 && user.getIsCompany() == 1)
+            appGoods1 = repository.findAll(pre1[0]);
+        else
+            appGoods1 = repository.findAll(pre[0]);
         appGoods1.forEach(goods -> {
             count[0]++;
         });

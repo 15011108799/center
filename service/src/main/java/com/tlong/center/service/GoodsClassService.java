@@ -1,15 +1,19 @@
 package com.tlong.center.service;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.GoodsTypeResponseDto;
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
 import com.tlong.center.domain.app.goods.AppGoodsclass;
 import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsPriceSystemRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -206,6 +210,70 @@ public class GoodsClassService {
         });
         GoodsClassRequestDto goodsClassRequestDto = new GoodsClassRequestDto();
         goodsClassRequestDto.setGoodsClassOneDtos(requestOne);
+        return goodsClassRequestDto;
+    }
+
+    public GoodsClassRequestDto searchGoodsType(GoodsTypeSearchRequestDto requestDto1) {
+        final Predicate[] pre = {appGoodsclass.id.isNull()};
+        final Predicate[] pre1 = {appGoodsclass.id.isNotNull()};
+        List<Tuple> tuples;
+        if (StringUtils.isNotEmpty(requestDto1.getGoodsTitle())) {
+            AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.goodsClassName.eq(requestDto1.getGoodsTitle()));
+            if (appGoodsclass1.getGoodsClassLevel() == 0) {
+                Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(appGoodsclass1.getId()));
+                all.forEach(one -> {
+                    pre[0] = ExpressionUtils.or(pre[0], appGoodsclass.id.longValue().eq(one.getId()));
+                });
+            } else {
+                AppGoodsclass appGoodsclass2 = repository.findOne(appGoodsclass.id.longValue().eq(appGoodsclass1.getGoodsClassIdParent()));
+                pre[0] = ExpressionUtils.or(pre[0], appGoodsclass.id.longValue().eq(appGoodsclass2.getId()));
+            }
+            pre[0] = ExpressionUtils.or(pre[0], appGoodsclass.id.longValue().eq(appGoodsclass1.getId()));
+            if (requestDto1.getStartTime() != null && requestDto1.getEndTime() != null)
+                pre[0] = ExpressionUtils.and(pre[0], appGoodsclass.publishTime.between(requestDto1.getStartTime() + " 00:00:00", requestDto1.getEndTime() + " 23:59:59"));
+            else if (requestDto1.getStartTime() == null && requestDto1.getEndTime() != null)
+                pre[0] = ExpressionUtils.and(pre[0], appGoodsclass.publishTime.lt(requestDto1.getEndTime() + " 23:59:59"));
+            else if (requestDto1.getStartTime() != null && requestDto1.getEndTime() == null)
+                pre[0] = ExpressionUtils.and(pre[0], appGoodsclass.publishTime.gt(requestDto1.getStartTime() + " 00:00:00"));
+            pre[0] = ExpressionUtils.and(pre[0], appGoodsclass.id.eq(appGoodsPriceSystem.goodsClassId));
+            tuples = queryFactory.select(appGoodsclass.id, appGoodsclass.goodsClassName, appGoodsclass.goodsClassLevel, appGoodsclass.goodsClassIdParent,
+                    appGoodsPriceSystem.factoryRatio, appGoodsPriceSystem.lagshipRatio, appGoodsPriceSystem.originatorRatio, appGoodsPriceSystem.storeRatio, appGoodsclass.publishTime, appGoodsPriceSystem.intervalUp, appGoodsPriceSystem.intervalDown)
+                    .from(appGoodsclass, appGoodsPriceSystem)
+                    .where(pre[0])
+                    .fetch();
+        } else {
+            if (requestDto1.getStartTime() != null && requestDto1.getEndTime() != null)
+                pre1[0] = ExpressionUtils.and(pre1[0], appGoodsclass.publishTime.between(requestDto1.getStartTime() + " 00:00:00", requestDto1.getEndTime() + " 23:59:59"));
+            else if (requestDto1.getStartTime() == null && requestDto1.getEndTime() != null)
+                pre1[0] = ExpressionUtils.and(pre1[0], appGoodsclass.publishTime.lt(requestDto1.getEndTime() + " 23:59:59"));
+            else if (requestDto1.getStartTime() != null && requestDto1.getEndTime() == null)
+                pre1[0] = ExpressionUtils.and(pre1[0], appGoodsclass.publishTime.gt(requestDto1.getStartTime() + " 00:00:00"));
+            pre1[0] = ExpressionUtils.and(pre1[0], appGoodsclass.id.eq(appGoodsPriceSystem.goodsClassId));
+            tuples = queryFactory.select(appGoodsclass.id, appGoodsclass.goodsClassName, appGoodsclass.goodsClassLevel, appGoodsclass.goodsClassIdParent,
+                    appGoodsPriceSystem.factoryRatio, appGoodsPriceSystem.lagshipRatio, appGoodsPriceSystem.originatorRatio, appGoodsPriceSystem.storeRatio, appGoodsclass.publishTime, appGoodsPriceSystem.intervalUp, appGoodsPriceSystem.intervalDown)
+                    .from(appGoodsclass, appGoodsPriceSystem)
+                    .where(pre1[0])
+                    .fetch();
+        }
+        List<WebGoodsClassRequestDto> requestOne = new ArrayList<>();
+        List<WebGoodsClassRequestDto> requestTwo = new ArrayList<>();
+        final String[] tag = {""};
+        tuples.stream().forEach(one -> {
+            WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
+                    , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
+                    one.get(appGoodsclass.publishTime), one.get(appGoodsPriceSystem.intervalUp), one.get(appGoodsPriceSystem.intervalDown));
+            if (one.get(appGoodsclass.goodsClassLevel) == 0)
+                requestOne.add(requestDto);
+            else if (one.get(appGoodsclass.goodsClassLevel) == 1) {
+                if (tag[0].indexOf(requestDto.getClassName()) > -1)
+                    return;
+                tag[0] += requestDto.getClassName();
+                requestTwo.add(requestDto);
+            }
+        });
+        GoodsClassRequestDto goodsClassRequestDto = new GoodsClassRequestDto();
+        goodsClassRequestDto.setGoodsClassOneDtos(requestOne);
+        goodsClassRequestDto.setGoodsClassTwoDtos(requestTwo);
         return goodsClassRequestDto;
     }
 }

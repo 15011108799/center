@@ -2,6 +2,7 @@ package com.tlong.center.web;
 
 import com.tlong.center.api.dto.GoodsTypeResponseDto;
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
 import com.tlong.center.api.web.WebGoodsClassApi;
@@ -57,5 +58,10 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     @Override
     public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody Long id) {
         return goodsClassService.findGoodsTwoClass(id);
+    }
+
+    @Override
+    public GoodsClassRequestDto searchGoodsType(@RequestBody GoodsTypeSearchRequestDto requestDto) {
+        return goodsClassService.searchGoodsType(requestDto);
     }
 }
