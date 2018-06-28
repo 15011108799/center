@@ -2,6 +2,7 @@ package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.center.api.web.WebGoodsApi;
@@ -58,5 +59,10 @@ public class WebGoodsController implements WebGoodsApi {
     @Override
     public WebGoodsDetailResponseDto findGoodsById(@RequestBody String id) {
         return webGoodsService.findGoodsById(Long.valueOf(id));
+    }
+
+    @Override
+    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session) {
+        return webGoodsService.searchGoods(requestDto,session);
     }
 }

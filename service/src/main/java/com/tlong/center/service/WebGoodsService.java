@@ -4,6 +4,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.center.common.utils.FileUploadUtils;
@@ -15,6 +16,7 @@ import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -37,11 +39,11 @@ public class WebGoodsService {
     final AppUserRepository appUserRepository;
     final GoodsClassRepository goodsClassRepository;
 
-    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository,GoodsClassRepository goodsClassRepository) {
+    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
-        this.goodsClassRepository=goodsClassRepository;
+        this.goodsClassRepository = goodsClassRepository;
     }
 
     /**
@@ -54,8 +56,8 @@ public class WebGoodsService {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<WebGoods> webGoods=null;
-        if (user.getUserType()!=null&&user.getUserType()==1) {
+        Page<WebGoods> webGoods = null;
+        if (user.getUserType() != null && user.getUserType() == 1) {
             if (user.getIsCompany() == 0)
                 webGoods = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()), pageRequest);
             else {
@@ -66,8 +68,8 @@ public class WebGoodsService {
                 });
                 webGoods = repository.findAll(pre[0], pageRequest);
             }
-        }else {
-            webGoods=repository.findAll(pageRequest);
+        } else {
+            webGoods = repository.findAll(pageRequest);
         }
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         webGoods.forEach(webGoods1 -> {
@@ -105,8 +107,8 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
-            if (webGoods1.getGoodsClassId()!=null){
-                AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+            if (webGoods1.getGoodsClassId() != null) {
+                AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
                 webGoodsDetailResponseDto.setGoodsClassId(appGoodsclass.getGoodsClassName());
             }
             requestDtos.add(webGoodsDetailResponseDto);
@@ -114,7 +116,7 @@ public class WebGoodsService {
         responseDto.setList(requestDtos);
         final int[] count = {0};
         Iterable<WebGoods> appGoods1;
-        if (user.getUserType()!=null&&user.getUserType()==1) {
+        if (user.getUserType() != null && user.getUserType() == 1) {
             if (user.getIsCompany() == 0)
                 appGoods1 = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
@@ -125,8 +127,8 @@ public class WebGoodsService {
                 });
                 appGoods1 = repository.findAll(pre[0]);
             }
-        }else
-            appGoods1=repository.findAll();
+        } else
+            appGoods1 = repository.findAll();
         appGoods1.forEach(goods -> {
             count[0]++;
         });
@@ -139,7 +141,7 @@ public class WebGoodsService {
      *
      * @return
      */
-    public Result add(String s, WebGoodsDetailResponseDto reqDto,HttpSession session) {
+    public Result add(String s, WebGoodsDetailResponseDto reqDto, HttpSession session) {
         reqDto.setGoodsPic(s.substring(0, s.length() - 1));
         reqDto.setCertificate(FileUploadUtils.readFile(reqDto.getCertificate()));
         reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
@@ -205,7 +207,7 @@ public class WebGoodsService {
     public WebGoodsDetailResponseDto findGoodsById(Long id) {
         WebGoods webGoods1 = repository.findOne(id);
         WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
-        AppGoodsclass appGoodsclass=goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+        AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
         webGoodsDetailResponseDto.setParentClassId(appGoodsclass.getGoodsClassIdParent());
         if (webGoods1.getId() != null)
             webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
@@ -307,11 +309,103 @@ public class WebGoodsService {
 
     /**
      * 设置审核驳回
+     *
      * @param id
      */
     public void updateGoodsStateReject(Long id) {
         WebGoods webGoods = repository.findOne(id);
         webGoods.setIsCheck(2);
         repository.save(webGoods);
+    }
+
+    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(GoodsSearchRequestDto requestDto, HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
+        Page<WebGoods> webGoods = null;
+        final Predicate[] pre = {QWebGoods.webGoods.id.isNotNull()};
+        if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
+            TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
+            if (tlongUser1 != null) {
+                pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
+            }
+        }
+        if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
+        if (requestDto.getGoodsState() != 5)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.state.eq(requestDto.getGoodsState()));
+        if (requestDto.getCheckState() != 3)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.isCheck.eq(requestDto.getCheckState()));
+        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+        if (user.getUserType() != null && user.getUserType() == 1) {
+            if (user.getIsCompany() == 0) {
+                pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
+                webGoods = repository.findAll(pre[0], pageRequest);
+            } else {
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                tlongUser3.forEach(one -> {
+                    pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+                });
+                webGoods = repository.findAll(pre[0], pageRequest);
+            }
+        } else {
+            webGoods = repository.findAll(pre[0], pageRequest);
+        }
+        List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
+        webGoods.forEach(webGoods1 -> {
+            WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
+            webGoodsDetailResponseDto.setIsCheck(webGoods1.getIsCheck() + "");
+            if (webGoods1.getId() != null)
+                webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
+            if (webGoods1.getRealStar() != null)
+                webGoodsDetailResponseDto.setRealStar(webGoods1.getStar() + "");
+            if (webGoods1.getId() != null)
+                webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
+            if (webGoods1.getPicType() != null)
+                webGoodsDetailResponseDto.setPicType(webGoods1.getPicType() + "");
+            if (webGoods1.getCircle() != null)
+                webGoodsDetailResponseDto.setCircle(webGoods1.getCircle() + "");
+            if (webGoods1.getNum() != null)
+                webGoodsDetailResponseDto.setNum(webGoods1.getNum() + "");
+            if (webGoods1.getPriceType() != null)
+                webGoodsDetailResponseDto.setPriceType(webGoods1.getPriceType() + "");
+            if (webGoods1.getFactoryPrice() != null)
+                webGoodsDetailResponseDto.setFactoryPrice(webGoods1.getFactoryPrice() + "");
+            if (webGoods1.getFlagshipPrice() != null)
+                webGoodsDetailResponseDto.setFlagshipPrice(webGoods1.getFlagshipPrice() + "");
+            if (webGoods1.getFounderPrice() != null)
+                webGoodsDetailResponseDto.setFounderPrice(webGoods1.getFounderPrice() + "");
+            if (webGoods1.getPublishPrice() != null)
+                webGoodsDetailResponseDto.setPublishPrice(webGoods1.getPublishPrice() + "");
+            if (webGoods1.getStorePrice() != null)
+                webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
+            if (webGoods1.getState() != null)
+                webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+            if (webGoods1.getPublishUserId() != null) {
+                TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
+                webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
+                webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
+                webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
+            }
+            if (webGoods1.getGoodsClassId() != null) {
+                AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
+                webGoodsDetailResponseDto.setGoodsClassId(appGoodsclass.getGoodsClassName());
+            }
+            requestDtos.add(webGoodsDetailResponseDto);
+        });
+        responseDto.setList(requestDtos);
+        final int[] count = {0};
+        Iterable<WebGoods> appGoods1;
+        appGoods1 = repository.findAll(pre[0]);
+        appGoods1.forEach(goods -> {
+            count[0]++;
+        });
+        responseDto.setCount(count[0]);
+        return responseDto;
     }
 }

@@ -2,7 +2,10 @@ package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
+import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
+import com.tlong.center.api.dto.user.UserSearchRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -43,5 +46,9 @@ public interface WebGoodsApi {
     @ApiOperation("根据id查询商品")
     @PutMapping("/findGoodsById")
     WebGoodsDetailResponseDto findGoodsById(@RequestParam String id);
+
+    @ApiOperation("商品搜索")
+    @PostMapping("/searchGoods")
+    PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session);
 
 }
