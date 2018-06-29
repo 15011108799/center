@@ -2,6 +2,8 @@ package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.message.MessageSearchRequestDto;
 import com.tlong.center.api.dto.tlong.TlongRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import io.swagger.annotations.Api;
@@ -37,4 +39,8 @@ public interface WebTlongAboutApi {
     @ApiOperation("查找单条关于珑石接口")
     @PutMapping("/findTlongshiById")
     TlongRequestDto findTlongshiById(@RequestBody Long id);
+
+    @ApiOperation("条件查询所有珑石接口")
+    @PostMapping("/searchTlongshi")
+    PageResponseDto<TlongRequestDto> searchTlongshi(@RequestBody MessageSearchRequestDto requestDto);
 }

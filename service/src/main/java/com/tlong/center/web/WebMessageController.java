@@ -3,6 +3,7 @@ package com.tlong.center.web;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.message.MessageSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.web.WebMessageApi;
 import com.tlong.center.service.MessageService;
@@ -48,5 +49,10 @@ public class WebMessageController implements WebMessageApi {
     @Override
     public MessageRequestDto findMessageById(@RequestBody Long id) {
         return messageService.findOne(id);
+    }
+
+    @Override
+    public PageResponseDto<MessageRequestDto> searchMessage(@RequestBody MessageSearchRequestDto requestDto) {
+        return messageService.searchMessage(requestDto);
     }
 }

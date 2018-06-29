@@ -4,6 +4,7 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.EvaluateRequestDto;
+import com.tlong.center.api.dto.web.EvaluateSearchRequestDto;
 import com.tlong.center.api.web.WebEvaluateApi;
 import com.tlong.center.api.web.WebOrderApi;
 import com.tlong.center.service.EvaluateService;
@@ -25,5 +26,10 @@ public class WebEvaluateController implements WebEvaluateApi {
     @Override
     public PageResponseDto<EvaluateRequestDto> findAllEvaluate(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
         return evaluateService.findAllEvaluate(requestDto,session);
+    }
+
+    @Override
+    public PageResponseDto<EvaluateRequestDto> searchEvaluate(@RequestBody EvaluateSearchRequestDto requestDto, HttpSession session) {
+        return evaluateService.searchEvaluate(requestDto,session);
     }
 }

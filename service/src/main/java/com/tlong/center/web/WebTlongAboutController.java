@@ -2,6 +2,7 @@ package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.message.MessageSearchRequestDto;
 import com.tlong.center.api.dto.tlong.TlongRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.web.WebTlongAboutApi;
@@ -46,5 +47,10 @@ public class WebTlongAboutController implements WebTlongAboutApi {
     @Override
     public TlongRequestDto findTlongshiById(@RequestBody Long id) {
         return tlongService.findTlongshiById(id);
+    }
+
+    @Override
+    public PageResponseDto<TlongRequestDto> searchTlongshi(@RequestBody MessageSearchRequestDto requestDto) {
+        return tlongService.searchTlongshi(requestDto);
     }
 }

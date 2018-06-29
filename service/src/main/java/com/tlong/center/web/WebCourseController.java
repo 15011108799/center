@@ -1,7 +1,10 @@
 package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
+import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.course.AppCourseRequestDto;
+import com.tlong.center.api.dto.course.CourseSearchRequestDto;
+import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.web.WebCourseApi;
 import com.tlong.center.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,8 @@ public class WebCourseController implements WebCourseApi {
     }
 
     @Override
-    public List<AppCourseRequestDto> findAllCourse() {
-        return courseService.findAllCourse();
+    public PageResponseDto<AppCourseRequestDto> findAllCourse(@RequestBody PageAndSortRequestDto requestDto) {
+        return courseService.findAllCourse(requestDto);
     }
 
     @Override
@@ -40,5 +43,10 @@ public class WebCourseController implements WebCourseApi {
     @Override
     public AppCourseRequestDto findCourseById(@RequestBody Long id) {
         return courseService.findCourseById(id);
+    }
+
+    @Override
+    public PageResponseDto<AppCourseRequestDto> searchCourse(@RequestBody CourseSearchRequestDto requestDto) {
+        return courseService.searchCourse(requestDto);
     }
 }
