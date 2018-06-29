@@ -96,4 +96,9 @@ public class WebUserController implements WebUserApi {
     public Integer findCount(@RequestBody Integer type,HttpSession session) {
         return userService.findCount(type,session);
     }
+
+    @Override
+    public Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
+        return userService.findCount1(requestDto,session);
+    }
 }

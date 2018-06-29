@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
+import static com.tlong.center.domain.web.QWebOrder.webOrder;
 
 @Component
 @Transactional
@@ -430,6 +431,67 @@ public class UserService {
             tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(type).and(tlongUser.esgin.intValue().eq(1).and(tlongUser.authentication.intValue().eq(1))));
         else
             tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3)).or(tlongUser.userType.intValue().eq(4)).and(tlongUser.esgin.intValue().eq(1).and(tlongUser.authentication.intValue().eq(1))));
+        final int[] count = {0};
+        tlongUser3.forEach(tlongUser1 -> {
+            if (user.getUserType() != null && user.getUserType() != 1) {
+                if (user.getOrgId() == null)
+                    count[0]++;
+                else {
+                    if (user.getOrgId().split("-").length == 3 || user.getOrgId().split("-").length - tlongUser1.getOrgId().split("-").length == -1) {
+                        count[0]++;
+                    }
+                }
+            } else
+                count[0]++;
+        });
+        return count[0];
+    }
+
+    public Integer findCount1(UserSearchRequestDto requestDto, HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        Iterable<TlongUser> tlongUser3;
+        Predicate pre = tlongUser.id.isNotNull();
+        if (requestDto.getPtype() != 1 && requestDto.getPtype() != 5 && user.getOrgId() != null) {
+            pre = ExpressionUtils.and(pre, tlongUser.userType.isNotNull());
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(requestDto.getPtype()));
+            pre = ExpressionUtils.and(pre, tlongUser.orgId.like(user.getOrgId() + "%"));
+            pre = ExpressionUtils.and(pre, tlongUser.id.longValue().ne(user.getId()));
+        } else if (requestDto.getPtype() == 5) {
+            if (user.getOrgId() != null) {
+                pre = ExpressionUtils.and(pre, tlongUser.orgId.like(user.getOrgId() + "%"));
+                pre = ExpressionUtils.and(pre, tlongUser.id.longValue().ne(user.getId()));
+            }
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3)).or(tlongUser.userType.intValue().eq(4)));
+        } else if (requestDto.getPtype() == 1) {
+            if (user.getIsCompany() == null)
+                pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+            else if (user.getIsCompany() == 0)
+                pre = ExpressionUtils.and(pre, tlongUser.id.longValue().eq(user.getId()));
+            else {
+                pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+                pre = ExpressionUtils.and(pre, tlongUser.isCompany.intValue().eq(0));
+                pre = ExpressionUtils.and(pre, tlongUser.orgId.eq(user.getOrgId()));
+            }
+        } else {
+            pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(requestDto.getPtype()));
+        }
+        if (StringUtils.isNotEmpty(requestDto.getUserName()))
+            pre = ExpressionUtils.and(pre, tlongUser.userName.eq(requestDto.getUserName()));
+        if (StringUtils.isNotEmpty(requestDto.getUserCode()))
+            pre = ExpressionUtils.and(pre, tlongUser.userCode.eq(requestDto.getUserCode()));
+        if (requestDto.getEsign() == 0 || requestDto.getEsign() == 1)
+            pre = ExpressionUtils.and(pre, tlongUser.esgin.intValue().eq(requestDto.getEsign()));
+        if (requestDto.getAuthentication() == 0 || requestDto.getAuthentication() == 1)
+            pre = ExpressionUtils.and(pre, tlongUser.authentication.intValue().eq(requestDto.getAuthentication()));
+        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.lt(requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+            pre = ExpressionUtils.and(pre, tlongUser.registDate.gt(requestDto.getStartTime() + " 00:00:00"));
+        pre = ExpressionUtils.and(pre, tlongUser.esgin.intValue().eq(1));
+        pre = ExpressionUtils.and(pre, tlongUser.authentication.intValue().eq(1));
+        tlongUser3 = appUserRepository.findAll(pre);
         final int[] count = {0};
         tlongUser3.forEach(tlongUser1 -> {
             if (user.getUserType() != null && user.getUserType() != 1) {

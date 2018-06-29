@@ -75,4 +75,8 @@ public interface WebUserApi {
     @ApiOperation("查找供应商认证通过人数")
     @PostMapping("/findCount")
     Integer findCount(@RequestBody Integer type,HttpSession session);
+
+    @ApiOperation("搜索查找供应商认证通过人数")
+    @PostMapping("/findCount1")
+    Integer findCount(@RequestBody UserSearchRequestDto requestDto,HttpSession session);
 }
