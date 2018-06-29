@@ -118,6 +118,16 @@ public class UserService {
                 pre = ExpressionUtils.and(pre, tlongUser.id.longValue().ne(user.getId()));
             }
             pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(2).or(tlongUser.userType.intValue().eq(3)).or(tlongUser.userType.intValue().eq(4)));
+        } else if (requestDto.getPtype() == 1) {
+            if (user.getIsCompany() == null)
+                pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+            else if (user.getIsCompany() == 0)
+                pre = ExpressionUtils.and(pre, tlongUser.id.longValue().eq(user.getId()));
+            else {
+                pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+                pre = ExpressionUtils.and(pre, tlongUser.isCompany.intValue().eq(0));
+                pre = ExpressionUtils.and(pre, tlongUser.orgId.eq(user.getOrgId()));
+            }
         } else {
             pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(requestDto.getPtype()));
         }
@@ -193,7 +203,7 @@ public class UserService {
         else if (user.getIsCompany() == 0)
             tlongUser2 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()), pageRequest);
         else
-            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.eq(user.getOrgId())), pageRequest);
+            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.eq(user.getOrgId())), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
