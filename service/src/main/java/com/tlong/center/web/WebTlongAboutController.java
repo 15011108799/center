@@ -35,6 +35,11 @@ public class WebTlongAboutController implements WebTlongAboutApi {
     }
 
     @Override
+    public Result delBatchTlongshi(@RequestBody String id) {
+        return tlongService.delBatchTlongshi(id);
+    }
+
+    @Override
     public Result updateTlongshi(@RequestBody TlongRequestDto requestDto) {
         return tlongService.updateTlongshi(requestDto);
     }
@@ -42,6 +47,11 @@ public class WebTlongAboutController implements WebTlongAboutApi {
     @Override
     public void updateTlongState(@RequestBody Long id) {
         tlongService.updateTlongState(id);
+    }
+
+    @Override
+    public void updateBatchTlongState(@RequestBody String id) {
+        tlongService.updateBatchTlongState(id);
     }
 
     @Override

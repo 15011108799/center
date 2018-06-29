@@ -26,6 +26,9 @@ public interface WebMessageApi {
     @PutMapping("/delMessage")
     Result delMessage(@RequestParam Long id);
 
+    @ApiOperation("批量删除信息接口")
+    @PutMapping("/delBatchMessage")
+    Result delBatchMessage(@RequestParam String id);
 
     @ApiOperation("修改信息接口")
     @PostMapping("/updateMessage")
@@ -34,6 +37,10 @@ public interface WebMessageApi {
     @ApiOperation("修改信息状态")
     @PostMapping("/updateMessageState")
     void updateMessageState(@RequestBody Long id);
+
+    @ApiOperation("批量修改信息状态")
+    @PutMapping("/updateBatchMessageState")
+    void updateBatchMessageState(@RequestParam String id);
 
     @ApiOperation("查找单条信息接口")
     @PutMapping("/findMessageById")

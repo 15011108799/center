@@ -351,7 +351,7 @@ public class WebGoodsService {
 
                 Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
-                    System.out.println("+++++++++"+one.getRealName());
+                    System.out.println("+++++++++" + one.getRealName());
                     pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
                 if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
@@ -431,5 +431,16 @@ public class WebGoodsService {
         });
         responseDto.setCount(count[0]);
         return responseDto;
+    }
+
+    public Result delBatchGoods(String goodsId) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(goodsId)) {
+            goodsIds = goodsId.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delGoods(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
     }
 }

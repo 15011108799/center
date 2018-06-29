@@ -124,4 +124,25 @@ public class TlongService {
         tlongRequestDtoPageResponseDto.setCount(count[0]);
         return tlongRequestDtoPageResponseDto;
     }
+
+    public Result delBatchTlongshi(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delTlongshi(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
+    }
+
+    public void updateBatchTlongState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updateTlongState(Long.valueOf(goodsIds[i]));
+            }
+        }
+    }
 }

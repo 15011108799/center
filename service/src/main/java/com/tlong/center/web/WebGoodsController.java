@@ -65,4 +65,9 @@ public class WebGoodsController implements WebGoodsApi {
     public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session) {
         return webGoodsService.searchGoods(requestDto,session);
     }
+
+    @Override
+    public Result delBatchGoods(@RequestBody String goodsId) {
+        return webGoodsService.delBatchGoods(goodsId);
+    }
 }

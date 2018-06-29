@@ -37,6 +37,11 @@ public class WebMessageController implements WebMessageApi {
     }
 
     @Override
+    public Result delBatchMessage(@RequestBody String id) {
+        return messageService.delBatchMessage(id);
+    }
+
+    @Override
     public Result updateMessage(@RequestBody MessageRequestDto requestDto) {
         return messageService.updateMessage(requestDto);
     }
@@ -44,6 +49,11 @@ public class WebMessageController implements WebMessageApi {
     @Override
     public void updateMessageState(@RequestBody Long id) {
         messageService.updateMessageState(id);
+    }
+
+    @Override
+    public void updateBatchMessageState(@RequestBody String id) {
+        messageService.updateBatchMessageState(id);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.repository.NewsRepository;
 import com.tlong.center.domain.web.WebNews;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -148,5 +149,26 @@ public class NewsService {
         });
         newsRequestDtoPageResponseDto.setCount(count[0]);
         return newsRequestDtoPageResponseDto;
+    }
+
+    public Result delBatchNews(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delNews(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
+    }
+
+    public void updateBatchNewsState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updateNewsState(Long.valueOf(goodsIds[i]));
+            }
+        }
     }
 }

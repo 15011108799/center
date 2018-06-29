@@ -51,4 +51,7 @@ public interface WebGoodsApi {
     @PostMapping("/searchGoods")
     PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session);
 
+    @ApiModelProperty("批量删除商品")
+    @PutMapping("/delBatchGoods")
+    Result delBatchGoods(@RequestParam String goodsId);
 }

@@ -42,6 +42,11 @@ public class WebNewsController implements WebNewsApi {
     }
 
     @Override
+    public Result delBatchNews(@RequestBody String id) {
+        return newsService.delBatchNews(id);
+    }
+
+    @Override
     public Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto) {
         return newsService.updateNews(FileUploadUtils.handleFileUpload(file), reqDto);
     }
@@ -49,6 +54,11 @@ public class WebNewsController implements WebNewsApi {
     @Override
     public void updateNewsState(@RequestBody String id) {
         newsService.updateNewsState(Long.valueOf(id));
+    }
+
+    @Override
+    public void updateBatchNewsState(@RequestBody String id) {
+        newsService.updateBatchNewsState(id);
     }
 
     @Override

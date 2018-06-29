@@ -150,4 +150,25 @@ public class MessageService {
         messageRequestDtoPageResponseDto.setCount(count[0]);
         return messageRequestDtoPageResponseDto;
     }
+
+    public Result delBatchMessage(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delMessage(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
+    }
+
+    public void updateBatchMessageState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updateMessageState(Long.valueOf(goodsIds[i]));
+            }
+        }
+    }
 }

@@ -27,6 +27,9 @@ public interface WebTlongAboutApi {
     @PutMapping("/delTlongshi")
     Result delTlongshi(@RequestParam Long id);
 
+    @ApiOperation("批量删除关于珑石接口")
+    @PutMapping("/delBatchTlongshi")
+    Result delBatchTlongshi(@RequestParam String id);
 
     @ApiOperation("修改关于珑石接口")
     @PostMapping("/updateTlongshi")
@@ -35,6 +38,10 @@ public interface WebTlongAboutApi {
     @ApiOperation("修改关于珑石状态")
     @PostMapping("/updateTlongState")
     void updateTlongState(@RequestBody Long id);
+
+    @ApiOperation("批量修改关于珑石状态")
+    @PutMapping("/updateBatchTlongState")
+    void updateBatchTlongState(@RequestParam String id);
 
     @ApiOperation("查找单条关于珑石接口")
     @PutMapping("/findTlongshiById")

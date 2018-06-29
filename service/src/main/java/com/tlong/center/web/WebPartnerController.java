@@ -18,12 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/web/partner")
-public class WebPartnerController implements WebPartnerApi{
+public class WebPartnerController implements WebPartnerApi {
 
     @Autowired
     private PartnerService partnerService;
+
     @Override
-    public PageResponseDto<PartnerRequestDto> findAllPartners(@RequestBody  PageAndSortRequestDto requestDto) {
+    public PageResponseDto<PartnerRequestDto> findAllPartners(@RequestBody PageAndSortRequestDto requestDto) {
         return partnerService.findAllPartners(requestDto);
     }
 
@@ -38,6 +39,11 @@ public class WebPartnerController implements WebPartnerApi{
     }
 
     @Override
+    public Result delBatchPartner(@RequestBody String id) {
+        return partnerService.delBatchPartner(id);
+    }
+
+    @Override
     public Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto) {
         return partnerService.updatePartner(FileUploadUtils.handleFileUpload(file), reqDto);
     }
@@ -45,6 +51,11 @@ public class WebPartnerController implements WebPartnerApi{
     @Override
     public void updatePartnerState(@RequestBody String id) {
         partnerService.updatePartnerState(Long.valueOf(id));
+    }
+
+    @Override
+    public void updateBatchPartnerState(@RequestBody String id) {
+        partnerService.updateBatchPartnerState(id);
     }
 
     @Override

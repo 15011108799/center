@@ -12,6 +12,7 @@ import com.tlong.center.domain.app.Message;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.PartnerRepository;
 import com.tlong.center.domain.web.WebPartner;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -151,5 +152,26 @@ public class PartnerService {
         });
         partnerRequestDtoPageResponseDto.setCount(count[0]);
         return partnerRequestDtoPageResponseDto;
+    }
+
+    public Result delBatchPartner(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delPartner(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
+    }
+
+    public void updateBatchPartnerState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updatePartnerState(Long.valueOf(goodsIds[i]));
+            }
+        }
     }
 }

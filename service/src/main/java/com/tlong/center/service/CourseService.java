@@ -145,7 +145,7 @@ public class CourseService {
             pre = ExpressionUtils.and(pre, course.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
         else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
             pre = ExpressionUtils.and(pre, course.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
-        Page<Course> courses = appCourseRepository.findAll(pre,pageRequest);
+        Page<Course> courses = appCourseRepository.findAll(pre, pageRequest);
         List<AppCourseRequestDto> requestDtos = new ArrayList<>();
         courses.forEach(course -> {
             AppCourseRequestDto courseRequestDto = new AppCourseRequestDto();
@@ -168,5 +168,16 @@ public class CourseService {
         });
         courseRequestDtoPageResponseDto.setCount(count[0]);
         return courseRequestDtoPageResponseDto;
+    }
+
+    public Result delBatchCourse(String id) {
+        String[] courseIds;
+        if (StringUtils.isNotEmpty(id)) {
+            courseIds = id.split(",");
+            for (int i = 0; i < courseIds.length; i++) {
+                delCourse(Long.valueOf(courseIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
     }
 }

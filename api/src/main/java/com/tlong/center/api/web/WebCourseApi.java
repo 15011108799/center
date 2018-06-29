@@ -40,5 +40,9 @@ public interface WebCourseApi {
     @ApiOperation("条件查询所有课程接口")
     @PostMapping("/searchCourse")
     PageResponseDto<AppCourseRequestDto> searchCourse(@RequestBody CourseSearchRequestDto requestDto);
+
+    @ApiOperation("批量删除课程接口")
+    @PutMapping("/delBatchCourse")
+    Result delBatchCourse(@RequestParam String id);
 }
 

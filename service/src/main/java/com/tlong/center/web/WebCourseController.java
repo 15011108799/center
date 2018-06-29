@@ -49,4 +49,9 @@ public class WebCourseController implements WebCourseApi {
     public PageResponseDto<AppCourseRequestDto> searchCourse(@RequestBody CourseSearchRequestDto requestDto) {
         return courseService.searchCourse(requestDto);
     }
+
+    @Override
+    public Result delBatchCourse(@RequestBody String id) {
+        return courseService.delBatchCourse(id);
+    }
 }
