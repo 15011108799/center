@@ -58,7 +58,7 @@ public class WebGoods extends BaseJpa {
     private Integer realStar;
 
     //上传类别
-    private Integer publishClass;
+    private String publishClass;
 
     //商品视频
     private String video;
@@ -219,11 +219,11 @@ public class WebGoods extends BaseJpa {
         this.realStar = realStar;
     }
 
-    public Integer getPublishClass() {
+    public String getPublishClass() {
         return publishClass;
     }
 
-    public void setPublishClass(Integer publishClass) {
+    public void setPublishClass(String publishClass) {
         this.publishClass = publishClass;
     }
 

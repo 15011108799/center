@@ -32,6 +32,9 @@ public class WebEvaluate extends BaseJpa {
     //商品id
     private Long goodsId;
 
+    //用户id
+    private Long userId;
+
     //评论内容
     private String content;
 
@@ -90,5 +93,13 @@ public class WebEvaluate extends BaseJpa {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

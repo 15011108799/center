@@ -15,12 +15,12 @@ public interface WebUserApi {
 
     @ApiOperation("供应商注册接口")
     @PostMapping("/suppliersRegister")
-    //TODO
+        //TODO
     Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto);
 
     @ApiOperation("代理商注册接口")
     @PostMapping("/agentRegister")
-    //TODO
+        //TODO
     Long agentRegister(@RequestBody AgentRegisterRequestDto requestDto);
 
 
@@ -31,12 +31,12 @@ public interface WebUserApi {
 
 //    @ApiOperation("用户修改(代理商丶供货商)")
 //    @PutMapping("/updateUser")
-      //TODO 可能接口要分开写
+    //TODO 可能接口要分开写
 //    Integer updateUser(@RequestBody )
 
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
-    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, HttpSession session);
 
 
     @ApiOperation("用户认证(供应商代理商)")
@@ -49,7 +49,7 @@ public interface WebUserApi {
 
     @ApiOperation("查询所有用户代理商")
     @PostMapping("/findAllAgents")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto);
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
 
     @ApiOperation("根据id查询用户")
     @PutMapping("/findSupplierById")
@@ -74,5 +74,26 @@ public interface WebUserApi {
 
     @ApiOperation("查找供应商认证通过人数")
     @PostMapping("/findCount")
-    Integer findCount(@RequestBody Integer type);
+    Integer findCount(@RequestBody Integer type, HttpSession session);
+
+    @ApiOperation("搜索查找供应商认证通过人数")
+    @PostMapping("/findCount1")
+    Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session);
+
+    @ApiOperation("查询同一层级所有代理商")
+    @PostMapping("/findAgentByLevel")
+    PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(@RequestBody PageAndSortRequestDto requestDto);
+
+    @ApiOperation("查询所有供货商分公司")
+    @PostMapping("/findSupplirtCompany")
+    PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto);
+
+    @ApiOperation("查询所有高级管理员")
+    @PostMapping("/findAllManager")
+    PageResponseDto<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto);
+
+    @ApiOperation("查询某个部门管理员")
+    @PostMapping("/findOrgManager")
+    PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto);
+
 }

@@ -30,6 +30,10 @@ public interface WebPartnerApi {
     @PutMapping("/delPartner")
     Result delPartner(@RequestParam String id);
 
+    @ApiModelProperty("批量删除合伙人")
+    @PutMapping("/delBatchPartner")
+    Result delBatchPartner(@RequestParam String id);
+
     @ApiModelProperty("修改合伙人信息")
     @PostMapping("/updatePartner")
     Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto);
@@ -37,6 +41,10 @@ public interface WebPartnerApi {
     @ApiOperation("修改合伙人状态")
     @PostMapping("/updatePartnerState")
     void updatePartnerState(@RequestBody String id);
+
+    @ApiOperation("批量修改合伙人状态")
+    @PutMapping("/updateBatchPartnerState")
+    void updateBatchPartnerState(@RequestParam String id);
 
     @ApiOperation("根据id查询合伙人")
     @PutMapping("/findPartnerById")

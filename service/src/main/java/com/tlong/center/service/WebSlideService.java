@@ -6,6 +6,7 @@ import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.domain.repository.SlideRepository;
 import com.tlong.center.domain.web.WebSlideshow;
 import com.tlong.core.utils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -104,5 +105,26 @@ public class WebSlideService {
     public WebSlideDto findSlideById(Long id) {
         WebSlideshow slideshow = repository.findOne(id);
         return slideshow.toDto();
+    }
+
+    public void updateBatchSlideState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updateSlideState(Long.valueOf(goodsIds[i]));
+            }
+        }
+    }
+
+    public Result delBatchSlide(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delSlide(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
     }
 }

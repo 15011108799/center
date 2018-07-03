@@ -1,12 +1,17 @@
 package com.tlong.center.service;
 
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.message.MessageSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.Message;
+import com.tlong.center.domain.app.QMessage;
 import com.tlong.center.domain.repository.AppMessageRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -108,5 +113,62 @@ public class MessageService {
         else
             message.setState(0);
         appMessageRepository.save(message);
+    }
+
+    public PageResponseDto<MessageRequestDto> searchMessage(MessageSearchRequestDto requestDto) {
+        PageResponseDto<MessageRequestDto> messageRequestDtoPageResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
+        Predicate pre = QMessage.message.id.isNotNull();
+        if (StringUtils.isNotEmpty(requestDto.getTitle()))
+            pre = ExpressionUtils.and(pre, QMessage.message.title.eq(requestDto.getTitle()));
+        if (requestDto.getState() != 2)
+            pre = ExpressionUtils.and(pre, QMessage.message.state.intValue().eq(requestDto.getState()));
+        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, QMessage.message.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+            pre = ExpressionUtils.and(pre, QMessage.message.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+            pre = ExpressionUtils.and(pre, QMessage.message.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+        Page<Message> messages = appMessageRepository.findAll(pre,pageRequest);
+        List<MessageRequestDto> requestDtos = new ArrayList<>();
+        messages.forEach(message -> {
+            MessageRequestDto messageRequestDto = new MessageRequestDto();
+            messageRequestDto.setId(message.getId());
+            messageRequestDto.setTitle(message.getTitle());
+            messageRequestDto.setContent(message.getContent());
+            messageRequestDto.setUserName(message.getUserName());
+            messageRequestDto.setState(message.getState());
+            messageRequestDto.setPublishTime(message.getPublishTime());
+            requestDtos.add(messageRequestDto);
+        });
+        messageRequestDtoPageResponseDto.setList(requestDtos);
+        final int[] count = {0};
+        Iterable<Message> messages1 = appMessageRepository.findAll(pre);
+        messages1.forEach(message -> {
+            count[0]++;
+        });
+        messageRequestDtoPageResponseDto.setCount(count[0]);
+        return messageRequestDtoPageResponseDto;
+    }
+
+    public Result delBatchMessage(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                delMessage(Long.valueOf(goodsIds[i]));
+            }
+        }
+        return new Result(1, "删除成功");
+    }
+
+    public void updateBatchMessageState(String id) {
+        String[] goodsIds;
+        if (StringUtils.isNotEmpty(id)) {
+            goodsIds = id.split(",");
+            for (int i = 0; i < goodsIds.length; i++) {
+                updateMessageState(Long.valueOf(goodsIds[i]));
+            }
+        }
     }
 }
