@@ -98,6 +98,12 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     @ApiModelProperty("企业名称")
     private String companyName;
 
+    @ApiModelProperty("角色id")
+    private Long roleId;
+
+    @ApiModelProperty("角色名称")
+    private String roleName;
+
     public String getCompanyName() {
         return companyName;
     }
@@ -340,5 +346,21 @@ public class SuppliersRegisterRequsetDto implements Serializable{
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

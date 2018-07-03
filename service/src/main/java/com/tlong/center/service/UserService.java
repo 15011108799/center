@@ -10,10 +10,16 @@ import com.tlong.center.api.dto.user.UserSearchRequestDto;
 import com.tlong.center.api.dto.user.UserSearchResponseDto;
 import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.common.utils.PageAndSortUtil;
+import com.tlong.center.domain.app.QTlongUser;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.common.user.QTlongUserSettings;
 import com.tlong.center.domain.repository.AppUserRepository;
+import com.tlong.center.domain.repository.TlongRoleRepository;
+import com.tlong.center.domain.repository.TlongUserRoleRepository;
 import com.tlong.center.domain.repository.TlongUserSettingsRepository;
+import com.tlong.center.domain.web.QTlongRole;
+import com.tlong.center.domain.web.QTlongUserRole;
+import com.tlong.center.domain.web.TlongUserRole;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,7 +42,11 @@ public class UserService {
     @Autowired
     private AppUserRepository appUserRepository;
     @Autowired
+    private TlongUserRoleRepository tlongUserRoleRepository;
+    @Autowired
     private TlongUserSettingsRepository settingsRepository;
+    @Autowired
+    private TlongRoleRepository tlongRoleRepository;
 
     /**
      * 供应商注册
@@ -53,9 +63,10 @@ public class UserService {
         //TODO
         if (requsetDto.getPassword() == null || requsetDto.getPassword().length() <= 6)
             return new Result(0, "密码格式不正确");
-        tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));
+        /* tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));*/
+        tlongUser.setPassword(requsetDto.getPassword());
         tlongUser.setUserType(requsetDto.getUserType());
-        if (requsetDto.getUserType() == 1) {
+        if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
             tlongUser.setGoodsPublishNum(settingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(0)).getGoodsReleaseNumber());
         }
         tlongUser.setIsCompany(requsetDto.getIsCompany());
@@ -75,6 +86,12 @@ public class UserService {
         tlongUser.setEsgin(0);
         tlongUser.setAuthentication(0);
         TlongUser user = appUserRepository.save(tlongUser);
+        if (requsetDto.getRoleId() != null) {
+            TlongUserRole tlongUserRole = new TlongUserRole();
+            tlongUserRole.setRoleId(requsetDto.getRoleId());
+            tlongUserRole.setUserId(user.getId());
+            tlongUserRoleRepository.save(tlongUserRole);
+        }
         if (user == null) {
             return new Result(0, "注册失败");
         }
@@ -506,5 +523,139 @@ public class UserService {
                 count[0]++;
         });
         return count[0];
+    }
+
+    /**
+     * 查找同一等级的代理商
+     *
+     * @param requestDto
+     * @return
+     */
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUserRole> tlongUserRoles;
+        if (requestDto.getLevel() == 0) {
+            tlongUserRoles = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(11), pageRequest);
+        } else if (requestDto.getLevel() == 1) {
+            tlongUserRoles = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(10), pageRequest);
+        } else
+            tlongUserRoles = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(7), pageRequest);
+        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+        tlongUserRoles.forEach(one -> {
+            if (StringUtils.isEmpty(requestDto.getOrg())) {
+                TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
+                SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+                registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
+                registerRequsetDto.setUserName(tlongUser.getUserName());
+                registerRequsetDto.setOrgId(tlongUser.getOrgId());
+                registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                suppliersRegisterRequsetDtos.add(registerRequsetDto);
+            } else {
+                TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
+                        .and(QTlongUser.tlongUser.orgId.like(requestDto.getOrg() + "%")
+                                .and(QTlongUser.tlongUser.orgId.ne(requestDto.getOrg()))));
+                if (tlongUser != null) {
+                    SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+                    registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
+                    registerRequsetDto.setUserName(tlongUser.getUserName());
+                    registerRequsetDto.setOrgId(tlongUser.getOrgId());
+                    registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                    suppliersRegisterRequsetDtos.add(registerRequsetDto);
+                }
+            }
+        });
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUserRole> tlongUserRoles1;
+        if (requestDto.getLevel() == 0) {
+            tlongUserRoles1 = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(11));
+        } else if (requestDto.getLevel() == 1) {
+            tlongUserRoles1 = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(10));
+        } else
+            tlongUserRoles1 = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(7));
+        tlongUserRoles1.forEach(tlongUserRole -> {
+            if (StringUtils.isEmpty(requestDto.getOrg())) {
+                count[0]++;
+            } else {
+                TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(tlongUserRole.getUserId())
+                        .and(QTlongUser.tlongUser.orgId.like(requestDto.getOrg() + "%")
+                                .and(QTlongUser.tlongUser.orgId.ne(requestDto.getOrg()))));
+                if (tlongUser != null)
+                    count[0]++;
+            }
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
+    }
+
+    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUser> tlongUsers = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(1)), pageRequest);
+        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+        tlongUsers.forEach(one -> {
+            SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+            registerRequsetDto.setUserName(one.getUserName());
+            registerRequsetDto.setOrgId(one.getOrgId());
+            registerRequsetDto.setRegistDate(one.getRegistDate());
+            suppliersRegisterRequsetDtos.add(registerRequsetDto);
+        });
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUser> tlongUsers1 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(1)));
+        tlongUsers1.forEach(tlongUser -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
+    }
+
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllManager(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUserRole> tlongUserRoles = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(6).or(QTlongUserRole.tlongUserRole.roleId.intValue().eq(9)), pageRequest);
+        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+        tlongUserRoles.forEach(one -> {
+            SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+            registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
+            TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
+            registerRequsetDto.setUserName(tlongUser.getUserName());
+            registerRequsetDto.setRealName(tlongUser.getRealName());
+            registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+            suppliersRegisterRequsetDtos.add(registerRequsetDto);
+        });
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        Iterable<TlongUserRole> tlongUserRoles1 = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(6).or(QTlongUserRole.tlongUserRole.roleId.intValue().eq(9)));
+        final int[] count = {0};
+        tlongUserRoles1.forEach(tlongUserRole -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
+    }
+
+    public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(PageAndSortRequestDto requestDto) {
+        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        Page<TlongUserRole> tlongUserRoles = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()), pageRequest);
+        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+        tlongUserRoles.forEach(one -> {
+            SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+            registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
+            TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
+            registerRequsetDto.setUserName(tlongUser.getUserName());
+            registerRequsetDto.setRealName(tlongUser.getRealName());
+            registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+            suppliersRegisterRequsetDtos.add(registerRequsetDto);
+        });
+        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+        final int[] count = {0};
+        Iterable<TlongUserRole> tlongUserRoles1 = tlongUserRoleRepository.findAll(QTlongUserRole.tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()));
+        tlongUserRoles1.forEach(one -> {
+            count[0]++;
+        });
+        pageSuppliersResponseDto.setCount(count[0]);
+        return pageSuppliersResponseDto;
     }
 }

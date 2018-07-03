@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tlong_role")
 @DynamicUpdate
-public class TlongRole extends BaseJpa{
+public class TlongRole extends BaseJpa {
 
 
     public TlongRole() {
@@ -18,12 +18,12 @@ public class TlongRole extends BaseJpa{
     }
 
     public TlongRole(WebRoleDto dto) {
-        PropertyUtils.copyPropertiesOfNotNull(dto,this);
+        PropertyUtils.copyPropertiesOfNotNull(dto, this);
     }
 
     public WebRoleDto toDto() {
         WebRoleDto dto = new WebRoleDto();
-        PropertyUtils.copyPropertiesOfNotNull(this,dto);
+        PropertyUtils.copyPropertiesOfNotNull(this, dto);
         return dto;
     }
 
@@ -33,6 +33,12 @@ public class TlongRole extends BaseJpa{
 
     //角色名称
     private String roleName;
+
+    private String des;
+
+    private String registDate;
+
+    private Integer type;
 
     public Long getId() {
         return id;
@@ -48,5 +54,29 @@ public class TlongRole extends BaseJpa{
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
+    }
+
+    public String getRegistDate() {
+        return registDate;
+    }
+
+    public void setRegistDate(String registDate) {
+        this.registDate = registDate;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

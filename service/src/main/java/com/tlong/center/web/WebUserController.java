@@ -101,4 +101,24 @@ public class WebUserController implements WebUserApi {
     public Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
         return userService.findCount1(requestDto,session);
     }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findAgentByLevel(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findSupplirtCompany(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findAllManager(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findOrgManager(requestDto);
+    }
 }
