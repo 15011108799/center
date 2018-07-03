@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.http.HTTPBinding;
 import java.util.List;
 
 @RestController
@@ -39,8 +40,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto) {
-        return userService.searchUser(requestDto);
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
+        return userService.searchUser(requestDto,session);
     }
 
     @Override
@@ -54,8 +55,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findAllAgents(requestDto);
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto,HttpSession session) {
+        return userService.findAllAgents(requestDto,session);
     }
 
     @Override
@@ -92,7 +93,32 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public Integer findCount(@RequestBody Integer type) {
-        return userService.findCount(type);
+    public Integer findCount(@RequestBody Integer type,HttpSession session) {
+        return userService.findCount(type,session);
+    }
+
+    @Override
+    public Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
+        return userService.findCount1(requestDto,session);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findAgentByLevel(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findSupplirtCompany(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findAllManager(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findOrgManager(requestDto);
     }
 }

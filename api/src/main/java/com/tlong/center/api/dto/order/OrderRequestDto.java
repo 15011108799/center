@@ -40,6 +40,9 @@ public class OrderRequestDto implements Serializable {
     @ApiModelProperty("商品价格")
     private Double goodsPrice;
 
+    @ApiModelProperty("创始人旗舰店价格")
+    private Double founderPrice;
+
     @ApiModelProperty("订单状态")
     private Integer state;
 
@@ -148,5 +151,13 @@ public class OrderRequestDto implements Serializable {
 
     public void setGoodsName(String goodsName) {
         this.goodsName = goodsName;
+    }
+
+    public Double getFounderPrice() {
+        return founderPrice;
+    }
+
+    public void setFounderPrice(Double founderPrice) {
+        this.founderPrice = founderPrice;
     }
 }

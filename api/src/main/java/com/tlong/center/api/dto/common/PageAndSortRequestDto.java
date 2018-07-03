@@ -13,6 +13,18 @@ PageAndSortRequestDto implements Serializable{
     @ApiModelProperty("起始页")
     private Integer page;
 
+    @ApiModelProperty("类型")
+    private Integer type;
+
+    @ApiModelProperty("父id")
+    private Long pid;
+
+    @ApiModelProperty("等级")
+    private Long Level;
+
+    @ApiModelProperty("组织")
+    private String org;
+
     @ApiModelProperty("每页数量")
     private Integer size;
 
@@ -52,5 +64,37 @@ PageAndSortRequestDto implements Serializable{
 
     public void setDirection(Integer direction) {
         this.direction = direction;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
+    public Long getLevel() {
+        return Level;
+    }
+
+    public void setLevel(Long level) {
+        Level = level;
+    }
+
+    public String getOrg() {
+        return org;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
     }
 }

@@ -30,6 +30,10 @@ public interface WebNewsApi {
     @PutMapping("/delNews")
     Result delNews(@RequestParam String id);
 
+    @ApiModelProperty("批量删除新闻")
+    @PutMapping("/delBatchNews")
+    Result delBatchNews(@RequestParam String id);
+
     @ApiModelProperty("修改新闻信息")
     @PostMapping("/updateNews")
     Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto);
@@ -37,6 +41,10 @@ public interface WebNewsApi {
     @ApiOperation("修改新闻状态")
     @PostMapping("/updateNewsState")
     void updateNewsState(@RequestBody String id);
+
+    @ApiOperation("批量修改新闻状态")
+    @PutMapping("/updateBatchNewsState")
+    void updateBatchNewsState(@RequestParam String id);
 
     @ApiOperation("根据id查询新闻")
     @PutMapping("/findNewsById")

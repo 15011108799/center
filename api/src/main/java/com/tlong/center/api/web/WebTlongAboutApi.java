@@ -2,6 +2,8 @@ package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.message.MessageRequestDto;
+import com.tlong.center.api.dto.message.MessageSearchRequestDto;
 import com.tlong.center.api.dto.tlong.TlongRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import io.swagger.annotations.Api;
@@ -25,6 +27,9 @@ public interface WebTlongAboutApi {
     @PutMapping("/delTlongshi")
     Result delTlongshi(@RequestParam Long id);
 
+    @ApiOperation("批量删除关于珑石接口")
+    @PutMapping("/delBatchTlongshi")
+    Result delBatchTlongshi(@RequestParam String id);
 
     @ApiOperation("修改关于珑石接口")
     @PostMapping("/updateTlongshi")
@@ -34,7 +39,15 @@ public interface WebTlongAboutApi {
     @PostMapping("/updateTlongState")
     void updateTlongState(@RequestBody Long id);
 
+    @ApiOperation("批量修改关于珑石状态")
+    @PutMapping("/updateBatchTlongState")
+    void updateBatchTlongState(@RequestParam String id);
+
     @ApiOperation("查找单条关于珑石接口")
     @PutMapping("/findTlongshiById")
     TlongRequestDto findTlongshiById(@RequestBody Long id);
+
+    @ApiOperation("条件查询所有珑石接口")
+    @PostMapping("/searchTlongshi")
+    PageResponseDto<TlongRequestDto> searchTlongshi(@RequestBody MessageSearchRequestDto requestDto);
 }

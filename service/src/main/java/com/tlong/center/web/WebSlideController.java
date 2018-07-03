@@ -43,6 +43,11 @@ public class WebSlideController implements WebSlideApi {
         return webSlideService.delSlide(slideId);
     }
 
+    @Override
+    public Result delBatchSlide(@RequestBody String id) {
+        return webSlideService.delBatchSlide(id);
+    }
+
     /**
      * 修改轮播图
      */
@@ -58,6 +63,11 @@ public class WebSlideController implements WebSlideApi {
     @Override
     public void updateSlideState(@RequestBody Long id) {
         webSlideService.updateSlideState(id);
+    }
+
+    @Override
+    public void updateBatchSlideState(@RequestBody String id) {
+         webSlideService.updateBatchSlideState(id);
     }
 
     /**

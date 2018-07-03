@@ -2,6 +2,7 @@ package com.tlong.center.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.center.api.web.WebGoodsApi;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -25,13 +27,13 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(PageAndSortRequestDto requestDto) {
-        return webGoodsService.findAllGoodsByPage(requestDto);
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
+        return webGoodsService.findAllGoodsByPage(requestDto,session);
     }
 
     @Override
-    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto) {
-        return webGoodsService.add(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session) {
+        return webGoodsService.add(FileUploadUtils.handleFileUpload(file), reqDto,session);
     }
 
     @Override
@@ -45,12 +47,27 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public void updateGoodsState(@RequestBody String id) {
-        webGoodsService.updateGoodsState(Long.valueOf(id));
+    public void updateGoodsState(@RequestBody Long id) {
+        webGoodsService.updateGoodsState(id);
+    }
+
+    @Override
+    public void updateGoodsStateReject(@RequestBody Long id) {
+        webGoodsService.updateGoodsStateReject(id);
     }
 
     @Override
     public WebGoodsDetailResponseDto findGoodsById(@RequestBody String id) {
         return webGoodsService.findGoodsById(Long.valueOf(id));
+    }
+
+    @Override
+    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session) {
+        return webGoodsService.searchGoods(requestDto,session);
+    }
+
+    @Override
+    public Result delBatchGoods(@RequestBody String goodsId) {
+        return webGoodsService.delBatchGoods(goodsId);
     }
 }

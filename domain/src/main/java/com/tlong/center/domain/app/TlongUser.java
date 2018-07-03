@@ -19,6 +19,9 @@ public class TlongUser extends BaseJpa {
     //账户
     private String userName;
 
+    //父id
+    private Long pid;
+
     //密码
     private String password;
 
@@ -113,6 +116,28 @@ public class TlongUser extends BaseJpa {
 
     //商品发布个数
     private Integer goodsPublishNum;
+
+    //出生年月
+    private String birthday;
+
+    //企业名称
+    private String companyName;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
     public Integer getGoodsPublishNum() {
         return goodsPublishNum;
@@ -384,5 +409,13 @@ public class TlongUser extends BaseJpa {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
     }
 }

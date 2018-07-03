@@ -25,6 +25,10 @@ public interface WebSlideApi {
     @PutMapping("/delSlide")
     Result delSlide(@RequestParam Long roleId);
 
+    @ApiModelProperty("批量删除轮播图")
+    @PutMapping("/delBatchSlide")
+    Result delBatchSlide(@RequestParam String id);
+
     @ApiModelProperty("修改轮播图信息")
     @PostMapping("/updateSlide")
     Result updateSlide(@RequestBody WebSlideDto reqDto);
@@ -32,6 +36,10 @@ public interface WebSlideApi {
     @ApiOperation("修改轮播图状态")
     @PostMapping("/updateSlideState")
     void updateSlideState(@RequestBody Long id);
+
+    @ApiOperation("批量修改轮播图状态")
+    @PutMapping("/updateBatchSlideState")
+    void updateBatchSlideState(@RequestParam String id);
 
     @ApiOperation("根据id查询轮播图")
     @PutMapping("/findSlideById")
