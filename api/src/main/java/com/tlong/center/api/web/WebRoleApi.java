@@ -9,13 +9,19 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Api("角色增删改查接口")
 public interface WebRoleApi {
 
-    @ApiOperation("获取角色列表")
+    @ApiOperation("获取其他部门角色列表")
     @PostMapping("/roleList")
     PageResponseDto<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto);
+
+    @ApiOperation("获取所有角色列表")
+    @PostMapping("/allRoleList")
+    List<WebRoleDto> allRoleList();
 
     @ApiModelProperty("新增角色")
     @PostMapping("/addRole")
@@ -32,5 +38,9 @@ public interface WebRoleApi {
     @ApiModelProperty("角色绑定权限")
     @GetMapping("/bindPower/{roleId}/{powerIds}")
     void bindPower(@PathVariable Long roleId, @PathVariable String powerIds);
+
+    @ApiModelProperty("角色修改权限")
+    @GetMapping("/updatePower/{roleId}/{powerIds}")
+    void updatePower(@PathVariable Long roleId, @PathVariable String powerIds);
 
 }

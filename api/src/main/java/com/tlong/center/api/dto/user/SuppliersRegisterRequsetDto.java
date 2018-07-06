@@ -6,10 +6,13 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 @ApiModel("代理商注册请求模型")
-public class SuppliersRegisterRequsetDto implements Serializable{
+public class SuppliersRegisterRequsetDto implements Serializable {
     private static final long serialVersionUID = -7697313937998312834L;
     @ApiModelProperty("id")
     private Long id;
+
+    @ApiModelProperty("所选大区")
+    private Integer area;
 
     @ApiModelProperty("用户名")
     private String userName;
@@ -63,7 +66,7 @@ public class SuppliersRegisterRequsetDto implements Serializable{
     private String succ;
 
     @ApiModelProperty("法人姓名")
-    private String  legalPersonName;
+    private String legalPersonName;
 
     @ApiModelProperty("营业执照照片")
     private String businessLicense1;
@@ -362,5 +365,13 @@ public class SuppliersRegisterRequsetDto implements Serializable{
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
     }
 }

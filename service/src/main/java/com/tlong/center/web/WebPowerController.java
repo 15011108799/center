@@ -50,4 +50,9 @@ public class WebPowerController implements WebPowerApi {
     public Result updatePower(@RequestBody TlongPowerDto reqDto, @PathVariable Long powerId) {
         return webPowerService.updatePower(reqDto,powerId);
     }
+
+    @Override
+    public List<Integer> powerIdList(@RequestBody Long roleId) {
+        return webPowerService.powerIdList(roleId);
+    }
 }

@@ -27,4 +27,7 @@ public interface WebPowerApi {
     @PutMapping("/updatePower/{powerId}")
     Result updatePower(@RequestBody TlongPowerDto reqDto, @PathVariable Long powerId);
 
+    @ApiOperation("根据角色id获取权限列表")
+    @PostMapping("/powerIdList")
+    List<Integer> powerIdList(@RequestBody Long roleId);
 }

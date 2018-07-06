@@ -3,7 +3,10 @@ package com.tlong.center.service;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.web.TlongPowerDto;
 import com.tlong.center.domain.repository.TlongPowerRepository;
+import com.tlong.center.domain.repository.TlongRolePowerRepository;
+import com.tlong.center.domain.web.QTlongRolePower;
 import com.tlong.center.domain.web.TlongPower;
+import com.tlong.center.domain.web.TlongRolePower;
 import com.tlong.core.utils.PropertyUtils;
 import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
@@ -12,16 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.tlong.center.domain.web.QTlongRolePower.tlongRolePower;
+
 @Component
 @Transactional
 public class WebPowerService {
 
     final EntityManager entityManager;
     final TlongPowerRepository repository;
+    final TlongRolePowerRepository tlongRolePowerRepository;
 
-    public WebPowerService(EntityManager entityManager, TlongPowerRepository repository) {
+    public WebPowerService(EntityManager entityManager, TlongPowerRepository repository,TlongRolePowerRepository tlongRolePowerRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
+        this.tlongRolePowerRepository=tlongRolePowerRepository;
     }
 
     /**
@@ -68,5 +75,17 @@ public class WebPowerService {
             return new Result(0, "修改成功");
         }
         return new Result(1, "要修改的的权限不存在");
+    }
+
+    /**
+     * 根据角色id查询权限列表查询
+     */
+    public List<Integer> powerIdList(Long roleId) {
+        List<Integer> powerIds=new ArrayList<>();
+        Iterable<TlongRolePower> tlongRolePowers=tlongRolePowerRepository.findAll(tlongRolePower.roleId.longValue().eq(roleId));
+        tlongRolePowers.forEach(one->{
+            powerIds.add(one.getPowerId().intValue());
+        });
+        return powerIds;
     }
 }

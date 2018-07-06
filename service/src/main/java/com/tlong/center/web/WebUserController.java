@@ -7,6 +7,7 @@ import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -120,5 +121,20 @@ public class WebUserController implements WebUserApi {
     @Override
     public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto) {
         return userService.findOrgManager(requestDto);
+    }
+
+    @Override
+    public void delManage(@PathVariable Long id,@PathVariable  Long roleId) {
+        userService.delManage(id,roleId);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(@RequestBody UserSearchRequestDto requestDto) {
+        return userService.searchAgentByLevel(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto) {
+        return userService.searchSupplirtCompany(requestDto);
     }
 }
