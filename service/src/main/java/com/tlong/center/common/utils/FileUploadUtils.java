@@ -29,6 +29,7 @@ public class FileUploadUtils {
 
         //文件上传后的路径
         //TODO 自定义控制文件目录
+        //C:\\resources
         String filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongPic\\";
 
         //解决中文问题,，liunx下中文路径，图片显示问题

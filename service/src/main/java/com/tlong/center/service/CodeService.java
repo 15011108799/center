@@ -43,7 +43,7 @@ public class CodeService {
 
 
     /**
-     * 设置或者修改商品编码前缀规则
+     * 设置或者修改商品编码前缀规则 数据库需要预设置 只提供修改功能不提供新增功能
      */
     public void updateCodeRule(TlongUserSettingsRequestDto req) {
         TlongCodeRule one = repository.findOne(tlongCodeRule.userType.eq(0)

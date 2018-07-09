@@ -81,20 +81,19 @@ public class IndexService {
         //处理分页排序逻辑
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
 
-        /*Page<AppGoods> all = appGoodsRepository.findAll(appGoods.curState.eq(1), pageRequest);
+        Page<WebGoods> all = appGoodsRepository.findAll(appGoods.curState.eq(1), pageRequest);
 
         //变换
         return all.map(one->{
             AppIndexGoodsDetailResponseDto responseDto = new AppIndexGoodsDetailResponseDto();
             responseDto.setId(one.getId());
-            responseDto.setGoodsName(one.getGoodsName());
+            responseDto.setGoodsName(one.getGoodsHead());
             responseDto.setGoodsCode(one.getGoodsCode());
             responseDto.setFactoryPrice(one.getFactoryPrice());
-            List<String> picUrls = this.stringToList(one.getPicUrls());
-            responseDto.setPicUrls(picUrls);
+            String[] split = one.getGoodsPic().split(",");
+            responseDto.setPicUrl(split[0]);
             return responseDto;
-        });*/
-        return null;
+        });
     }
 
 

@@ -1,5 +1,7 @@
 package com.tlong.center.domain.app.course;
 
+import com.tlong.center.api.dto.app.clazz.ClazzResponseDto;
+import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -8,9 +10,22 @@ import javax.persistence.*;
 @Table(name = "tlong_course")
 @DynamicUpdate
 public class Course {
+
+    public Course(){}
+
+    public ClazzResponseDto toClazzResponseDto(){
+        ClazzResponseDto dto = new ClazzResponseDto();
+        PropertyUtils.copyPropertiesOfNotNull(this,dto);
+        return dto;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    //课程分类id
+    private Long styleId;
+
     //题目
     private String title;
 
@@ -34,6 +49,14 @@ public class Course {
 
     //发布时间
     private String publishTime;
+
+    public Long getStyleId() {
+        return styleId;
+    }
+
+    public void setStyleId(Long styleId) {
+        this.styleId = styleId;
+    }
 
     public String getPublishTime() {
         return publishTime;

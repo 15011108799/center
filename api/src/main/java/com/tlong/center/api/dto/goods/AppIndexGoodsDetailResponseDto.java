@@ -23,7 +23,7 @@ public class AppIndexGoodsDetailResponseDto implements Serializable{
     private Double factoryPrice;
 
     @ApiModelProperty("商品图片URL")
-    private List<String> picUrls;
+    private String picUrl;
 
     public Long getId() {
         return id;
@@ -57,11 +57,11 @@ public class AppIndexGoodsDetailResponseDto implements Serializable{
         this.factoryPrice = factoryPrice;
     }
 
-    public List<String> getPicUrls() {
-        return picUrls;
+    public String getPicUrl() {
+        return picUrl;
     }
 
-    public void setPicUrls(List<String> picUrls) {
-        this.picUrls = picUrls;
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 }
