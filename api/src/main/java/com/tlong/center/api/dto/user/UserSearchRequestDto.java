@@ -20,6 +20,9 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("用户编号")
     private String userCode;
 
+    @ApiModelProperty("组织")
+    private String org;
+
     @ApiModelProperty("e签宝认证状态")
     private Integer esign;
 
@@ -28,6 +31,9 @@ public class UserSearchRequestDto implements Serializable {
 
     @ApiModelProperty("身份类型")
     private Integer ptype;
+
+    @ApiModelProperty("代理商等级")
+    private Long level;
 
     @ApiModelProperty("开始时间")
     private String startTime;
@@ -97,5 +103,21 @@ public class UserSearchRequestDto implements Serializable {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getOrg() {
+        return org;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    public Long getLevel() {
+        return level;
+    }
+
+    public void setLevel(Long level) {
+        this.level = level;
     }
 }

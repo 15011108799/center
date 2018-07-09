@@ -123,6 +123,9 @@ public class TlongUser extends BaseJpa {
     //企业名称
     private String companyName;
 
+    //所选大区
+    private Integer area;
+
     public String getBirthday() {
         return birthday;
     }
@@ -417,5 +420,13 @@ public class TlongUser extends BaseJpa {
 
     public void setPid(Long pid) {
         this.pid = pid;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
     }
 }

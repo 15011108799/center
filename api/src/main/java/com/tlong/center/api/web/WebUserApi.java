@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Api("代理商供应商用户管理接口")
 public interface WebUserApi {
@@ -96,4 +95,15 @@ public interface WebUserApi {
     @PostMapping("/findOrgManager")
     PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto);
 
+    @ApiOperation("删除总公司超级合伙人管理员")
+    @GetMapping("/delManage/{id}/{roleId}")
+    void delManage(@PathVariable Long id, @PathVariable Long roleId);
+
+    @ApiOperation("用户搜索代理商分公司层级搜索")
+    @PostMapping("/searchAgentByLevel")
+    PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(@RequestBody UserSearchRequestDto requestDto);
+
+    @ApiOperation("搜索供货商分公司")
+    @PostMapping("/searchSupplirtCompany")
+    PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto);
 }
