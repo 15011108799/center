@@ -8,6 +8,8 @@ import com.tlong.center.api.web.WebRoleApi;
 import com.tlong.center.service.WebRoleService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/web/role")
 public class WebRoleController implements WebRoleApi {
@@ -25,6 +27,11 @@ public class WebRoleController implements WebRoleApi {
     @Override
     public PageResponseDto<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto) {
         return webRoleService.roleList(requestDto);
+    }
+
+    @Override
+    public List<WebRoleDto> allRoleList() {
+        return webRoleService.allRoleList();
     }
 
     /**
@@ -54,5 +61,10 @@ public class WebRoleController implements WebRoleApi {
     @Override
     public void bindPower(@PathVariable Long roleId, @PathVariable String powerIds) {
         webRoleService.bindPower(roleId, powerIds);
+    }
+
+    @Override
+    public void updatePower(@PathVariable Long roleId,@PathVariable String powerIds) {
+        webRoleService.updatePower(roleId,powerIds);
     }
 }

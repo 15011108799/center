@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class WebRoleDto implements Serializable{
 
     @ApiModelProperty("角色id")
-    private Long Id;
+    private Long id;
 
     @ApiModelProperty("角色名称")
     private String roleName;
@@ -24,11 +24,11 @@ public class WebRoleDto implements Serializable{
     private Integer type;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getRoleName() {

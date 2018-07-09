@@ -9,6 +9,7 @@ import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.TlongRolePowerRepository;
 import com.tlong.center.domain.repository.TlongRoleRepository;
 import com.tlong.center.domain.web.QTlongRole;
+import com.tlong.center.domain.web.QTlongRolePower;
 import com.tlong.center.domain.web.TlongRole;
 import com.tlong.center.domain.web.TlongRolePower;
 import com.tlong.core.utils.PropertyUtils;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.tlong.center.domain.web.QTlongRole.tlongRole;
+import static com.tlong.center.domain.web.QTlongRolePower.tlongRolePower;
 
 @Component
 @Transactional
@@ -102,6 +104,29 @@ public class WebRoleService {
     }
 
     public void bindPower(Long roleId, String powerIds) {
+        String[] powers = powerIds.split(",");
+        for (int i = 0; i < powers.length; i++) {
+            TlongRolePower tlongRolePower = new TlongRolePower();
+            tlongRolePower.setRoleId(roleId);
+            tlongRolePower.setPowerId(Long.valueOf(powers[i]));
+            tlongRolePowerRepository.save(tlongRolePower);
+        }
+    }
+
+    public List<WebRoleDto> allRoleList() {
+        Iterable<TlongRole> tlongRoles=repository.findAll();
+        List<WebRoleDto> webRoleDtos=new ArrayList<>();
+        tlongRoles.forEach(one->{
+            webRoleDtos.add(one.toDto());
+        });
+        return webRoleDtos;
+    }
+
+    public void updatePower(Long roleId, String powerIds) {
+        Iterable<TlongRolePower> tlongRolePowers=tlongRolePowerRepository.findAll(tlongRolePower.roleId.longValue().eq(roleId));
+        for (TlongRolePower rolePower : tlongRolePowers) {
+            tlongRolePowerRepository.delete(rolePower);
+        }
         String[] powers = powerIds.split(",");
         for (int i = 0; i < powers.length; i++) {
             TlongRolePower tlongRolePower = new TlongRolePower();
