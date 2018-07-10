@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@Api("APP接口接口")
-public interface AppUserApi {
+@Api("APP接口")
+public interface AppApi {
 
     @ApiOperation("APP登录接口")
     @PostMapping("/login")

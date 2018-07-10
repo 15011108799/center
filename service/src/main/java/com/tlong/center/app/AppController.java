@@ -1,12 +1,12 @@
 package com.tlong.center.app;
 
-import com.tlong.center.api.app.AppUserApi;
+import com.tlong.center.api.app.AppApi;
 import com.tlong.center.api.dto.app.clazz.ClazzResponseDto;
 import com.tlong.center.api.dto.app.clazz.ClazzStyleResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginRequestDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
-import com.tlong.center.service.AppUserService;
+import com.tlong.center.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +17,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/app/user")
-public class AppUserController implements AppUserApi {
+public class AppController implements AppApi {
+
+
+
 
     @Autowired
-    AppUserService appUserService;
+    AppService appService;
+
+
     /**
      * App登录方法
      */
     @Override
     public AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto) {
-        return appUserService.appLogin(requestDto);
+        return appService.appLogin(requestDto);
     }
 
     /**
@@ -36,9 +41,8 @@ public class AppUserController implements AppUserApi {
      */
     @Override
     public AppUserResponseDto userInfo(@PathVariable Long userId) {
-        return appUserService.userInfo(userId);
+        return appService.userInfo(userId);
     }
-
 
     /**
      * 根据用户id获取下级代理商信息
@@ -47,9 +51,8 @@ public class AppUserController implements AppUserApi {
      */
     @Override
     public List<AppUserResponseDto> children(@PathVariable Long userId) {
-        return appUserService.children(userId);
+        return appService.children(userId);
     }
-
 
     /**
      * 获取课程类型列表
@@ -57,7 +60,7 @@ public class AppUserController implements AppUserApi {
      */
     @Override
     public List<ClazzStyleResponseDto> clazzStyles() {
-        return appUserService.clazzStyles();
+        return appService.clazzStyles();
     }
 
     /**
@@ -67,7 +70,7 @@ public class AppUserController implements AppUserApi {
      */
     @Override
     public List<ClazzResponseDto> clazzList(@PathVariable Long clazzId) {
-        return appUserService.clazzList(clazzId);
+        return appService.clazzList(clazzId);
     }
 
 

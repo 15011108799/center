@@ -1,7 +1,6 @@
 package com.tlong.center.domain.app;
 
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
-import com.tlong.core.base.BaseJpa;
 import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -137,6 +136,9 @@ public class TlongUser{
 
     //企业名称
     private String companyName;
+
+    //所选区域
+    private Integer area;
 
     public Long getId() {
         return id;
@@ -432,5 +434,13 @@ public class TlongUser{
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
     }
 }

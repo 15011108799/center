@@ -34,9 +34,9 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 
 @Component
 @Transactional
-public class AppUserService {
+public class AppService {
 
-    private final Logger log  = LoggerFactory.getLogger(AppUserService.class);
+    private final Logger log  = LoggerFactory.getLogger(AppService.class);
 
     @Autowired
     private TlongUserRepository tlongUserRepository;
