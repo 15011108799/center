@@ -42,7 +42,7 @@ public class NewsService {
         reqDto.setPic(s.substring(0, s.length() - 1));
         reqDto.setTitleIcon(FileUploadUtils.readFile(reqDto.getTitleIcon()));
         reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         reqDto.setIsCheck("0");
         WebNews webNews = repository.save(new WebNews(reqDto));

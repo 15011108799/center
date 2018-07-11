@@ -67,7 +67,7 @@ public class WebRoleService {
      */
     public Integer addRole(WebRoleDto reqDto) {
         TlongRole tlongRole = new TlongRole(reqDto);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlongRole.setRegistDate(simpleDateFormat.format(new Date()));
         TlongRole tlongRole1 = repository.save(tlongRole);
         if (tlongRole1 == null) {

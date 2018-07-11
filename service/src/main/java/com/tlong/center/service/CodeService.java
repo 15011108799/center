@@ -70,7 +70,7 @@ public class CodeService {
         }
     }
 
-    private void createCode(Integer type,int head) {
+    public void createCode(Integer type,int head) {
         new CodeUtil(repository, codeRepository, entityManager).goodsCode(1, type,head);
     }
 
@@ -127,4 +127,9 @@ public class CodeService {
         });
         return requestDto;
     }
+
+    public String createAllCode(Integer type,Integer userType,Integer head) {
+        return new CodeUtil(repository, codeRepository, entityManager).goodsCode(type, userType,head);
+    }
+
 }

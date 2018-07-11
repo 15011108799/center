@@ -48,6 +48,8 @@ public class UserService {
     private TlongUserSettingsRepository settingsRepository;
     @Autowired
     private TlongRoleRepository tlongRoleRepository;
+    @Autowired
+    private CodeService codeService;
 
     /**
      * 供应商注册
@@ -69,6 +71,16 @@ public class UserService {
         tlongUser.setUserType(requsetDto.getUserType());
         if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
             tlongUser.setGoodsPublishNum(settingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(0)).getGoodsReleaseNumber());
+            if (requsetDto.getIsCompany() == 0)
+                tlongUser.setUserCode(codeService.createAllCode(3, 0, 1));
+            else
+                tlongUser.setUserCode(codeService.createAllCode(3, 1, 1));
+        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 2) {
+            tlongUser.setUserCode(codeService.createAllCode(2, 0, 1));
+        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 3) {
+            tlongUser.setUserCode(codeService.createAllCode(2, 1, 1));
+        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 4) {
+            tlongUser.setUserCode(codeService.createAllCode(2, 2, 1));
         }
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setRealName(requsetDto.getRealName());
@@ -76,10 +88,9 @@ public class UserService {
         tlongUser.setSex(requsetDto.getSex());
         tlongUser.setArea(requsetDto.getArea());
         tlongUser.setWx(requsetDto.getWx());
-        tlongUser.setUserCode("123123");
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
         tlongUser.setHeadImage(requsetDto.getHeadImage1());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlongUser.setRegistDate(simpleDateFormat.format(new Date()));
         tlongUser.setPremises(requsetDto.getPremises());
         tlongUser.setOrgId(requsetDto.getOrgId());
@@ -182,6 +193,7 @@ public class UserService {
             registerRequsetDto.setBirthday(tlongUser1.getBirthday());
             registerRequsetDto.setSex(tlongUser1.getSex());
             registerRequsetDto.setWx(tlongUser1.getWx());
+            registerRequsetDto.setUserCode(tlongUser1.getUserCode());
             registerRequsetDto.setNickName(tlongUser1.getNickName());
             registerRequsetDto.setEsgin(tlongUser1.getEsgin());
             registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
@@ -222,11 +234,11 @@ public class UserService {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         if (user.getIsCompany() == null)
-            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1), pageRequest);
-        else if (user.getIsCompany() == 0)
+            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)), pageRequest);
+        else if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
             tlongUser2 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()), pageRequest);
         else
-            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.eq(user.getOrgId())), pageRequest);
+            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.eq(user.getOrgId())), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -245,17 +257,18 @@ public class UserService {
             registerRequsetDto.setOrgId(tlongUser1.getOrgId());
             registerRequsetDto.setPremises(tlongUser1.getPremises());
             registerRequsetDto.setWx(tlongUser1.getWx());
+            registerRequsetDto.setUserCode(tlongUser1.getUserCode());
             suppliersRegisterRequsetDtos.add(registerRequsetDto);
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
         final int[] count = {0};
         Iterable<TlongUser> tlongUser3;
         if (user.getIsCompany() == null)
-            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1));
+            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)));
         else if (user.getIsCompany() == 0)
             tlongUser3 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()));
         else
-            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+            tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
         tlongUser3.forEach(tlongUser1 -> {
             count[0]++;
         });
@@ -298,7 +311,6 @@ public class UserService {
         TlongUser tlongUser = new TlongUser();
         tlongUser.setId(requsetDto.getId());
         tlongUser.setArea(requsetDto.getArea());
-        tlongUser.setUserCode("123123");
         tlongUser.setUserName(requsetDto.getUserName());
         tlongUser.setPassword(requsetDto.getPassword());
         tlongUser.setUserType(requsetDto.getUserType());
@@ -314,6 +326,7 @@ public class UserService {
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
         tlongUser.setCompanyName(requsetDto.getCompanyName());
         TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
+        tlongUser.setUserCode(tlongUser1.getUserCode());
         tlongUser.setPid(tlongUser1.getPid());
         if (requsetDto.getHeadImage1() != null && !requsetDto.getHeadImage1().equals("")) {
             tlongUser.setHeadImage(requsetDto.getHeadImage1());
@@ -357,9 +370,9 @@ public class UserService {
         Page<TlongUser> tlongUser2;
         if (user.getUserType() == null) {
             if (requestDto.getPid() == null)
-                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()), pageRequest);
+                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")), pageRequest);
             else
-                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.pid.longValue().eq(requestDto.getPid())), pageRequest);
+                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")).and(tlongUser.pid.longValue().eq(requestDto.getPid())), pageRequest);
         } else {
             if (requestDto.getPid() == null) {
                 tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")).and(tlongUser.id.longValue().ne(user.getId())), pageRequest);
@@ -384,6 +397,7 @@ public class UserService {
                 registerRequsetDto.setEsgin(tlongUser1.getEsgin());
                 registerRequsetDto.setAuthentication(tlongUser1.getAuthentication());
                 registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
+                registerRequsetDto.setUserCode(tlongUser1.getUserCode());
                 suppliersRegisterRequsetDtos.add(registerRequsetDto);
             }
         });
@@ -568,6 +582,24 @@ public class UserService {
                 TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
                         .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
                 if (tlongUser != null) {
+                    Iterable<TlongUser> tlongUsers=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like( tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                            .and(QTlongUser.tlongUser.userType.eq(2)));
+                    Iterable<TlongUser> tlongUsers2=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                            .and(QTlongUser.tlongUser.userType.eq(3)));
+                    Iterable<TlongUser> tlongUsers3=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                            .and(QTlongUser.tlongUser.userType.eq(4)));
+                    final int[] count = {0};
+                    final int[] count1 = {0};
+                    final int[] count2 = {0};
+                    for (TlongUser user : tlongUsers) {
+                        count[0]++;
+                    }
+                    for (TlongUser user : tlongUsers2) {
+                        count1[0]++;
+                    }
+                    for (TlongUser user : tlongUsers3) {
+                        count2[0]++;
+                    }
                     SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                     registerRequsetDto.setId(tlongUser.getId());
                     registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
@@ -578,6 +610,9 @@ public class UserService {
                     registerRequsetDto.setPhone(tlongUser.getPhone());
                     registerRequsetDto.setWx(tlongUser.getWx());
                     registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                    registerRequsetDto.setAgentOneNum(count[0]);
+                    registerRequsetDto.setAgentTwoNum(count1[0]);
+                    registerRequsetDto.setAgentThreeNum(count2[0]);
                     suppliersRegisterRequsetDtos.add(registerRequsetDto);
                 }
             }
@@ -596,7 +631,7 @@ public class UserService {
                 count[0]++;
             } else {
                 TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(tlongUserRole.getUserId())
-                                .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
+                        .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
                 if (tlongUser != null)
                     count[0]++;
             }
@@ -608,7 +643,7 @@ public class UserService {
     public PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(PageAndSortRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<TlongUser> tlongUsers = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(1)), pageRequest);
+        Page<TlongUser> tlongUsers = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(2)), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUsers.forEach(one -> {
             SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
@@ -621,7 +656,7 @@ public class UserService {
         });
         pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
         final int[] count = {0};
-        Iterable<TlongUser> tlongUsers1 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(1)));
+        Iterable<TlongUser> tlongUsers1 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(2)));
         tlongUsers1.forEach(tlongUser -> {
             count[0]++;
         });
@@ -740,7 +775,7 @@ public class UserService {
                 suppliersRegisterRequsetDtos.add(registerRequsetDto);
             } else {
                 TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
-                                .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
+                        .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
                 if (tlongUser != null) {
                     SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                     registerRequsetDto.setId(tlongUser.getId());
@@ -765,7 +800,7 @@ public class UserService {
                 count[0]++;
             } else {
                 TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(tlongUserRole.getUserId())
-                                .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
+                        .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
                 if (tlongUser != null)
                     count[0]++;
             }
@@ -776,6 +811,7 @@ public class UserService {
 
     /**
      * 搜索代理商分公司
+     *
      * @param requestDto
      * @return
      */
@@ -791,8 +827,8 @@ public class UserService {
             pre = ExpressionUtils.and(pre, tlongUser.registDate.lt(requestDto.getEndTime() + " 23:59:59"));
         else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
             pre = ExpressionUtils.and(pre, tlongUser.registDate.gt(requestDto.getStartTime() + " 00:00:00"));
-        pre=ExpressionUtils.and(pre,tlongUser.userType.intValue().eq(1));
-        pre=ExpressionUtils.and(pre,tlongUser.isCompany.intValue().eq(1));
+        pre = ExpressionUtils.and(pre, tlongUser.userType.intValue().eq(1));
+        pre = ExpressionUtils.and(pre, tlongUser.isCompany.intValue().eq(2));
         Page<TlongUser> tlongUsers = appUserRepository.findAll(pre, pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUsers.forEach(one -> {

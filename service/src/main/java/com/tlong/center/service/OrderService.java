@@ -15,6 +15,9 @@ import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
 import com.tlong.center.domain.repository.OrderRepository;
+import com.tlong.center.domain.repository.TlongUserRoleRepository;
+import com.tlong.center.domain.web.QTlongUserRole;
+import com.tlong.center.domain.web.TlongUserRole;
 import com.tlong.center.domain.web.WebOrder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,7 @@ import java.util.List;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
+import static com.tlong.center.domain.web.QTlongUserRole.tlongUserRole;
 import static com.tlong.center.domain.web.QWebOrder.webOrder;
 
 @Component
@@ -39,6 +43,7 @@ public class OrderService {
     final EntityManager entityManager;
     final AppUserRepository appUserRepository;
     final GoodsRepository repository1;
+    final TlongUserRoleRepository tlongUserRoleRepository;
     JPAQueryFactory queryFactory;
 
     @PostConstruct
@@ -46,11 +51,12 @@ public class OrderService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public OrderService(EntityManager entityManager, OrderRepository repository, AppUserRepository appUserRepository, GoodsRepository repository1) {
+    public OrderService(EntityManager entityManager, OrderRepository repository, AppUserRepository appUserRepository, GoodsRepository repository1, TlongUserRoleRepository tlongUserRoleRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
         this.repository1 = repository1;
+        this.tlongUserRoleRepository = tlongUserRoleRepository;
     }
 
     /**
@@ -63,11 +69,11 @@ public class OrderService {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         Iterable<WebGoods> appGoods1;
         if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0)
+            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
                 appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -78,6 +84,7 @@ public class OrderService {
         }
         List<Long> ids = new ArrayList<>();
         appGoods1.forEach(goods -> {
+            System.out.println("---------" + goods.getId());
             ids.add(goods.getId());
         });
         PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
@@ -95,6 +102,14 @@ public class OrderService {
             });
             orders = repository.findAll(pre2[0], pageRequest);
         } else {
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(one.getId()));
+                });
+                orders = repository.findAll(pre2[0],pageRequest);
+            } else
             orders = repository.findAll(pre[0], pageRequest);
         }
 
@@ -112,9 +127,8 @@ public class OrderService {
                     .from(tlongUser, webGoods, webOrder)
                     .where(pre4[0])
                     .fetch();
-
+            Integer userType = user.getUserType();
             tuples.stream().forEach(one -> {
-                int userType = one.get(tlongUser.userType);
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
                 orderRequestDto.setGoodsName(one.get(webGoods.goodsHead));
                 orderRequestDto.setUserName(one.get(tlongUser.realName));
@@ -125,7 +139,7 @@ public class OrderService {
                 orderRequestDto.setGoodsCode(one.get(webGoods.goodsCode));
                 orderRequestDto.setGoodsStar(one.get(webGoods.star));
                 orderRequestDto.setFounderPrice(one.get(webGoods.founderPrice));
-                orderRequestDto.setGoodsPrice(userType == 1 ? one.get(webGoods.publishPrice) : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
+                orderRequestDto.setGoodsPrice(userType == null ? one.get(webGoods.founderPrice) : userType == 1 ? one.get(webGoods.publishPrice) : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
                 orderRequestDto.setPlaceOrderTime(one.get(webOrder.placeOrderTime));
                 if (one.get(webGoods.publishUserId) != null) {
                     TlongUser tlongUser = appUserRepository.findOne(one.get(webGoods.publishUserId));
@@ -150,7 +164,15 @@ public class OrderService {
             });
             orders1 = repository.findAll(pre3[0], pageRequest);
         } else {
-            orders1 = repository.findAll(pre[0]);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre3[0] = ExpressionUtils.or(pre3[0], webOrder.userId.longValue().eq(one.getId()));
+                });
+                orders1 = repository.findAll(pre3[0]);
+            } else
+                orders1 = repository.findAll(pre1[0]);
         }
         orders1.forEach(order -> {
             count[0]++;
@@ -163,11 +185,11 @@ public class OrderService {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         Iterable<WebGoods> appGoods1;
         if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0)
+            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
                 appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -177,16 +199,22 @@ public class OrderService {
             appGoods1 = repository1.findAll();
         }
         List<Long> ids = new ArrayList<>();
+        PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
+        List<OrderRequestDto> requestDtos = new ArrayList<>();
         if (StringUtils.isNotEmpty(requestDto.getGoodsCode())) {
             WebGoods appGoods = repository1.findOne(webGoods.goodsCode.eq(requestDto.getGoodsCode()));
             if (appGoods != null)
                 ids.add(appGoods.getId());
+            else {
+                orderRequestDtoPageResponseDto.setList(requestDtos);
+                orderRequestDtoPageResponseDto.setCount(0);
+                return orderRequestDtoPageResponseDto;
+            }
         } else {
             appGoods1.forEach(goods -> {
                 ids.add(goods.getId());
             });
         }
-        PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<WebOrder> orders;
         final Predicate[] pre = {webOrder.id.isNull()};
@@ -201,10 +229,18 @@ public class OrderService {
             });
             orders = repository.findAll(pre2[0], pageRequest);
         } else {
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(one.getId()));
+                });
+                orders = repository.findAll(pre2[0],pageRequest);
+            } else
             orders = repository.findAll(pre[0], pageRequest);
         }
 
-        List<OrderRequestDto> requestDtos = new ArrayList<>();
+
         orders.forEach(order -> {
             final Predicate[] pre4 = {webOrder.id.isNotNull()};
             pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
@@ -225,9 +261,8 @@ public class OrderService {
                     .from(tlongUser, webGoods, webOrder)
                     .where(pre4[0])
                     .fetch();
-
+            Integer userType = user.getUserType();
             tuples.stream().forEach(one -> {
-                int userType = one.get(tlongUser.userType);
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
                 orderRequestDto.setGoodsName(one.get(webGoods.goodsHead));
                 orderRequestDto.setUserName(one.get(tlongUser.realName));
@@ -238,7 +273,7 @@ public class OrderService {
                 orderRequestDto.setGoodsCode(one.get(webGoods.goodsCode));
                 orderRequestDto.setGoodsStar(one.get(webGoods.star));
                 orderRequestDto.setFounderPrice(one.get(webGoods.founderPrice));
-                orderRequestDto.setGoodsPrice(userType == 1 ? one.get(webGoods.publishPrice) : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
+                orderRequestDto.setGoodsPrice(userType == null ? one.get(webGoods.founderPrice) : userType == 1 ? one.get(webGoods.publishPrice) : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
                 orderRequestDto.setPlaceOrderTime(one.get(webOrder.placeOrderTime));
                 if (one.get(webGoods.publishUserId) != null) {
                     TlongUser tlongUser = appUserRepository.findOne(one.get(webGoods.publishUserId));
@@ -275,7 +310,15 @@ public class OrderService {
             });
             orders1 = repository.findAll(pre3[0], pageRequest);
         } else {
-            orders1 = repository.findAll(pre[0]);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre3[0] = ExpressionUtils.or(pre3[0], webOrder.userId.longValue().eq(one.getId()));
+                });
+                orders1 = repository.findAll(pre3[0]);
+            } else
+            orders1 = repository.findAll(pre1[0]);
         }
         orders1.forEach(order -> {
             count[0]++;

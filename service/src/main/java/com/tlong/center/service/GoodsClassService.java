@@ -92,7 +92,7 @@ public class GoodsClassService {
         else
             appGoodsclass.setGoodsClassLevel(1);
         appGoodsclass.setGoodsClassName(requestDto.getClassName());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         appGoodsclass.setPublishTime(simpleDateFormat.format(new Date()));
         AppGoodsclass appGoodsclass1 = repository.save(appGoodsclass);
         AppGoodsPriceSystem appGoodsPriceSystem = new AppGoodsPriceSystem();

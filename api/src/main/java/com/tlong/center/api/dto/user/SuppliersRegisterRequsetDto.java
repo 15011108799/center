@@ -107,6 +107,15 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("角色名称")
     private String roleName;
 
+    @ApiModelProperty("创始人旗舰店人数")
+    private Integer agentOneNum;
+
+    @ApiModelProperty("旗舰店人数")
+    private Integer agentTwoNum;
+
+    @ApiModelProperty("专卖店人数")
+    private Integer agentThreeNum;
+
     public String getCompanyName() {
         return companyName;
     }
@@ -373,5 +382,29 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     public void setArea(Integer area) {
         this.area = area;
+    }
+
+    public Integer getAgentOneNum() {
+        return agentOneNum;
+    }
+
+    public void setAgentOneNum(Integer agentOneNum) {
+        this.agentOneNum = agentOneNum;
+    }
+
+    public Integer getAgentTwoNum() {
+        return agentTwoNum;
+    }
+
+    public void setAgentTwoNum(Integer agentTwoNum) {
+        this.agentTwoNum = agentTwoNum;
+    }
+
+    public Integer getAgentThreeNum() {
+        return agentThreeNum;
+    }
+
+    public void setAgentThreeNum(Integer agentThreeNum) {
+        this.agentThreeNum = agentThreeNum;
     }
 }
