@@ -99,6 +99,7 @@ public class UserService {
         tlongUser.setIsExemption(requsetDto.getIsExemption());
         tlongUser.setEsgin(0);
         tlongUser.setAuthentication(0);
+        tlongUser.setGoodsClass(requsetDto.getGoodsClass());
         TlongUser user = appUserRepository.save(tlongUser);
         if (requsetDto.getRoleId() != null) {
             TlongUserRole tlongUserRole = new TlongUserRole();
@@ -304,6 +305,7 @@ public class UserService {
         registerRequsetDto.setNickName(tlongUser.getNickName());
         registerRequsetDto.setIsExemption(tlongUser.getIsExemption());
         registerRequsetDto.setUserCode(tlongUser.getUserCode());
+        registerRequsetDto.setGoodsClass(tlongUser.getGoodsClass());
         return registerRequsetDto;
     }
 
@@ -322,6 +324,7 @@ public class UserService {
         tlongUser.setOrgId(requsetDto.getOrgId());
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setEsgin(0);
+        tlongUser.setGoodsClass(requsetDto.getGoodsClass());
         tlongUser.setAuthentication(0);
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
         tlongUser.setCompanyName(requsetDto.getCompanyName());
@@ -369,9 +372,12 @@ public class UserService {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<TlongUser> tlongUser2;
         if (user.getUserType() == null) {
-            if (requestDto.getPid() == null)
-                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")), pageRequest);
-            else
+            if (requestDto.getPid() == null) {
+                if (user.getOrgId() != null)
+                    tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")), pageRequest);
+                else
+                    tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()), pageRequest);
+            } else
                 tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")).and(tlongUser.pid.longValue().eq(requestDto.getPid())), pageRequest);
         } else {
             if (requestDto.getPid() == null) {
@@ -582,11 +588,11 @@ public class UserService {
                 TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
                         .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
                 if (tlongUser != null) {
-                    Iterable<TlongUser> tlongUsers=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like( tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                    Iterable<TlongUser> tlongUsers = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(2)));
-                    Iterable<TlongUser> tlongUsers2=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                    Iterable<TlongUser> tlongUsers2 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(3)));
-                    Iterable<TlongUser> tlongUsers3=appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-')+1,tlongUser.getUserName().length())+"%")
+                    Iterable<TlongUser> tlongUsers3 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(4)));
                     final int[] count = {0};
                     final int[] count1 = {0};

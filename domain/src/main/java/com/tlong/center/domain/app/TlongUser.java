@@ -126,6 +126,9 @@ public class TlongUser extends BaseJpa {
     //所选大区
     private Integer area;
 
+    //上货类别
+    private String goodsClass;
+
     public String getBirthday() {
         return birthday;
     }
@@ -428,5 +431,13 @@ public class TlongUser extends BaseJpa {
 
     public void setArea(Integer area) {
         this.area = area;
+    }
+
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
     }
 }

@@ -49,4 +49,8 @@ public interface WebGoodsClassApi {
     @ApiOperation("商品分类搜索")
     @PostMapping("/searchGoodsType")
     GoodsClassRequestDto searchGoodsType(@RequestBody GoodsTypeSearchRequestDto requestDto);
+
+    @ApiOperation("查询单个分类接口")
+    @PostMapping("/findOneGoodsClass")
+    GoodsTypeResponseDto findOneGoodsClass(@RequestBody  Long id);
 }

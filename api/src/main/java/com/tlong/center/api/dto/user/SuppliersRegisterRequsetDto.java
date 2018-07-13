@@ -116,6 +116,9 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("专卖店人数")
     private Integer agentThreeNum;
 
+    @ApiModelProperty("上货类别")
+    private String goodsClass;
+
     public String getCompanyName() {
         return companyName;
     }
@@ -406,5 +409,13 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     public void setAgentThreeNum(Integer agentThreeNum) {
         this.agentThreeNum = agentThreeNum;
+    }
+
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
     }
 }

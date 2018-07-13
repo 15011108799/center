@@ -276,4 +276,11 @@ public class GoodsClassService {
         goodsClassRequestDto.setGoodsClassTwoDtos(requestTwo);
         return goodsClassRequestDto;
     }
+
+    public GoodsTypeResponseDto findOneGoodsClass(Long id) {
+        AppGoodsclass appGoodsclass=repository.findOne(id);
+        GoodsTypeResponseDto goodsTypeResponseDto=new GoodsTypeResponseDto();
+        goodsTypeResponseDto.setClassName(appGoodsclass.getGoodsClassName());
+        return goodsTypeResponseDto;
+    }
 }
