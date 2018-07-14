@@ -4,11 +4,12 @@ import com.tlong.core.base.BaseJpa;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tlong_goods_class")
 @DynamicUpdate
-public class AppGoodsclass extends BaseJpa {
+public class AppGoodsclass extends BaseJpa{
 
 
     @Id
@@ -32,6 +33,20 @@ public class AppGoodsclass extends BaseJpa {
 
     //是否已删除(1已删除 0未删除)
     private Integer isDeleted = 0;*/
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AppGoodsclass that = (AppGoodsclass) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
 
     public Long getId() {
         return id;
@@ -88,4 +103,5 @@ public class AppGoodsclass extends BaseJpa {
     public void setPublishTime(String publishTime) {
         this.publishTime = publishTime;
     }
+
 }

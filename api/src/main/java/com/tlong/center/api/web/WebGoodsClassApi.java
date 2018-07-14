@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Api("分类管理接口")
@@ -40,11 +42,11 @@ public interface WebGoodsClassApi {
 
     @ApiOperation("查询一级分类接口")
     @PostMapping("/findGoodsClass")
-    List<GoodsTypeResponseDto> findGoodsClass();
+    List<GoodsTypeResponseDto> findGoodsClass(HttpSession session);
 
     @ApiOperation("查询二级分类接口")
     @PostMapping("/findGoodsTwoClass")
-    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id);
+    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id,HttpSession session);
 
     @ApiOperation("商品分类搜索")
     @PostMapping("/searchGoodsType")

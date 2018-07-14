@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -51,13 +52,13 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     }
 
     @Override
-    public List<GoodsTypeResponseDto> findGoodsClass() {
-        return goodsClassService.findGoodsClass();
+    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
+        return goodsClassService.findGoodsClass(session);
     }
 
     @Override
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody Long id) {
-        return goodsClassService.findGoodsTwoClass(id);
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody Long id,HttpSession session) {
+        return goodsClassService.findGoodsTwoClass(id,session);
     }
 
     @Override
