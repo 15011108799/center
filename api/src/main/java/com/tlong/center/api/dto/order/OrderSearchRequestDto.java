@@ -24,6 +24,15 @@ public class OrderSearchRequestDto implements Serializable {
     @ApiModelProperty("结束时间")
     private String endTime;
 
+    @ApiModelProperty("下单人编号")
+    private String placeUsesrCode;
+
+    @ApiModelProperty("下单人用户名")
+    private String placeUserName;
+
+    @ApiModelProperty("发布人编号")
+    private String publishCode;
+
     public PageAndSortRequestDto getPageAndSortRequestDto() {
         return pageAndSortRequestDto;
     }
@@ -62,5 +71,29 @@ public class OrderSearchRequestDto implements Serializable {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public String getPlaceUsesrCode() {
+        return placeUsesrCode;
+    }
+
+    public void setPlaceUsesrCode(String placeUsesrCode) {
+        this.placeUsesrCode = placeUsesrCode;
+    }
+
+    public String getPlaceUserName() {
+        return placeUserName;
+    }
+
+    public void setPlaceUserName(String placeUserName) {
+        this.placeUserName = placeUserName;
+    }
+
+    public String getPublishCode() {
+        return publishCode;
+    }
+
+    public void setPublishCode(String publishCode) {
+        this.publishCode = publishCode;
     }
 }
