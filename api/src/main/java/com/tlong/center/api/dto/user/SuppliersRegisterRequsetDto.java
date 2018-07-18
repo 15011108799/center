@@ -119,6 +119,15 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("上货类别")
     private String goodsClass;
 
+    @ApiModelProperty("订单数")
+    private Integer orderNum;
+
+    @ApiModelProperty("发布价总计")
+    private Double publishPrice;
+
+    @ApiModelProperty("传世旗舰店价格总计")
+    private Double founderPrice;
+
     public String getCompanyName() {
         return companyName;
     }
@@ -417,5 +426,29 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     public void setGoodsClass(String goodsClass) {
         this.goodsClass = goodsClass;
+    }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public Double getPublishPrice() {
+        return publishPrice;
+    }
+
+    public void setPublishPrice(Double publishPrice) {
+        this.publishPrice = publishPrice;
+    }
+
+    public Double getFounderPrice() {
+        return founderPrice;
+    }
+
+    public void setFounderPrice(Double founderPrice) {
+        this.founderPrice = founderPrice;
     }
 }

@@ -41,6 +41,10 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("结束时间")
     private String endTime;
 
+    @ApiModelProperty("是否展示当月")
+    private Integer currentMonth;
+
+
     public PageAndSortRequestDto getPageAndSortRequestDto() {
         return pageAndSortRequestDto;
     }
@@ -119,5 +123,13 @@ public class UserSearchRequestDto implements Serializable {
 
     public void setLevel(Long level) {
         this.level = level;
+    }
+
+    public Integer getCurrentMonth() {
+        return currentMonth;
+    }
+
+    public void setCurrentMonth(Integer currentMonth) {
+        this.currentMonth = currentMonth;
     }
 }

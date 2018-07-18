@@ -241,7 +241,16 @@ public class OrderService {
         PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
         List<OrderRequestDto> requestDtos = new ArrayList<>();
         if (StringUtils.isNotEmpty(requestDto.getGoodsCode())) {
-            WebGoods appGoods = repository1.findOne(webGoods.goodsCode.eq(requestDto.getGoodsCode()));
+            TlongUser one = null;
+            WebGoods appGoods = null;
+            if (StringUtils.isNotEmpty(requestDto.getPublishCode())) {
+                one = appUserRepository.findOne(tlongUser.userCode.eq(requestDto.getPublishCode()));
+                if (one == null)
+                    appGoods = null;
+                else
+                    appGoods = repository1.findOne(webGoods.goodsCode.eq(requestDto.getGoodsCode()).and(webGoods.publishUserId.longValue().eq(one.getId())));
+            } else
+                appGoods = repository1.findOne(webGoods.goodsCode.eq(requestDto.getGoodsCode()));
             if (appGoods != null)
                 ids.add(appGoods.getId());
             else {

@@ -1,7 +1,9 @@
 package com.tlong.center.service;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
@@ -13,19 +15,19 @@ import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.QTlongUser;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.common.user.QTlongUserSettings;
-import com.tlong.center.domain.repository.AppUserRepository;
-import com.tlong.center.domain.repository.TlongRoleRepository;
-import com.tlong.center.domain.repository.TlongUserRoleRepository;
-import com.tlong.center.domain.repository.TlongUserSettingsRepository;
+import com.tlong.center.domain.repository.*;
 import com.tlong.center.domain.web.QTlongRole;
 import com.tlong.center.domain.web.QTlongUserRole;
 import com.tlong.center.domain.web.TlongUserRole;
+import com.tlong.center.domain.web.WebOrder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
+import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
 import static com.tlong.center.domain.web.QTlongUserRole.tlongUserRole;
 import static com.tlong.center.domain.web.QWebOrder.webOrder;
 
@@ -50,6 +53,16 @@ public class UserService {
     private TlongRoleRepository tlongRoleRepository;
     @Autowired
     private CodeService codeService;
+    @Autowired
+    private OrderRepository repository;
+    JPAQueryFactory queryFactory;
+    @Autowired
+    private EntityManager entityManager;
+
+    @PostConstruct
+    public void init() {
+        queryFactory = new JPAQueryFactory(entityManager);
+    }
 
     /**
      * 供应商注册
@@ -563,6 +576,7 @@ public class UserService {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<TlongUserRole> tlongUserRoles;
+
         if (requestDto.getLevel() == 0) {
             tlongUserRoles = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(11), pageRequest);
         } else if (requestDto.getLevel() == 1) {
@@ -571,28 +585,99 @@ public class UserService {
             tlongUserRoles = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(7), pageRequest);
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUserRoles.forEach(one -> {
+            final int[] orderNum = {0};
+            final double[] publishPrice = {0.0};
+            final double[] founderPrice = {0.0};
             if (StringUtils.isEmpty(requestDto.getOrg())) {
-                TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
+                final Predicate[] pre2 = {webOrder.id.isNull()};
+                TlongUser tlongUser1 = appUserRepository.findOne(one.getUserId());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                if (requestDto.getCurrentMonth() != null) {
+                    Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%"));
+                    all.forEach(two -> {
+                        pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(two.getId()));
+                    });
+                    if (requestDto.getCurrentMonth() == 1)
+                        pre2[0] = ExpressionUtils.and(pre2[0], webOrder.placeOrderTime.between(sdf.format(new Date()) + "-01 00:00:00", sdf.format(new Date()) + "-31 23:59:59"));
+                    Iterable<WebOrder> orders = repository.findAll(pre2[0]);
+                    orders.forEach(order -> {
+                        final Predicate[] pre4 = {webOrder.id.isNotNull()};
+                        pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
+                        pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webOrder.goodsId));
+                        pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.longValue().eq(order.getUserId()));
+                        pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.longValue().eq(order.getGoodsId()));
+                        List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userCode, tlongUser.userName, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
+                                webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
+                                webOrder.state, webOrder.placeOrderTime)
+                                .from(tlongUser, webGoods, webOrder)
+                                .where(pre4[0])
+                                .fetch();
+                        tuples.stream().forEach(three -> {
+                            if (three.get(webOrder.state) != null && three.get(webOrder.state) == 0) {
+                                orderNum[0]++;
+                                publishPrice[0] += three.get(webGoods.publishPrice);
+                                founderPrice[0] += three.get(webGoods.founderPrice);
+                            }
+                        });
+                    });
+                }
                 SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                 registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
-                registerRequsetDto.setUserName(tlongUser.getUserName());
-                registerRequsetDto.setId(tlongUser.getId());
-                registerRequsetDto.setPassword(tlongUser.getPassword());
-                registerRequsetDto.setPhone(tlongUser.getPhone());
-                registerRequsetDto.setWx(tlongUser.getWx());
-                registerRequsetDto.setArea(tlongUser.getArea());
-                registerRequsetDto.setOrgId(tlongUser.getOrgId());
-                registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                registerRequsetDto.setUserName(tlongUser1.getUserName());
+                registerRequsetDto.setId(tlongUser1.getId());
+                registerRequsetDto.setPassword(tlongUser1.getPassword());
+                registerRequsetDto.setPhone(tlongUser1.getPhone());
+                registerRequsetDto.setWx(tlongUser1.getWx());
+                registerRequsetDto.setArea(tlongUser1.getArea());
+                registerRequsetDto.setOrgId(tlongUser1.getOrgId());
+                registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
+                registerRequsetDto.setOrderNum(orderNum[0]);
+                registerRequsetDto.setFounderPrice(founderPrice[0]);
                 suppliersRegisterRequsetDtos.add(registerRequsetDto);
             } else {
-                TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
+                final Predicate[] pre2 = {webOrder.id.isNull()};
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                TlongUser tlongUser1 = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
                         .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
-                if (tlongUser != null) {
-                    Iterable<TlongUser> tlongUsers = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
+                if (tlongUser1 != null) {
+                    if (requestDto.getCurrentMonth() != null) {
+                        Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%"));
+                        all.forEach(two -> {
+                            pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(two.getId()));
+                        });
+                        if (requestDto.getCurrentMonth() != null && requestDto.getCurrentMonth() == 1)
+                            pre2[0] = ExpressionUtils.and(pre2[0], webOrder.placeOrderTime.between(sdf.format(new Date()) + "-01 00:00:00", sdf.format(new Date()) + "-31 23:59:59"));
+                        Iterable<WebOrder> orders = repository.findAll(pre2[0]);
+                        orders.forEach(order -> {
+                            final Predicate[] pre4 = {webOrder.id.isNotNull()};
+                            pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
+                            pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webOrder.goodsId));
+                            pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.longValue().eq(order.getUserId()));
+                            pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.longValue().eq(order.getGoodsId()));
+
+                            List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userCode, tlongUser.userName, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
+                                    webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
+                                    webOrder.state, webOrder.placeOrderTime)
+                                    .from(tlongUser, webGoods, webOrder)
+                                    .where(pre4[0])
+                                    .fetch();
+
+                            tuples.stream().forEach(three -> {
+                                if (three.get(webOrder.state) != null && three.get(webOrder.state) == 0) {
+                                    orderNum[0]++;
+                                    publishPrice[0] += three.get(webGoods.publishPrice);
+                                    founderPrice[0] += three.get(webGoods.founderPrice);
+                                }
+                            });
+                        });
+                    }
+                }
+                if (tlongUser1 != null) {
+                    Iterable<TlongUser> tlongUsers = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(2)));
-                    Iterable<TlongUser> tlongUsers2 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
+                    Iterable<TlongUser> tlongUsers2 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(3)));
-                    Iterable<TlongUser> tlongUsers3 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser.getUserName().substring(tlongUser.getUserName().indexOf('-') + 1, tlongUser.getUserName().length()) + "%")
+                    Iterable<TlongUser> tlongUsers3 = appUserRepository.findAll(QTlongUser.tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%")
                             .and(QTlongUser.tlongUser.userType.eq(4)));
                     final int[] count = {0};
                     final int[] count1 = {0};
@@ -607,18 +692,20 @@ public class UserService {
                         count2[0]++;
                     }
                     SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
-                    registerRequsetDto.setId(tlongUser.getId());
+                    registerRequsetDto.setId(tlongUser1.getId());
                     registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
-                    registerRequsetDto.setUserName(tlongUser.getUserName());
-                    registerRequsetDto.setOrgId(tlongUser.getOrgId());
-                    registerRequsetDto.setArea(tlongUser.getArea());
-                    registerRequsetDto.setPassword(tlongUser.getPassword());
-                    registerRequsetDto.setPhone(tlongUser.getPhone());
-                    registerRequsetDto.setWx(tlongUser.getWx());
-                    registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                    registerRequsetDto.setUserName(tlongUser1.getUserName());
+                    registerRequsetDto.setOrgId(tlongUser1.getOrgId());
+                    registerRequsetDto.setArea(tlongUser1.getArea());
+                    registerRequsetDto.setPassword(tlongUser1.getPassword());
+                    registerRequsetDto.setPhone(tlongUser1.getPhone());
+                    registerRequsetDto.setWx(tlongUser1.getWx());
+                    registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
                     registerRequsetDto.setAgentOneNum(count[0]);
                     registerRequsetDto.setAgentTwoNum(count1[0]);
                     registerRequsetDto.setAgentThreeNum(count2[0]);
+                    registerRequsetDto.setOrderNum(orderNum[0]);
+                    registerRequsetDto.setFounderPrice(founderPrice[0]);
                     suppliersRegisterRequsetDtos.add(registerRequsetDto);
                 }
             }
@@ -738,35 +825,71 @@ public class UserService {
     public PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(UserSearchRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
-        Page<TlongUser> tlongUsers;
+        Iterable<TlongUser> tlongUsers;
         Predicate pre = tlongUser.id.isNotNull();
         final Predicate[] pre1 = {tlongUserRole.id.isNull()};
-        if (StringUtils.isNotEmpty(requestDto.getUserName()))
+        if (StringUtils.isNotEmpty(requestDto.getUserName())) {
             pre = ExpressionUtils.and(pre, tlongUser.userName.eq(requestDto.getUserName()));
+        }
         if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
             pre = ExpressionUtils.and(pre, tlongUser.registDate.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
         else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
             pre = ExpressionUtils.and(pre, tlongUser.registDate.lt(requestDto.getEndTime() + " 23:59:59"));
         else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
             pre = ExpressionUtils.and(pre, tlongUser.registDate.gt(requestDto.getStartTime() + " 00:00:00"));
-        tlongUsers = appUserRepository.findAll(pre, pageRequest);
+        tlongUsers = appUserRepository.findAll(pre);
         tlongUsers.forEach(one -> {
             pre1[0] = ExpressionUtils.or(pre1[0], tlongUserRole.userId.longValue().eq(one.getId()));
         });
         Page<TlongUserRole> tlongUserRoles;
         if (requestDto.getLevel() == 0) {
-            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.intValue().eq(11));
+            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.longValue().eq((long) 11));
             tlongUserRoles = tlongUserRoleRepository.findAll(pre1[0], pageRequest);
         } else if (requestDto.getLevel() == 1) {
-            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.intValue().eq(10));
+            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.longValue().eq((long) 10));
             tlongUserRoles = tlongUserRoleRepository.findAll(pre1[0], pageRequest);
         } else {
-            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.intValue().eq(7));
+            pre1[0] = ExpressionUtils.and(pre1[0], tlongUserRole.roleId.longValue().eq((long) 7));
             tlongUserRoles = tlongUserRoleRepository.findAll(pre1[0], pageRequest);
         }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUserRoles.forEach(one -> {
             if (StringUtils.isEmpty(requestDto.getOrg())) {
+                final Predicate[] pre2 = {webOrder.id.isNull()};
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                TlongUser tlongUser1 = appUserRepository.findOne(one.getUserId());
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%"));
+                all.forEach(two -> {
+                    pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(two.getId()));
+                });
+                if (requestDto.getCurrentMonth() != null & requestDto.getCurrentMonth() == 1)
+                    pre2[0] = ExpressionUtils.and(pre2[0], webOrder.placeOrderTime.between(sdf.format(new Date()) + "-01 00:00:00", sdf.format(new Date()) + "-31 23:59:59"));
+                Iterable<WebOrder> orders = repository.findAll(pre2[0]);
+                final int[] orderNum = {0};
+                final double[] publishPrice = {0.0};
+                final double[] founderPrice = {0.0};
+                orders.forEach(order -> {
+                    final Predicate[] pre4 = {webOrder.id.isNotNull()};
+                    pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
+                    pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webOrder.goodsId));
+                    pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.longValue().eq(order.getUserId()));
+                    pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.longValue().eq(order.getGoodsId()));
+
+                    List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userCode, tlongUser.userName, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
+                            webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
+                            webOrder.state, webOrder.placeOrderTime)
+                            .from(tlongUser, webGoods, webOrder)
+                            .where(pre4[0])
+                            .fetch();
+
+                    tuples.stream().forEach(three -> {
+                        if (three.get(webOrder.state) != null && three.get(webOrder.state) == 0) {
+                            orderNum[0]++;
+                            publishPrice[0] += three.get(webGoods.publishPrice);
+                            founderPrice[0] += three.get(webGoods.founderPrice);
+                        }
+                    });
+                });
                 TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
                 SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
                 registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
@@ -778,21 +901,61 @@ public class UserService {
                 registerRequsetDto.setArea(tlongUser.getArea());
                 registerRequsetDto.setOrgId(tlongUser.getOrgId());
                 registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                registerRequsetDto.setOrderNum(orderNum[0]);
+                registerRequsetDto.setFounderPrice(founderPrice[0]);
                 suppliersRegisterRequsetDtos.add(registerRequsetDto);
             } else {
-                TlongUser tlongUser = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
+                final int[] orderNum = {0};
+                final double[] publishPrice = {0.0};
+                final double[] founderPrice = {0.0};
+                final Predicate[] pre2 = {webOrder.id.isNull()};
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                TlongUser tlongUser1 = appUserRepository.findOne(QTlongUser.tlongUser.id.longValue().eq(one.getUserId())
                         .and(QTlongUser.tlongUser.orgId.eq(requestDto.getOrg())));
-                if (tlongUser != null) {
+                if (tlongUser1 != null) {
+                    Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(tlongUser1.getUserName().substring(tlongUser1.getUserName().indexOf('-') + 1, tlongUser1.getUserName().length()) + "%"));
+                    all.forEach(two -> {
+                        pre2[0] = ExpressionUtils.or(pre2[0], webOrder.userId.longValue().eq(two.getId()));
+                    });
+                    if (requestDto.getCurrentMonth() != null & requestDto.getCurrentMonth() == 1)
+                        pre2[0] = ExpressionUtils.and(pre2[0], webOrder.placeOrderTime.between(sdf.format(new Date()) + "-01 00:00:00", sdf.format(new Date()) + "-31 23:59:59"));
+                    Iterable<WebOrder> orders = repository.findAll(pre2[0]);
+
+                    orders.forEach(order -> {
+                        final Predicate[] pre4 = {webOrder.id.isNotNull()};
+                        pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
+                        pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webOrder.goodsId));
+                        pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.longValue().eq(order.getUserId()));
+                        pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.longValue().eq(order.getGoodsId()));
+                        List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userCode, tlongUser.userName, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
+                                webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
+                                webOrder.state, webOrder.placeOrderTime)
+                                .from(tlongUser, webGoods, webOrder)
+                                .where(pre4[0])
+                                .fetch();
+
+                        tuples.stream().forEach(three -> {
+                            if (three.get(webOrder.state) != null && three.get(webOrder.state) == 0) {
+                                orderNum[0]++;
+                                publishPrice[0] += three.get(webGoods.publishPrice);
+                                founderPrice[0] += three.get(webGoods.founderPrice);
+                            }
+                        });
+                    });
+                }
+                if (tlongUser1 != null) {
                     SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
-                    registerRequsetDto.setId(tlongUser.getId());
+                    registerRequsetDto.setId(tlongUser1.getId());
                     registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
-                    registerRequsetDto.setUserName(tlongUser.getUserName());
-                    registerRequsetDto.setOrgId(tlongUser.getOrgId());
-                    registerRequsetDto.setArea(tlongUser.getArea());
-                    registerRequsetDto.setPassword(tlongUser.getPassword());
-                    registerRequsetDto.setPhone(tlongUser.getPhone());
-                    registerRequsetDto.setWx(tlongUser.getWx());
-                    registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+                    registerRequsetDto.setUserName(tlongUser1.getUserName());
+                    registerRequsetDto.setOrgId(tlongUser1.getOrgId());
+                    registerRequsetDto.setArea(tlongUser1.getArea());
+                    registerRequsetDto.setPassword(tlongUser1.getPassword());
+                    registerRequsetDto.setPhone(tlongUser1.getPhone());
+                    registerRequsetDto.setWx(tlongUser1.getWx());
+                    registerRequsetDto.setOrderNum(orderNum[0]);
+                    registerRequsetDto.setFounderPrice(founderPrice[0]);
+                    registerRequsetDto.setRegistDate(tlongUser1.getRegistDate());
                     suppliersRegisterRequsetDtos.add(registerRequsetDto);
                 }
             }
