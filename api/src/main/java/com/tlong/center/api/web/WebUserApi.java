@@ -106,4 +106,12 @@ public interface WebUserApi {
     @ApiOperation("搜索供货商分公司")
     @PostMapping("/searchSupplirtCompany")
     PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto);
+
+    @ApiOperation("查询某公司所有供货商")
+    @PostMapping("/findSupplierByOrg")
+    PageResponseDto<SuppliersRegisterRequsetDto> findSupplierByOrg(@RequestBody PageAndSortRequestDto requestDto);
+
+    @ApiOperation("用户搜索某公司所有供货商")
+    @PostMapping("/searchSupplierByOrg")
+    PageResponseDto<SuppliersRegisterRequsetDto> searchSupplierByOrg(@RequestBody UserSearchRequestDto requestDto);
 }
