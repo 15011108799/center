@@ -46,7 +46,7 @@ public class PartnerService {
         reqDto.setPic(s.substring(0, s.length() - 1));
         reqDto.setTitleIcon(FileUploadUtils.readFile(reqDto.getTitleIcon()));
         reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         reqDto.setIsCheck("0");
         WebPartner webPartner1 = repository.save(new WebPartner(reqDto));

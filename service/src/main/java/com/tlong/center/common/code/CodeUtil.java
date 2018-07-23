@@ -49,11 +49,11 @@ public class CodeUtil {
     public String goodsCode(Integer codeType, Integer userType, int head) {
         String content;
         String code;
-        Integer totalLength1 = 6;
         String placeholder1 = "0";
         List<String> codes = queryFactory.select(tlongCode.code)
                 .from(tlongCode, tlongCodeRule)
                 .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue())
+                        .and(tlongCodeRule.type.intValue().eq(codeType))
                         .and(tlongCodeRule.userType.intValue().eq(userType)))
                 .orderBy(tlongCode.id.desc())
                 .fetch();
@@ -66,6 +66,7 @@ public class CodeUtil {
             return "ERROR";
         }
         //组装编码
+        Integer totalLength1 = tlongCodeRule1.getTotalLength();
         String headContent = tlongCodeRule1.getHeadContent();
         //得到编号
         if (CollectionUtils.isEmpty(codes)) {

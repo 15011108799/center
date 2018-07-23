@@ -36,7 +36,7 @@ public class TlongService {
         if (requestDto.getTitle() == null || requestDto.getContent() == null || requestDto.getTitle().equals("") || requestDto.getContent().equals(""))
             return new Result(0, "输入信息不能为空");
         Tlong tlong = new Tlong(requestDto);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlong.setPublishTime(simpleDateFormat.format(new Date()));
         Tlong tlong1 = repository.save(tlong);
         if (tlong1 == null) {
@@ -73,7 +73,7 @@ public class TlongService {
 
     public Result updateTlongshi(TlongRequestDto requestDto) {
         Tlong tlong = new Tlong(requestDto);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlong.setPublishTime(simpleDateFormat.format(new Date()));
         Tlong tlong1 = repository.save(tlong);
         if (tlong1 == null) {

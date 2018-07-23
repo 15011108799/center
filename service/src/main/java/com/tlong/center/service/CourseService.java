@@ -42,7 +42,7 @@ public class CourseService {
         course.setCatalog(requestDto.getCatalog());
         course.setCurState(requestDto.getCurState());
         course.setDes(requestDto.getDes());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         course.setPublishTime(simpleDateFormat.format(new Date()));
         course.setTeacher(requestDto.getTeacher());
         if (!requestDto.getVideo().equals(""))
@@ -101,7 +101,7 @@ public class CourseService {
         course1.setTeacher(requestDto.getTeacher());
         course1.setCurState(requestDto.getCurState());
         course1.setDes(requestDto.getDes());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         course1.setPublishTime(simpleDateFormat.format(new Date()));
         if (requestDto.getVideo() == null || FileUploadUtils.readFile(requestDto.getVideo()).equals(""))
             course1.setVideo(course.getVideo());

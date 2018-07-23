@@ -38,7 +38,7 @@ public class MessageService {
         message.setContent(requestDto.getContent());
         message.setUserName(requestDto.getUserName());
         message.setState(requestDto.getState());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         message.setPublishTime(simpleDateFormat.format(new Date()));
         Message message1 = appMessageRepository.save(message);
         if (message1 == null) {
@@ -87,7 +87,7 @@ public class MessageService {
         message.setContent(requestDto.getContent());
         message.setState(requestDto.getState());
         message.setUserName(requestDto.getUserName());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         message.setPublishTime(simpleDateFormat.format(new Date()));
         Message message1 = appMessageRepository.save(message);
         if (message1 == null) {

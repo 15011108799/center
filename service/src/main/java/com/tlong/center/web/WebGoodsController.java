@@ -70,4 +70,9 @@ public class WebGoodsController implements WebGoodsApi {
     public Result delBatchGoods(@RequestBody String goodsId) {
         return webGoodsService.delBatchGoods(goodsId);
     }
+
+    @Override
+    public Result publishAgain(@RequestBody String goodsId) {
+        return webGoodsService.publishAgain(goodsId);
+    }
 }

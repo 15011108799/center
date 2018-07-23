@@ -25,6 +25,9 @@ PageAndSortRequestDto implements Serializable{
     @ApiModelProperty("组织")
     private String org;
 
+    @ApiModelProperty("是否展示当月")
+    private Integer currentMonth;
+
     @ApiModelProperty("每页数量")
     private Integer size;
 
@@ -96,5 +99,13 @@ PageAndSortRequestDto implements Serializable{
 
     public void setOrg(String org) {
         this.org = org;
+    }
+
+    public Integer getCurrentMonth() {
+        return currentMonth;
+    }
+
+    public void setCurrentMonth(Integer currentMonth) {
+        this.currentMonth = currentMonth;
     }
 }
