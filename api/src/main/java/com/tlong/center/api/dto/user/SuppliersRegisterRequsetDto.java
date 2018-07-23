@@ -107,6 +107,27 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("角色名称")
     private String roleName;
 
+    @ApiModelProperty("创始人旗舰店人数")
+    private Integer agentOneNum;
+
+    @ApiModelProperty("旗舰店人数")
+    private Integer agentTwoNum;
+
+    @ApiModelProperty("专卖店人数")
+    private Integer agentThreeNum;
+
+    @ApiModelProperty("上货类别")
+    private String goodsClass;
+
+    @ApiModelProperty("订单数")
+    private Integer orderNum;
+
+    @ApiModelProperty("发布价总计")
+    private Double publishPrice;
+
+    @ApiModelProperty("传世旗舰店价格总计")
+    private Double founderPrice;
+
     public String getCompanyName() {
         return companyName;
     }
@@ -373,5 +394,61 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     public void setArea(Integer area) {
         this.area = area;
+    }
+
+    public Integer getAgentOneNum() {
+        return agentOneNum;
+    }
+
+    public void setAgentOneNum(Integer agentOneNum) {
+        this.agentOneNum = agentOneNum;
+    }
+
+    public Integer getAgentTwoNum() {
+        return agentTwoNum;
+    }
+
+    public void setAgentTwoNum(Integer agentTwoNum) {
+        this.agentTwoNum = agentTwoNum;
+    }
+
+    public Integer getAgentThreeNum() {
+        return agentThreeNum;
+    }
+
+    public void setAgentThreeNum(Integer agentThreeNum) {
+        this.agentThreeNum = agentThreeNum;
+    }
+
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
+    }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public Double getPublishPrice() {
+        return publishPrice;
+    }
+
+    public void setPublishPrice(Double publishPrice) {
+        this.publishPrice = publishPrice;
+    }
+
+    public Double getFounderPrice() {
+        return founderPrice;
+    }
+
+    public void setFounderPrice(Double founderPrice) {
+        this.founderPrice = founderPrice;
     }
 }

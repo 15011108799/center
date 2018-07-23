@@ -14,7 +14,9 @@ import com.tlong.center.domain.app.goods.QWebGoods;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
+import com.tlong.center.domain.repository.TlongUserRoleRepository;
 import com.tlong.center.domain.repository.WebEvaluateRepository;
+import com.tlong.center.domain.web.TlongUserRole;
 import com.tlong.center.domain.web.WebEvaluate;
 import com.tlong.center.domain.web.WebOrder;
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +33,7 @@ import java.util.List;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
+import static com.tlong.center.domain.web.QTlongUserRole.tlongUserRole;
 import static com.tlong.center.domain.web.QWebEvaluate.webEvaluate;
 import static com.tlong.center.domain.web.QWebOrder.webOrder;
 
@@ -41,6 +44,7 @@ public class EvaluateService {
     final EntityManager entityManager;
     final AppUserRepository appUserRepository;
     final GoodsRepository repository1;
+    final TlongUserRoleRepository tlongUserRoleRepository;
     JPAQueryFactory queryFactory;
 
     @PostConstruct
@@ -48,11 +52,12 @@ public class EvaluateService {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public EvaluateService(EntityManager entityManager, WebEvaluateRepository repository, AppUserRepository appUserRepository, GoodsRepository repository1) {
+    public EvaluateService(EntityManager entityManager, WebEvaluateRepository repository, AppUserRepository appUserRepository, GoodsRepository repository1, TlongUserRoleRepository tlongUserRoleRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
         this.repository1 = repository1;
+        this.tlongUserRoleRepository = tlongUserRoleRepository;
     }
 
     /**
@@ -65,11 +70,11 @@ public class EvaluateService {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         Iterable<WebGoods> appGoods1;
         if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0)
+            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
                 appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -90,13 +95,22 @@ public class EvaluateService {
             pre[0] = ExpressionUtils.or(pre[0], webEvaluate.goodsId.longValue().eq(one));
         });
         if (user.getUserType() != null && user.getUserType() != 1) {
-            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
-            tlongUser3.forEach(one->{
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")));
+            tlongUser3.forEach(one -> {
                 pre2[0] = ExpressionUtils.or(pre2[0], webEvaluate.userId.longValue().eq(one.getId()));
             });
             evaluates = repository.findAll(pre2[0], pageRequest);
         } else {
-            evaluates = repository.findAll(pre[0], pageRequest);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre2[0] = ExpressionUtils.or(pre2[0], webEvaluate.userId.longValue().eq(one.getId()));
+                });
+                evaluates = repository.findAll(pre2[0], pageRequest);
+            } else {
+                evaluates = repository.findAll(pre[0], pageRequest);
+            }
         }
         List<EvaluateRequestDto> requestDtos = new ArrayList<>();
         evaluates.forEach(evaluate -> {
@@ -126,13 +140,21 @@ public class EvaluateService {
         Iterable<WebEvaluate> evaluates1;
         final Predicate[] pre3 = {webEvaluate.id.isNull()};
         if (user.getUserType() != null && user.getUserType() != 1) {
-            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
-            tlongUser3.forEach(one->{
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")));
+            tlongUser3.forEach(one -> {
                 pre3[0] = ExpressionUtils.or(pre3[0], webEvaluate.userId.longValue().eq(one.getId()));
             });
             evaluates1 = repository.findAll(pre3[0], pageRequest);
         } else {
-            evaluates1 = repository.findAll(pre[0]);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre3[0] = ExpressionUtils.or(pre3[0], webEvaluate.userId.longValue().eq(one.getId()));
+                });
+                evaluates1 = repository.findAll(pre3[0]);
+            } else
+                evaluates1 = repository.findAll(pre[0]);
         }
         evaluates1.forEach(order -> {
             count[0]++;
@@ -143,13 +165,15 @@ public class EvaluateService {
 
     public PageResponseDto<EvaluateRequestDto> searchEvaluate(EvaluateSearchRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        PageResponseDto<EvaluateRequestDto> evaluateRequestDtoPageResponseDto = new PageResponseDto<>();
+        List<EvaluateRequestDto> requestDtos = new ArrayList<>();
         Iterable<WebGoods> appGoods1;
         if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0)
+            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
                 appGoods1 = repository1.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().eq(0)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -162,12 +186,17 @@ public class EvaluateService {
             WebGoods appGoods = repository1.findOne(webGoods.goodsCode.eq(requestDto.getGoodsCode()));
             if (appGoods != null)
                 ids.add(appGoods.getId());
+            else {
+                evaluateRequestDtoPageResponseDto.setList(requestDtos);
+                evaluateRequestDtoPageResponseDto.setCount(0);
+                return evaluateRequestDtoPageResponseDto;
+            }
         } else {
             appGoods1.forEach(goods -> {
                 ids.add(goods.getId());
             });
         }
-        PageResponseDto<EvaluateRequestDto> evaluateRequestDtoPageResponseDto = new PageResponseDto<>();
+
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<WebEvaluate> evaluates;
         final Predicate[] pre = {webEvaluate.id.isNull()};
@@ -176,15 +205,25 @@ public class EvaluateService {
             pre[0] = ExpressionUtils.or(pre[0], webEvaluate.goodsId.longValue().eq(one));
         });
         if (user.getUserType() != null && user.getUserType() != 1) {
-            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
-            tlongUser3.forEach(one->{
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")));
+            tlongUser3.forEach(one -> {
                 pre2[0] = ExpressionUtils.or(pre2[0], webEvaluate.userId.longValue().eq(one.getId()));
             });
+            pre2[0] = ExpressionUtils.and(pre2[0], pre[0]);
             evaluates = repository.findAll(pre2[0], pageRequest);
         } else {
-            evaluates = repository.findAll(pre[0], pageRequest);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre2[0] = ExpressionUtils.or(pre2[0], webEvaluate.userId.longValue().eq(one.getId()));
+                });
+                pre2[0] = ExpressionUtils.and(pre2[0], pre[0]);
+                evaluates = repository.findAll(pre2[0], pageRequest);
+            } else
+                evaluates = repository.findAll(pre[0], pageRequest);
         }
-        List<EvaluateRequestDto> requestDtos = new ArrayList<>();
+
         evaluates.forEach(evaluate -> {
             final Predicate[] pre4 = {webEvaluate.id.isNotNull()};
             pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webEvaluate.goodsId));
@@ -227,8 +266,8 @@ public class EvaluateService {
         Iterable<WebEvaluate> evaluates1;
         final Predicate[] pre3 = {webEvaluate.id.isNull()};
         if (user.getUserType() != null && user.getUserType() != 1) {
-            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId()+"%")));
-            tlongUser3.forEach(one->{
+            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(2).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.like(user.getOrgId() + "%")));
+            tlongUser3.forEach(one -> {
                 pre3[0] = ExpressionUtils.or(pre3[0], webEvaluate.userId.longValue().eq(one.getId()));
                 if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
                     pre1[0] = ExpressionUtils.and(pre1[0], webEvaluate.time.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
@@ -237,9 +276,19 @@ public class EvaluateService {
                 else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
                     pre1[0] = ExpressionUtils.and(pre1[0], webEvaluate.time.gt(requestDto.getStartTime() + " 00:00:00"));
             });
+            pre3[0] = ExpressionUtils.and(pre3[0], pre1[0]);
             evaluates1 = repository.findAll(pre3[0], pageRequest);
         } else {
-            evaluates1 = repository.findAll(pre[0]);
+            TlongUserRole tlongUserRole1 = tlongUserRoleRepository.findOne(tlongUserRole.userId.longValue().eq(user.getId()));
+            if (tlongUserRole1.getRoleId() == 7 || tlongUserRole1.getRoleId() == 10 || tlongUserRole1.getRoleId() == 11) {
+                Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.orgId.like(user.getUserName().substring(user.getUserName().indexOf('-') + 1, user.getUserName().length()) + "%"));
+                all.forEach(one -> {
+                    pre3[0] = ExpressionUtils.or(pre3[0], webEvaluate.userId.longValue().eq(one.getId()));
+                });
+                pre3[0] = ExpressionUtils.and(pre3[0], pre1[0]);
+                evaluates1 = repository.findAll(pre3[0]);
+            } else
+                evaluates1 = repository.findAll(pre[0]);
         }
         evaluates1.forEach(order -> {
             count[0]++;

@@ -11,7 +11,13 @@ public class OrderRequestDto implements Serializable {
     private Long id;
 
     @ApiModelProperty("用户姓名")
+    private String realName;
+
+    @ApiModelProperty("用户名")
     private String userName;
+
+    @ApiModelProperty("用户编码")
+    private String userCode;
 
     @ApiModelProperty("用户手机号")
     private String userPhone;
@@ -28,6 +34,9 @@ public class OrderRequestDto implements Serializable {
     @ApiModelProperty("商品发布人姓名")
     private String publishName;
 
+    @ApiModelProperty("商品发布人编码")
+    private String publishCode;
+
     @ApiModelProperty("商品发布人电话")
     private String publishPhone;
 
@@ -37,8 +46,11 @@ public class OrderRequestDto implements Serializable {
     @ApiModelProperty("商品评星")
     private String goodsStar;
 
-    @ApiModelProperty("商品价格")
+    @ApiModelProperty("下单人成交价格")
     private Double goodsPrice;
+
+    @ApiModelProperty("发布价格")
+    private Double publishPrice;
 
     @ApiModelProperty("创始人旗舰店价格")
     private Double founderPrice;
@@ -159,5 +171,37 @@ public class OrderRequestDto implements Serializable {
 
     public void setFounderPrice(Double founderPrice) {
         this.founderPrice = founderPrice;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getPublishCode() {
+        return publishCode;
+    }
+
+    public void setPublishCode(String publishCode) {
+        this.publishCode = publishCode;
+    }
+
+    public Double getPublishPrice() {
+        return publishPrice;
+    }
+
+    public void setPublishPrice(Double publishPrice) {
+        this.publishPrice = publishPrice;
     }
 }

@@ -54,4 +54,8 @@ public interface WebGoodsApi {
     @ApiModelProperty("批量删除商品")
     @PutMapping("/delBatchGoods")
     Result delBatchGoods(@RequestParam String goodsId);
+
+    @ApiModelProperty("重新发布商品")
+    @PutMapping("/publishAgain")
+    Result publishAgain(@RequestParam String goodsId);
 }

@@ -9,6 +9,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
 import com.tlong.center.domain.app.goods.AppGoodsclass;
 import com.tlong.center.domain.repository.GoodsClassRepository;
@@ -18,10 +19,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.tlong.center.domain.app.goods.QAppGoodsPriceSystem.appGoodsPriceSystem;
@@ -92,7 +95,7 @@ public class GoodsClassService {
         else
             appGoodsclass.setGoodsClassLevel(1);
         appGoodsclass.setGoodsClassName(requestDto.getClassName());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         appGoodsclass.setPublishTime(simpleDateFormat.format(new Date()));
         AppGoodsclass appGoodsclass1 = repository.save(appGoodsclass);
         AppGoodsPriceSystem appGoodsPriceSystem = new AppGoodsPriceSystem();
@@ -166,16 +169,37 @@ public class GoodsClassService {
      *
      * @return
      */
-    public List<GoodsTypeResponseDto> findGoodsClass() {
+    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
-        for (AppGoodsclass goodsclass : goodsclasses) {
-            GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-            goodsTypeResponseDto.setId(goodsclass.getId());
-            goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-            goodsTypeResponseDtos.add(goodsTypeResponseDto);
+        if (user.getUserType() != null && user.getUserType() == 1) {
+            String[] goodsClass = user.getGoodsClass().split(",");
+            if (goodsClass.length==0){
+                return goodsTypeResponseDtos;
+            }
+            HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
+            for (String goodsclass : goodsClass) {
+                AppGoodsclass appGoodsclass = repository.findOne(Long.valueOf(goodsclass));
+                AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.getGoodsClassIdParent());
+                appGoodsclasses.add(appGoodsclass1);
+            }
+            for (AppGoodsclass goodsclass : appGoodsclasses) {
+                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+                goodsTypeResponseDto.setId(goodsclass.getId());
+                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+            }
+            return goodsTypeResponseDtos;
+        } else {
+            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
+            for (AppGoodsclass goodsclass : goodsclasses) {
+                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+                goodsTypeResponseDto.setId(goodsclass.getId());
+                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+            }
+            return goodsTypeResponseDtos;
         }
-        return goodsTypeResponseDtos;
     }
 
     /**
@@ -183,16 +207,36 @@ public class GoodsClassService {
      *
      * @return
      */
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id) {
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id, HttpSession session) {
+        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
-        for (AppGoodsclass goodsclass : goodsclasses) {
-            GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-            goodsTypeResponseDto.setId(goodsclass.getId());
-            goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-            goodsTypeResponseDtos.add(goodsTypeResponseDto);
+        if (user.getUserType() != null && user.getUserType() == 1) {
+            String[] goodsClass = user.getGoodsClass().split(",");
+            if (goodsClass.length==0)
+                return goodsTypeResponseDtos;
+            Predicate pre = appGoodsclass.id.isNull();
+            for (String goodsclass : goodsClass) {
+                pre = ExpressionUtils.or(pre, appGoodsclass.id.longValue().eq(Long.valueOf(goodsclass)));
+            }
+            pre = ExpressionUtils.and(pre, appGoodsclass.goodsClassIdParent.longValue().eq(id));
+            Iterable<AppGoodsclass> goodsclasses = repository.findAll(pre);
+            for (AppGoodsclass goodsclass : goodsclasses) {
+                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+                goodsTypeResponseDto.setId(goodsclass.getId());
+                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+            }
+            return goodsTypeResponseDtos;
+        }else {
+            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
+            for (AppGoodsclass goodsclass : goodsclasses) {
+                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+                goodsTypeResponseDto.setId(goodsclass.getId());
+                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+            }
+            return goodsTypeResponseDtos;
         }
-        return goodsTypeResponseDtos;
     }
 
     public GoodsClassRequestDto findAllGoodsClassByName(String goodsClassName) {
@@ -275,5 +319,12 @@ public class GoodsClassService {
         goodsClassRequestDto.setGoodsClassOneDtos(requestOne);
         goodsClassRequestDto.setGoodsClassTwoDtos(requestTwo);
         return goodsClassRequestDto;
+    }
+
+    public GoodsTypeResponseDto findOneGoodsClass(Long id) {
+        AppGoodsclass appGoodsclass = repository.findOne(id);
+        GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+        goodsTypeResponseDto.setClassName(appGoodsclass.getGoodsClassName());
+        return goodsTypeResponseDto;
     }
 }

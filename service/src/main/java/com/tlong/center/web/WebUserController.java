@@ -137,4 +137,14 @@ public class WebUserController implements WebUserApi {
     public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto) {
         return userService.searchSupplirtCompany(requestDto);
     }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplierByOrg(@RequestBody PageAndSortRequestDto requestDto) {
+        return userService.findSupplierByOrg(requestDto);
+    }
+
+    @Override
+    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplierByOrg(@RequestBody UserSearchRequestDto requestDto) {
+        return userService.searchSupplierByOrg(requestDto);
+    }
 }
