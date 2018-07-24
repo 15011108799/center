@@ -141,11 +141,11 @@ public class OrderService {
 
             tuples.stream().forEach(one -> {
                 Integer userType = one.get(tlongUser.userType);
-                if (one.get(webOrder.state) != null && one.get(webOrder.state) == 0) {
+              /*  if (one.get(webOrder.state) != null && one.get(webOrder.state) == 0) {
                     orderNum[0]++;
                     publishPrice[0] += one.get(webGoods.publishPrice);
                     founderPrice[0] += one.get(webGoods.founderPrice);
-                }
+                }*/
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
                 orderRequestDto.setGoodsName(one.get(webGoods.goodsHead));
                 orderRequestDto.setUserName(one.get(tlongUser.userName));
@@ -203,8 +203,28 @@ public class OrderService {
             }
         }
         orders1.forEach(order -> {
-            count[0]++;
-        });
+                    count[0]++;
+                    final Predicate[] pre4 = {webOrder.id.isNotNull()};
+                    pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.eq(webOrder.userId));
+                    pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.eq(webOrder.goodsId));
+                    pre4[0] = ExpressionUtils.and(pre4[0], tlongUser.id.longValue().eq(order.getUserId()));
+                    pre4[0] = ExpressionUtils.and(pre4[0], webGoods.id.longValue().eq(order.getGoodsId()));
+
+                    List<Tuple> tuples = queryFactory.select(tlongUser.realName, tlongUser.phone, tlongUser.userCode, tlongUser.userName, tlongUser.userType, webGoods.goodsHead, webGoods.goodsPic, webGoods.publishUserId, webGoods.star,
+                            webGoods.goodsCode, webGoods.factoryPrice, webGoods.flagshipPrice, webGoods.founderPrice, webGoods.publishPrice, webGoods.storePrice,
+                            webOrder.state, webOrder.placeOrderTime)
+                            .from(tlongUser, webGoods, webOrder)
+                            .where(pre4[0])
+                            .fetch();
+
+                    tuples.stream().forEach(one -> {
+                        if (one.get(webOrder.state) != null && one.get(webOrder.state) == 0) {
+                            orderNum[0]++;
+                            publishPrice[0] += one.get(webGoods.publishPrice);
+                            founderPrice[0] += one.get(webGoods.founderPrice);
+                        }
+                    });
+                });
         orderRequestDtoPageResponseDto.setCount(count[0]);
         orderRequestDtoPageResponseDto.setOrderNum(orderNum[0]);
         orderRequestDtoPageResponseDto.setFounderPrice(founderPrice[0]);

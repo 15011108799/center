@@ -5,19 +5,25 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.course.AppCourseRequestDto;
 import com.tlong.center.api.dto.course.CourseSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
+import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 @Api("课程管理接口")
 public interface WebCourseApi {
-    @ApiOperation("课程添加接口")
+    @ApiModelProperty("课程添加接口")
     @PostMapping("/addCourse")
-    Result addCourse(@RequestBody AppCourseRequestDto requestDto);
+    Result addCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto);
 
     @ApiOperation("课程查询接口")
     @PostMapping("/findAllCourse")
@@ -30,7 +36,7 @@ public interface WebCourseApi {
 
     @ApiOperation("修改课程接口")
     @PostMapping("/updateCourse")
-    Result updateCourse(@RequestBody AppCourseRequestDto requestDto);
+    Result updateCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto);
 
 
     @ApiOperation("查找单条课程接口")
