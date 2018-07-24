@@ -41,7 +41,10 @@ server:
     port: 8083
 
 #servers:
-#  url: https://localhost:8083
+#  url: https://47.96.66.66:8083
+#sop:
+#  swagger:
+#    host: 47.96.66.66
 
 feign:
   hystrix:

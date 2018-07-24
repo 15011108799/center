@@ -6,7 +6,6 @@ import com.tlong.center.api.dto.app.clazz.ClazzStyleResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginRequestDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
-import com.tlong.center.api.exception.NosuchRecordException;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.course.ClazzStyle;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -36,7 +34,7 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 @Transactional
 public class AppService {
 
-    private final Logger log  = LoggerFactory.getLogger(AppService.class);
+    private final Logger logger  = LoggerFactory.getLogger(AppService.class);
 
     @Autowired
     private TlongUserRepository tlongUserRepository;

@@ -20,7 +20,6 @@ public interface AppAreaApi {
     @PostMapping("/searchArea") //TODO 联动查询
     AppSearchAreaResponseDto searchArea(@RequestBody AppSearchAreaRequestDto requestDto);
 
-
     @ApiOperation("修改地域信息")
     @PostMapping("/updateArea")
     Boolean updateArea(@RequestBody AppUpdateAreaRequestDto requestDto);

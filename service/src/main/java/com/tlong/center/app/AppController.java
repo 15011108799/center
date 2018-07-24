@@ -1,6 +1,6 @@
 package com.tlong.center.app;
 
-import com.tlong.center.api.app.AppApi;
+import com.tlong.center.api.app.AppBaseApi;
 import com.tlong.center.api.dto.app.clazz.ClazzResponseDto;
 import com.tlong.center.api.dto.app.clazz.ClazzStyleResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginRequestDto;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/app/user")
-public class AppController implements AppApi {
+public class AppController implements AppBaseApi {
 
 
 

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@Api("APP接口")
-public interface AppApi {
+@Api("APP基本接口")
+public interface AppBaseApi {
 
     @ApiOperation("APP登录接口")
     @PostMapping("/login")
@@ -24,7 +24,6 @@ public interface AppApi {
     @ApiOperation("根据id获取用户信息")
     @PostMapping("/userInfo/{userId}")
     AppUserResponseDto userInfo(@PathVariable Long userId);
-
 
     //供应商
     @ApiOperation("获取下级代理商")

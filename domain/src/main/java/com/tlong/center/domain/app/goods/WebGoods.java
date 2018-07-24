@@ -123,6 +123,12 @@ public class WebGoods extends BaseJpa {
     //是否审核
     private Integer isCheck;
 
+    //当前状态
+    private Integer curState;
+
+    //是否删除
+    private Integer isDeleted;
+
     public Integer getIsCheck() {
         return isCheck;
     }
@@ -377,5 +383,22 @@ public class WebGoods extends BaseJpa {
 
     public void setPhoneService(String phoneService) {
         this.phoneService = phoneService;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Integer getCurState() {
+
+        return curState;
+    }
+
+    public void setCurState(Integer curState) {
+        this.curState = curState;
     }
 }

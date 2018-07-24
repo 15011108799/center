@@ -143,36 +143,28 @@ public class TlongUser{
     //上货类别
     private String goodsClass;
 
-    public String getBirthday() {
-        return birthday;
+    public Long getId() {
+        return id;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public Integer getGoodsPublishNum() {
-        return goodsPublishNum;
+    public String getPassword() {
+        return password;
     }
 
-    public void setGoodsPublishNum(Integer goodsPublishNum) {
-        this.goodsPublishNum = goodsPublishNum;
-    }
-
-    public String getRegistDate() {
-        return registDate;
-    }
-
-    public void setRegistDate(String registDate) {
-        this.registDate = registDate;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUserCode() {
@@ -183,62 +175,6 @@ public class TlongUser{
         this.userCode = userCode;
     }
 
-    public String getOrganizationCode() {
-        return organizationCode;
-    }
-
-    public void setOrganizationCode(String organizationCode) {
-        this.organizationCode = organizationCode;
-    }
-
-    public String getSucc() {
-        return succ;
-    }
-
-    public void setSucc(String succ) {
-        this.succ = succ;
-    }
-
-    public String getLegalPersonName() {
-        return legalPersonName;
-    }
-
-    public void setLegalPersonName(String legalPersonName) {
-        this.legalPersonName = legalPersonName;
-    }
-
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
-
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getOrginPhone() {
-        return orginPhone;
-    }
-
-    public void setOrginPhone(String orginPhone) {
-        this.orginPhone = orginPhone;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
     public Integer getUserType() {
         return userType;
     }
@@ -247,12 +183,20 @@ public class TlongUser{
         this.userType = userType;
     }
 
-    public Integer getEsgin() {
-        return esgin;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setEsgin(Integer esgin) {
-        this.esgin = esgin;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getPremises() {
+        return premises;
+    }
+
+    public void setPremises(String premises) {
+        this.premises = premises;
     }
 
     public Integer getIsCompany() {
@@ -261,6 +205,22 @@ public class TlongUser{
 
     public void setIsCompany(Integer isCompany) {
         this.isCompany = isCompany;
+    }
+
+    public Integer getIsExemption() {
+        return isExemption;
+    }
+
+    public void setIsExemption(Integer isExemption) {
+        this.isExemption = isExemption;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getHeadImage() {
@@ -277,6 +237,62 @@ public class TlongUser{
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getWx() {
+        return wx;
+    }
+
+    public void setWx(String wx) {
+        this.wx = wx;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getServiceHotline() {
+        return serviceHotline;
+    }
+
+    public void setServiceHotline(String serviceHotline) {
+        this.serviceHotline = serviceHotline;
+    }
+
+    public String getOrginPhone() {
+        return orginPhone;
+    }
+
+    public void setOrginPhone(String orginPhone) {
+        this.orginPhone = orginPhone;
+    }
+
+    public Integer getEsgin() {
+        return esgin;
+    }
+
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
     }
 
     public String getPhone() {

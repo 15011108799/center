@@ -2,6 +2,7 @@ package com.tlong.center.api.dto.common;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 
 import java.io.Serializable;
 
@@ -12,6 +13,9 @@ PageAndSortRequestDto implements Serializable{
 
     @ApiModelProperty("起始页")
     private Integer page;
+
+    @ApiModelProperty("商品分类id")
+    private Long goodsClassId;
 
     @ApiModelProperty("类型")
     private Integer type;
@@ -107,5 +111,13 @@ PageAndSortRequestDto implements Serializable{
 
     public void setCurrentMonth(Integer currentMonth) {
         this.currentMonth = currentMonth;
+    }
+
+    public Long getGoodsClassId() {
+        return goodsClassId;
+    }
+
+    public void setGoodsClassId(Long goodsClassId) {
+        this.goodsClassId = goodsClassId;
     }
 }
