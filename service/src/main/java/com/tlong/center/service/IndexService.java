@@ -1,12 +1,12 @@
 package com.tlong.center.service;
 
 import com.tlong.center.api.dto.AppSlidesShowResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsRequestDto;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.AppCategoryResponseDto;
-import com.tlong.center.api.dto.goods.AppIndexGoodsDetailResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.AppCategory;
-import com.tlong.center.domain.app.goods.AppGoods;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.app.AppSlideshow;
 import com.tlong.center.domain.repository.AppCategoryRepository;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static com.tlong.center.domain.app.QAppCategory.appCategory;
 import static com.tlong.center.domain.app.QAppSlideshow.appSlideshow;
-import static com.tlong.center.domain.app.goods.QAppGoods.appGoods;
+import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
 
 
 @Component
@@ -63,38 +63,40 @@ public class IndexService {
     /**
      * 商品类别获取
      */
-    public AppCategoryResponseDto category() {
+    public List<AppCategoryResponseDto> category() {
         Iterable<AppCategory> all = appCategoryRepository.findAll(appCategory.curState.ne(0));
-        List returnList = new ArrayList();
+        List<AppCategoryResponseDto> returnList = new ArrayList();
 
-        all.forEach(one -> returnList.add(one.getCategoryName()));
-
-        AppCategoryResponseDto responseDto = new AppCategoryResponseDto();
-        responseDto.setCategoryList(returnList);
-        return responseDto;
+        all.forEach(one ->{
+            AppCategoryResponseDto dto = new AppCategoryResponseDto();
+            dto.setGoodsClassId(one.getGoodsClassId());
+            dto.setCategoryName(one.getCategoryName());
+            returnList.add(dto);
+        } );
+        return returnList;
     }
 
     /**
      * 首页商品详情
      */
-    public Page<AppIndexGoodsDetailResponseDto> indexGoodsDetail(PageAndSortRequestDto requestDto) {
+    public Page<AppIndexGoodsResponseDto> indexGoodsDetail(AppIndexGoodsRequestDto requestDto) {
         //处理分页排序逻辑
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
 
-        /*Page<AppGoods> all = appGoodsRepository.findAll(appGoods.curState.eq(1), pageRequest);
+        Page<WebGoods> all = appGoodsRepository.findAll(webGoods.curState.eq(1)
+                .and(webGoods.goodsClassId.eq(requestDto.getGoodsClassId())), pageRequest);
 
         //变换
         return all.map(one->{
-            AppIndexGoodsDetailResponseDto responseDto = new AppIndexGoodsDetailResponseDto();
+            AppIndexGoodsResponseDto responseDto = new AppIndexGoodsResponseDto();
             responseDto.setId(one.getId());
-            responseDto.setGoodsName(one.getGoodsName());
+            responseDto.setGoodsName(one.getGoodsHead());
             responseDto.setGoodsCode(one.getGoodsCode());
             responseDto.setFactoryPrice(one.getFactoryPrice());
-            List<String> picUrls = this.stringToList(one.getPicUrls());
-            responseDto.setPicUrls(picUrls);
+            String[] split = one.getGoodsPic().split(",");
+            responseDto.setPicUrl(split[0]);
             return responseDto;
-        });*/
-        return null;
+        });
     }
 
 

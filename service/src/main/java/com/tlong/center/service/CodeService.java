@@ -7,15 +7,17 @@ import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.domain.common.code.TlongCodeRule;
 import com.tlong.center.domain.repository.TlongCodeRepository;
 import com.tlong.center.domain.repository.TlongCodeRuleRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tlong.center.domain.common.QTlongCode.tlongCode;
+import static com.tlong.center.domain.common.code.QTlongCode.tlongCode;
 import static com.tlong.center.domain.common.code.QTlongCodeRule.tlongCodeRule;
 import static com.tlong.center.domain.common.user.QTlongUserSettings.tlongUserSettings;
 
@@ -41,7 +43,7 @@ public class CodeService {
 
 
     /**
-     * 设置或者修改商品编码前缀规则
+     * 设置或者修改商品编码前缀规则 数据库需要预设置 只提供修改功能不提供新增功能
      */
     public void updateCodeRule(TlongUserSettingsRequestDto req) {
         TlongCodeRule one = repository.findOne(tlongCodeRule.userType.eq(0)

@@ -1,16 +1,26 @@
 package com.tlong.center.domain.app;
 
-import com.tlong.core.base.BaseJpa;
+import com.tlong.center.api.dto.app.user.AppUserResponseDto;
+import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "tlong_user")
 @DynamicUpdate
-public class TlongUser extends BaseJpa {
+public class TlongUser{
+
+    public TlongUser() {
+    }
+
+    public AppUserResponseDto toAppUserResponseDto() {
+        AppUserResponseDto dto = new AppUserResponseDto();
+        PropertyUtils.copyPropertiesOfNotNull(this,dto);
+        return dto;
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,47 +29,59 @@ public class TlongUser extends BaseJpa {
     //账户
     private String userName;
 
-    //父id
-    private Long pid;
-
     //密码
     private String password;
 
-    //当前状态(1启用 0禁用)
-    private Integer curState = 1;
-
-    //是否已删除(1已删除 0未删除)
-    private Integer isDeleted;
-
-    //真实姓名
-    private String realName;
-
-    //创建人原始用户名
-    private String orginPhone;
-
-    //性别
-    private String sex;
+    //用户编号
+    private String userCode;
 
     //用户类型（1 供应商  2 代理人）
     private Integer userType;
 
-    //E签宝认证状态（1 认证通过  0 未认证）
-    private Integer esgin;
+    //用户机构id
+    private String orgId;
 
-    //加入时间
-    private LocalDateTime joinTime;
+    //经营地
+    private String premises;
 
-    //是否为集团类型(1 是  0 不是)
+    //是否企业
     private Integer isCompany;
 
     //是否免检(1 免检  0 不是)
     private Integer isExemption;
+
+    //昵称
+    private String nickName;
 
     //头像地址
     private String headImage;
 
     //年龄
     private Integer age;
+
+    //性别
+    private String sex;
+
+    //微信
+    private String wx;
+
+    //真实姓名
+    private String realName;
+
+    //服务热线
+    private String serviceHotline;
+
+    //创建人原始用户名
+    private String orginPhone;
+
+    //E签宝认证状态（1 认证通过  0 未认证）
+    private Integer esgin;
+
+    //后台认证
+    private Integer authentication;
+
+//    //加入时间(注册时间)
+//    private Date joinTime;
 
     //绑定手机号
     private String phone;
@@ -73,32 +95,23 @@ public class TlongUser extends BaseJpa {
     //身份证反面照
     private String idcardReverse;
 
-    //微信
-    private String wx;
-
-    //昵称
-    private String nickName;
-
-    //服务热线
-    private String serviceHotline;
-
-    //后台认证
-    private Integer authentication;
-
     //父级代理id
     private Long parentId;
 
     //代理人等级
     private Integer level;
 
-    //经营地
-    private String premises;
+    //E签宝证书编号
+    private String evId;
 
-    //所属部门
-    private String orgId;
+    //当前状态(1启用 0禁用)
+    private Integer curState = 1;
 
-    //用户编号
-    private String userCode;
+    //是否已删除(1已删除 0未删除)
+    private Integer isDeleted;
+
+    //创建时间
+    private Date createDate;
 
     //组织机构代码
     private String organizationCode;
@@ -112,6 +125,7 @@ public class TlongUser extends BaseJpa {
     //营业执照照片
     private String businessLicense;
 
+    //注册时间
     private String registDate;
 
     //商品发布个数
@@ -123,42 +137,34 @@ public class TlongUser extends BaseJpa {
     //企业名称
     private String companyName;
 
-    //所选大区
+    //所选区域
     private Integer area;
 
     //上货类别
     private String goodsClass;
 
-    public String getBirthday() {
-        return birthday;
+    public Long getId() {
+        return id;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public Integer getGoodsPublishNum() {
-        return goodsPublishNum;
+    public String getPassword() {
+        return password;
     }
 
-    public void setGoodsPublishNum(Integer goodsPublishNum) {
-        this.goodsPublishNum = goodsPublishNum;
-    }
-
-    public String getRegistDate() {
-        return registDate;
-    }
-
-    public void setRegistDate(String registDate) {
-        this.registDate = registDate;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUserCode() {
@@ -169,62 +175,6 @@ public class TlongUser extends BaseJpa {
         this.userCode = userCode;
     }
 
-    public String getOrganizationCode() {
-        return organizationCode;
-    }
-
-    public void setOrganizationCode(String organizationCode) {
-        this.organizationCode = organizationCode;
-    }
-
-    public String getSucc() {
-        return succ;
-    }
-
-    public void setSucc(String succ) {
-        this.succ = succ;
-    }
-
-    public String getLegalPersonName() {
-        return legalPersonName;
-    }
-
-    public void setLegalPersonName(String legalPersonName) {
-        this.legalPersonName = legalPersonName;
-    }
-
-    public String getBusinessLicense() {
-        return businessLicense;
-    }
-
-    public void setBusinessLicense(String businessLicense) {
-        this.businessLicense = businessLicense;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getOrginPhone() {
-        return orginPhone;
-    }
-
-    public void setOrginPhone(String orginPhone) {
-        this.orginPhone = orginPhone;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
     public Integer getUserType() {
         return userType;
     }
@@ -233,12 +183,20 @@ public class TlongUser extends BaseJpa {
         this.userType = userType;
     }
 
-    public Integer getEsgin() {
-        return esgin;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setEsgin(Integer esgin) {
-        this.esgin = esgin;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getPremises() {
+        return premises;
+    }
+
+    public void setPremises(String premises) {
+        this.premises = premises;
     }
 
     public Integer getIsCompany() {
@@ -247,6 +205,22 @@ public class TlongUser extends BaseJpa {
 
     public void setIsCompany(Integer isCompany) {
         this.isCompany = isCompany;
+    }
+
+    public Integer getIsExemption() {
+        return isExemption;
+    }
+
+    public void setIsExemption(Integer isExemption) {
+        this.isExemption = isExemption;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getHeadImage() {
@@ -263,6 +237,62 @@ public class TlongUser extends BaseJpa {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getWx() {
+        return wx;
+    }
+
+    public void setWx(String wx) {
+        this.wx = wx;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getServiceHotline() {
+        return serviceHotline;
+    }
+
+    public void setServiceHotline(String serviceHotline) {
+        this.serviceHotline = serviceHotline;
+    }
+
+    public String getOrginPhone() {
+        return orginPhone;
+    }
+
+    public void setOrginPhone(String orginPhone) {
+        this.orginPhone = orginPhone;
+    }
+
+    public Integer getEsgin() {
+        return esgin;
+    }
+
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
     }
 
     public String getPhone() {
@@ -297,36 +327,28 @@ public class TlongUser extends BaseJpa {
         this.idcardReverse = idcardReverse;
     }
 
-    public String getWx() {
-        return wx;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setWx(String wx) {
-        this.wx = wx;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
-    public Long getId() {
-        return id;
+    public Integer getLevel() {
+        return level;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEvId() {
+        return evId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEvId(String evId) {
+        this.evId = evId;
     }
 
     public Integer getCurState() {
@@ -345,84 +367,76 @@ public class TlongUser extends BaseJpa {
         this.isDeleted = isDeleted;
     }
 
-    public LocalDateTime getJoinTime() {
-        return joinTime;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setJoinTime(LocalDateTime joinTime) {
-        this.joinTime = joinTime;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
-    public Integer getIsExemption() {
-        return isExemption;
+    public String getOrganizationCode() {
+        return organizationCode;
     }
 
-    public void setIsExemption(Integer isExemption) {
-        this.isExemption = isExemption;
+    public void setOrganizationCode(String organizationCode) {
+        this.organizationCode = organizationCode;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getSucc() {
+        return succ;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setSucc(String succ) {
+        this.succ = succ;
     }
 
-    public String getServiceHotline() {
-        return serviceHotline;
+    public String getLegalPersonName() {
+        return legalPersonName;
     }
 
-    public void setServiceHotline(String serviceHotline) {
-        this.serviceHotline = serviceHotline;
+    public void setLegalPersonName(String legalPersonName) {
+        this.legalPersonName = legalPersonName;
     }
 
-    public Integer getAuthentication() {
-        return authentication;
+    public String getBusinessLicense() {
+        return businessLicense;
     }
 
-    public void setAuthentication(Integer authentication) {
-        this.authentication = authentication;
+    public void setBusinessLicense(String businessLicense) {
+        this.businessLicense = businessLicense;
     }
 
-    public Long getParentId() {
-        return parentId;
+    public String getRegistDate() {
+        return registDate;
     }
 
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    public void setRegistDate(String registDate) {
+        this.registDate = registDate;
     }
 
-    public Integer getLevel() {
-        return level;
+    public Integer getGoodsPublishNum() {
+        return goodsPublishNum;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setGoodsPublishNum(Integer goodsPublishNum) {
+        this.goodsPublishNum = goodsPublishNum;
     }
 
-    public String getPremises() {
-        return premises;
+    public String getBirthday() {
+        return birthday;
     }
 
-    public void setPremises(String premises) {
-        this.premises = premises;
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
-    }
-
-    public Long getPid() {
-        return pid;
-    }
-
-    public void setPid(Long pid) {
-        this.pid = pid;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Integer getArea() {

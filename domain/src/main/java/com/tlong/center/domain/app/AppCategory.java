@@ -14,6 +14,9 @@ public class AppCategory extends BaseJpa {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    //商品分类did
+    private Long goodsClassId;
+
     //类别名称
     private String categoryName;
 
@@ -53,5 +56,13 @@ public class AppCategory extends BaseJpa {
 
     public void setIsDeleted(Integer isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public Long getGoodsClassId() {
+        return goodsClassId;
+    }
+
+    public void setGoodsClassId(Long goodsClassId) {
+        this.goodsClassId = goodsClassId;
     }
 }

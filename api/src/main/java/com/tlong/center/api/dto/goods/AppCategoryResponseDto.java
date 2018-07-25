@@ -10,13 +10,24 @@ public class AppCategoryResponseDto implements Serializable{
     private static final long serialVersionUID = -6442184984901664701L;
 
     //商品类别列表
-    private List<String> categoryList;
+    private Long goodsClassId;
 
-    public List<String> getCategoryList() {
-        return categoryList;
+    //商品费类型名称
+    private String categoryName;
+
+    public Long getGoodsClassId() {
+        return goodsClassId;
     }
 
-    public void setCategoryList(List<String> categoryList) {
-        this.categoryList = categoryList;
+    public void setGoodsClassId(Long goodsClassId) {
+        this.goodsClassId = goodsClassId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

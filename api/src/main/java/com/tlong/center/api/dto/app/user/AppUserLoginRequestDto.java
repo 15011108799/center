@@ -1,4 +1,4 @@
-package com.tlong.center.api.dto;
+package com.tlong.center.api.dto.app.user;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 @ApiModel("APP登录请求数据模型")
-public class AppUserRequestDto implements Serializable{
+public class AppUserLoginRequestDto implements Serializable{
     private static final long serialVersionUID = -6604349839124806064L;
 
     @ApiModelProperty("用户名")
