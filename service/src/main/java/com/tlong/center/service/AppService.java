@@ -1,6 +1,5 @@
 package com.tlong.center.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.app.clazz.ClazzResponseDto;
 import com.tlong.center.api.dto.app.clazz.ClazzStyleResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginRequestDto;
@@ -13,13 +12,9 @@ import com.tlong.center.domain.app.course.Course;
 import com.tlong.center.domain.repository.ClazzStyleRepository;
 import com.tlong.center.domain.repository.CourseRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,27 +29,29 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 @Transactional
 public class AppService {
 
-    private final Logger logger  = LoggerFactory.getLogger(AppService.class);
+    private final TlongUserRepository tlongUserRepository;
+
+    private final ClazzStyleRepository clazzStyleRepository;
+
+    private final CourseRepository courseRepository;
 
     @Autowired
-    private TlongUserRepository tlongUserRepository;
-
-    @Autowired
-    private ClazzStyleRepository clazzStyleRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private EntityManager entityManager;
-
-    private JPAQueryFactory queryFactory;
-
-
-    @PostConstruct
-    public void init() {
-        queryFactory = new JPAQueryFactory(entityManager);
+    public AppService(TlongUserRepository tlongUserRepository, ClazzStyleRepository clazzStyleRepository, CourseRepository courseRepository) {
+        this.tlongUserRepository = tlongUserRepository;
+        this.clazzStyleRepository = clazzStyleRepository;
+        this.courseRepository = courseRepository;
     }
+
+//    @Autowired
+//    private EntityManager entityManager;
+//
+//    private JPAQueryFactory queryFactory;
+//
+//
+//    @PostConstruct
+//    public void init() {
+//        queryFactory = new JPAQueryFactory(entityManager);
+//    }
 
     /**
      * app登录业务
@@ -70,13 +67,11 @@ public class AppService {
 
     /**
      * 根据用户id获取用户基本信息
-     * @param userId
-     * @return
      */
     public AppUserResponseDto userInfo(Long userId) {
         TlongUser one = tlongUserRepository.findOne(userId);
         AppUserResponseDto responseDto = new AppUserResponseDto();
-        if (Objects.isNull(one)){
+        if (!Objects.isNull(one)){
            responseDto.setEvId(one.getEvId());
            responseDto.setHeadImage(one.getHeadImage());
            responseDto.setNickName(one.getNickName());
@@ -90,8 +85,6 @@ public class AppService {
 
     /**
      * 根据用户id获取下级代理商信息
-     * @param userId
-     * @return
      */
     public List<AppUserResponseDto> children(Long userId) {
         Iterable<TlongUser> all = tlongUserRepository.findAll(tlongUser.parentId.eq(userId));
@@ -102,18 +95,14 @@ public class AppService {
 
     /**
      * 获取课程类型列表
-     * @return
      */
     public List<ClazzStyleResponseDto> clazzStyles() {
         List<ClazzStyle> all = clazzStyleRepository.findAll();
-        List<ClazzStyleResponseDto> collect = all.stream().map((one -> one.toDto())).collect(Collectors.toList());
-        return collect;
+        return all.stream().map((ClazzStyle::toDto)).collect(Collectors.toList());
     }
 
     /**
      * 获取课程列表
-     * @param clazzId
-     * @return
      */
     public List<ClazzResponseDto> clazzList(Long clazzId) {
         Iterable<Course> all = courseRepository.findAll(course.styleId.eq(clazzId));
@@ -121,6 +110,6 @@ public class AppService {
             return null;
         }
         List<Course> courses = ToListUtil.IterableToList(all);
-        return courses.stream().map(one -> one.toClazzResponseDto()).collect(Collectors.toList());
+        return courses.stream().map(Course::toClazzResponseDto).collect(Collectors.toList());
     }
 }

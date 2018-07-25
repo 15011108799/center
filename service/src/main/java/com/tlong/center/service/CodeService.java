@@ -7,12 +7,10 @@ import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.domain.common.code.TlongCodeRule;
 import com.tlong.center.domain.repository.TlongCodeRepository;
 import com.tlong.center.domain.repository.TlongCodeRuleRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -27,8 +25,8 @@ public class CodeService {
 
     final EntityManager entityManager;
     final TlongCodeRuleRepository repository;
-    final TlongCodeRepository codeRepository;
-    JPAQueryFactory queryFactory;
+    private final TlongCodeRepository codeRepository;
+    private JPAQueryFactory queryFactory;
 
     @PostConstruct
     public void init() {
@@ -51,7 +49,7 @@ public class CodeService {
         TlongCodeRule two = repository.findOne(tlongCodeRule.userType.eq(1)
                 .and(tlongCodeRule.type.eq(1)));
 
-        int head=0;
+        int head;
         if (Objects.nonNull(one)) {
             head=one.getHeadContent().length();
             one.setHeadContent(req.getPersonHeadContent());
@@ -109,11 +107,11 @@ public class CodeService {
                         .and(tlongCodeRule.userType.eq(tlongUserSettings.userType))
                         .and(tlongCodeRule.userType.intValue().eq(0)))
                 .fetch();
-        tuples.stream().forEach(one -> {
+        tuples.forEach(one -> {
             requestDto.setPersonHeadContent(one.get(tlongCodeRule.headContent));
             requestDto.setPersonReleaseNumber(one.get(tlongUserSettings.goodsReleaseNumber));
             requestDto.setPersonReReleaseNumber(one.get(tlongUserSettings.goodsReReleaseNumber));
-            requestDto.setPersonBehind(one.get(tlongCode.code).substring(one.get(tlongCodeRule.headContent).length(), one.get(tlongCode.code).length()));
+            requestDto.setPersonBehind(Objects.requireNonNull(one.get(tlongCode.code)).substring(Objects.requireNonNull(one.get(tlongCodeRule.headContent)).length(), Objects.requireNonNull(one.get(tlongCode.code)).length()));
         });
         List<Tuple> tuples1 = queryFactory.select(tlongCode.code, tlongCodeRule.headContent, tlongUserSettings.goodsReleaseNumber, tlongUserSettings.goodsReReleaseNumber)
                 .from(tlongCode, tlongCodeRule, tlongUserSettings)
@@ -121,11 +119,11 @@ public class CodeService {
                         .and(tlongCodeRule.userType.eq(tlongUserSettings.userType))
                         .and(tlongCodeRule.userType.intValue().eq(1)))
                 .fetch();
-        tuples1.stream().forEach(one -> {
+        tuples1.forEach(one -> {
             requestDto.setCompanyHeadContent(one.get(tlongCodeRule.headContent));
             requestDto.setCompanyReleaseNumber(one.get(tlongUserSettings.goodsReleaseNumber));
             requestDto.setCompanyReReleaseNumber(one.get(tlongUserSettings.goodsReReleaseNumber));
-            requestDto.setCompanyBehind(one.get(tlongCode.code).substring(one.get(tlongCodeRule.headContent).length(), one.get(tlongCode.code).length()));
+            requestDto.setCompanyBehind(Objects.requireNonNull(one.get(tlongCode.code)).substring(Objects.requireNonNull(one.get(tlongCodeRule.headContent)).length(), Objects.requireNonNull(one.get(tlongCode.code)).length()));
         });
         return requestDto;
     }
