@@ -12,6 +12,7 @@ import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
 import com.tlong.center.domain.app.goods.AppGoodsclass;
+import com.tlong.center.domain.app.goods.QAppGoodsclass;
 import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsPriceSystemRepository;
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +89,9 @@ public class GoodsClassService {
      * @return
      */
     public Result addGoodsClass(WebGoodsClassRequestDto requestDto) {
+        AppGoodsclass one = repository.findOne(QAppGoodsclass.appGoodsclass.goodsClassName.eq(requestDto.getClassName()));
+        if (one!=null)
+            return new Result(0,"此分类已存在");
         AppGoodsclass appGoodsclass = new AppGoodsclass();
         appGoodsclass.setGoodsClassIdParent(requestDto.getParentClassId());
         if (appGoodsclass.getGoodsClassIdParent() == 0)
