@@ -1,4 +1,4 @@
-package com.tlong.center.api.dto.goods;
+package com.tlong.center.api.dto.app.goods;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @ApiModel("APP首页商品详情数据模型")
-public class AppIndexGoodsDetailResponseDto implements Serializable{
+public class AppIndexGoodsResponseDto implements Serializable{
     private static final long serialVersionUID = 2653690795536120658L;
 
     @ApiModelProperty("商品id")

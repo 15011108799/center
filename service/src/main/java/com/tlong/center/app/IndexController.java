@@ -2,9 +2,10 @@ package com.tlong.center.app;
 
 import com.tlong.center.api.app.IndexApi;
 import com.tlong.center.api.dto.AppSlidesShowResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsRequestDto;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.AppCategoryResponseDto;
-import com.tlong.center.api.dto.goods.AppIndexGoodsDetailResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsResponseDto;
 import com.tlong.center.service.IndexService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +45,7 @@ public class IndexController implements IndexApi{
      * 首页商品详情列表
      */
     @Override
-    public Page<AppIndexGoodsDetailResponseDto> indexGoodsDetail(@RequestBody PageAndSortRequestDto requestDto) {
+    public Page<AppIndexGoodsResponseDto> indexGoodsDetail(@RequestBody AppIndexGoodsRequestDto requestDto) {
         return indexService.indexGoodsDetail(requestDto);
     }
 }

@@ -1,9 +1,10 @@
 package com.tlong.center.service;
 
 import com.tlong.center.api.dto.AppSlidesShowResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsRequestDto;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.AppCategoryResponseDto;
-import com.tlong.center.api.dto.goods.AppIndexGoodsDetailResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.AppCategory;
 import com.tlong.center.domain.app.goods.WebGoods;
@@ -25,8 +26,6 @@ import java.util.List;
 import static com.tlong.center.domain.app.QAppCategory.appCategory;
 import static com.tlong.center.domain.app.QAppSlideshow.appSlideshow;
 import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
-import static com.tlong.center.domain.app.goods.QAppGoodsclass.appGoodsclass;
-
 
 
 @Component
@@ -80,7 +79,7 @@ public class IndexService {
     /**
      * 首页商品详情
      */
-    public Page<AppIndexGoodsDetailResponseDto> indexGoodsDetail(PageAndSortRequestDto requestDto) {
+    public Page<AppIndexGoodsResponseDto> indexGoodsDetail(AppIndexGoodsRequestDto requestDto) {
         //处理分页排序逻辑
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
 
@@ -89,7 +88,7 @@ public class IndexService {
 
         //变换
         return all.map(one->{
-            AppIndexGoodsDetailResponseDto responseDto = new AppIndexGoodsDetailResponseDto();
+            AppIndexGoodsResponseDto responseDto = new AppIndexGoodsResponseDto();
             responseDto.setId(one.getId());
             responseDto.setGoodsName(one.getGoodsHead());
             responseDto.setGoodsCode(one.getGoodsCode());

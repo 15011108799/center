@@ -1,9 +1,9 @@
 package com.tlong.center.api.app;
 
 import com.tlong.center.api.dto.AppSlidesShowResponseDto;
-import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsRequestDto;
 import com.tlong.center.api.dto.goods.AppCategoryResponseDto;
-import com.tlong.center.api.dto.goods.AppIndexGoodsDetailResponseDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
@@ -27,6 +27,6 @@ public interface IndexApi {
 
     @ApiOperation("获取首页商品数据")
     @PostMapping("/indexGoodsDetail")
-    Page<AppIndexGoodsDetailResponseDto> indexGoodsDetail(@RequestBody PageAndSortRequestDto requestDto);
+    Page<AppIndexGoodsResponseDto> indexGoodsDetail(@RequestBody AppIndexGoodsRequestDto requestDto);
 
 }
