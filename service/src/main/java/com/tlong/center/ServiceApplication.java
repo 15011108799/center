@@ -37,9 +37,9 @@ public class ServiceApplication extends SpringBootServletInitializer {
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //允许上传的文件最大值
-        factory.setMaxFileSize("50MB"); //KB,MB
+        factory.setMaxFileSize("5000MB"); //KB,MB
         /// 设置总上传数据总大小
-        factory.setMaxRequestSize("50MB");
+        factory.setMaxRequestSize("5000MB");
         return factory.createMultipartConfig();
     }
 
@@ -49,7 +49,7 @@ public class ServiceApplication extends SpringBootServletInitializer {
             if (container instanceof TomcatEmbeddedServletContainerFactory) {
                 TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
                 tomcat.addConnectorCustomizers((connector) -> {
-                    connector.setMaxPostSize(50000000); // 50 MB
+                    connector.setMaxPostSize(500000000); // 50 MB
                 });
             }
         };

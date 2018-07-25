@@ -45,8 +45,7 @@ public class CourseService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         course.setPublishTime(simpleDateFormat.format(new Date()));
         course.setTeacher(requestDto.getTeacher());
-        if (!requestDto.getVideo().equals(""))
-            course.setVideo(FileUploadUtils.readFile(requestDto.getVideo()));
+        course.setVideo(requestDto.getVideo());
         if (!requestDto.getImg().equals(""))
             course.setImg(FileUploadUtils.readFile(requestDto.getImg()));
         Course course1 = appCourseRepository.save(course);
@@ -103,10 +102,10 @@ public class CourseService {
         course1.setDes(requestDto.getDes());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         course1.setPublishTime(simpleDateFormat.format(new Date()));
-        if (requestDto.getVideo() == null || FileUploadUtils.readFile(requestDto.getVideo()).equals(""))
-            course1.setVideo(course.getVideo());
+        if (StringUtils.isNotEmpty(requestDto.getVideo()))
+            course1.setVideo(requestDto.getVideo());
         else
-            course1.setVideo(FileUploadUtils.readFile(requestDto.getVideo()));
+            course1.setVideo(course.getVideo());
         if (requestDto.getImg() == null || FileUploadUtils.readFile(requestDto.getImg()).equals(""))
             course1.setImg(course.getImg());
         else
