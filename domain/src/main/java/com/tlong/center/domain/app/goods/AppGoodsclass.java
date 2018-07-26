@@ -1,6 +1,8 @@
 package com.tlong.center.domain.app.goods;
 
+import com.tlong.center.api.dto.GoodsTypeResponseDto;
 import com.tlong.core.base.BaseJpa;
+import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -11,6 +13,14 @@ import java.util.Objects;
 @DynamicUpdate
 public class AppGoodsclass extends BaseJpa{
 
+    public AppGoodsclass() {
+    }
+
+    public GoodsTypeResponseDto toDto(){
+        GoodsTypeResponseDto dto = new GoodsTypeResponseDto();
+        PropertyUtils.copyPropertiesOfNotNull(this,dto);
+        return dto;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

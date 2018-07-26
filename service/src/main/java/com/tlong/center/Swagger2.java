@@ -21,7 +21,6 @@ public class Swagger2 {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .host("47.96.66.66")
                 .groupName("centerApi")
                 .apiInfo(apiInfo())
                 .select()

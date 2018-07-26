@@ -28,7 +28,8 @@ public class FileUploadUtils {
         logger.info("上传文件的后缀名为:" + suffixName);
 
         //文件上传后的路径
-        //TODO 自定义控制文件目录
+        //TODO 自定义控制文件目录、
+
         //C:\\resources
         String filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongPic\\";
 

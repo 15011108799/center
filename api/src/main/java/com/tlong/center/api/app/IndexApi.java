@@ -21,7 +21,7 @@ public interface IndexApi {
     @PostMapping("/slideshow")
     AppSlidesShowResponseDto slideshow(@RequestParam Long picBatch);
 
-    @ApiOperation("获取商品类别")
+    @ApiOperation("获取商品主页面固定的类别条目")
     @GetMapping("/category")
     List<AppCategoryResponseDto> category();
 

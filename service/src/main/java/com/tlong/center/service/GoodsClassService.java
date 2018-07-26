@@ -9,6 +9,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
 import com.tlong.center.domain.app.goods.AppGoodsclass;
@@ -23,10 +24,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.tlong.center.domain.app.goods.QAppGoodsPriceSystem.appGoodsPriceSystem;
 import static com.tlong.center.domain.app.goods.QAppGoodsclass.appGoodsclass;
@@ -182,6 +181,20 @@ public class GoodsClassService {
                 return goodsTypeResponseDtos;
             }
             HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
+
+
+//            ArrayList<Long> a1 = new ArrayList<>();
+//            Arrays.asList(goodsClass).forEach(one -> a1.add(Long.valueOf(one)));
+//            Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.id.in(a1));
+//            List<AppGoodsclass> appGoodsClassesN = ToListUtil.IterableToList(all);
+
+//            List<Long> collect = appGoodsClassesN.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
+//            Iterable<AppGoodsclass> all1 = repository.findAll(appGoodsclass.id.in(collect));
+//            List<AppGoodsclass> appGoodsclasses1 = ToListUtil.IterableToList(all1);
+//            appGoodsclasses1.forEach(AppGoodsclass::toDto);
+//            return appGoodsclasses1;
+
+
             for (String goodsclass : goodsClass) {
                 AppGoodsclass appGoodsclass = repository.findOne(Long.valueOf(goodsclass));
                 AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.getGoodsClassIdParent());

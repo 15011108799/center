@@ -1,5 +1,7 @@
 package com.tlong.center.domain.app.goods;
 
+import com.tlong.center.api.dto.app.goods.AppGoodsUploadRequestDto;
+import com.tlong.center.api.dto.app.goods.AppIndexGoodsRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.core.base.BaseJpa;
 import com.tlong.core.utils.PropertyUtils;
@@ -17,6 +19,10 @@ public class WebGoods extends BaseJpa {
     }
 
     public WebGoods(WebGoodsDetailResponseDto dto) {
+        PropertyUtils.copyPropertiesOfNotNull(dto, this);
+    }
+
+    public WebGoods(AppGoodsUploadRequestDto dto) {
         PropertyUtils.copyPropertiesOfNotNull(dto, this);
     }
 
