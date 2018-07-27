@@ -379,6 +379,9 @@ public class UserService {
     }
 
     public Result update(SuppliersRegisterRequsetDto requsetDto) {
+        WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
+        if (one1==null)
+            return new Result(0,"机构不存在");
         TlongUser tlongUser = new TlongUser();
         tlongUser.setId(requsetDto.getId());
         tlongUser.setArea(requsetDto.getArea());
@@ -424,7 +427,6 @@ public class UserService {
             tlongUser.setBusinessLicense(tlongUser1.getBusinessLicense());
         tlongUser.setRegistDate(tlongUser1.getRegistDate());
         tlongUser.setPremises(requsetDto.getPremises());
-        WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
         tlongUser.setOrgId(one1.getId());
         tlongUser.setNickName(requsetDto.getNickName());
         tlongUser.setIsExemption(requsetDto.getIsExemption());
