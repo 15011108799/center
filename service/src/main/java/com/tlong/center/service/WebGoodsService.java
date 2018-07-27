@@ -16,6 +16,9 @@ import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.repository.AppUserRepository;
 import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
+import com.tlong.center.domain.repository.WebOrgRepository;
+import com.tlong.center.domain.web.QWebOrg;
+import com.tlong.center.domain.web.WebOrg;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,14 +42,16 @@ public class WebGoodsService {
     final GoodsRepository repository;
     final AppUserRepository appUserRepository;
     final GoodsClassRepository goodsClassRepository;
+    final WebOrgRepository webOrgRepository;
     @Autowired
     private CodeService codeService;
 
-    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository) {
+    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository,WebOrgRepository webOrgRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
         this.goodsClassRepository = goodsClassRepository;
+        this.webOrgRepository=webOrgRepository;
     }
 
     /**
@@ -107,7 +112,8 @@ public class WebGoodsService {
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
-                webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
+                WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser.getOrgId()));
+                webGoodsDetailResponseDto.setOrgId(one.getOrgName());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
             if (webGoods1.getGoodsClassId() != null) {
@@ -418,7 +424,8 @@ public class WebGoodsService {
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
-                webGoodsDetailResponseDto.setOrgId(tlongUser.getOrgId());
+                WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser.getOrgId()));
+                webGoodsDetailResponseDto.setOrgId(one.getOrgName());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
             if (webGoods1.getGoodsClassId() != null) {

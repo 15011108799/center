@@ -95,7 +95,7 @@ public class TlongUser extends BaseJpa {
     private String premises;
 
     //所属部门
-    private String orgId;
+    private Long orgId;
 
     //用户编号
     private String userCode;
@@ -409,11 +409,11 @@ public class TlongUser extends BaseJpa {
         this.premises = premises;
     }
 
-    public String getOrgId() {
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(String orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 
