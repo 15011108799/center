@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.25</version>
+			<version>5.1.38</version>
 		</dependency>
         <!--End 数据库连接池依赖 -->
 
@@ -99,7 +99,7 @@
 	<distributionManagement>
 		<repository>
 			<id>snapshots</id>
-			<url>http://192.168.1.134:8081/repository/tlong-snapshot/</url>
+			<url>http://192.168.1.25:8081/repository/tlong-snapshot/</url>
 		</repository>
 	</distributionManagement>
 

@@ -19,9 +19,6 @@ import java.util.List;
 @RequestMapping("/api/app/user")
 public class AppController implements AppBaseApi {
 
-
-
-
     @Autowired
     AppService appService;
 
