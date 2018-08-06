@@ -63,7 +63,6 @@ public class GoodsClassService {
                 .fetch();
         List<WebGoodsClassRequestDto> requestOne = new ArrayList<>();
         List<WebGoodsClassRequestDto> requestTwo = new ArrayList<>();
-        final String[] tag = {""};
         tuples.stream().forEach(one -> {
             WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
                     , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
@@ -71,9 +70,13 @@ public class GoodsClassService {
             if (one.get(appGoodsclass.goodsClassLevel) == 0)
                 requestOne.add(requestDto);
             else if (one.get(appGoodsclass.goodsClassLevel) == 1) {
-                if (tag[0].indexOf(requestDto.getClassName()) > -1)
-                    return;
-                tag[0] += requestDto.getClassName();
+                if (requestTwo.size() > 0) {
+                    for (int i = 0; i < requestTwo.size(); i++) {
+                        if (requestTwo.get(i).getClassName().equals(requestDto.getClassName()) && (requestTwo.get(i).getParentClassId().intValue() == requestDto.getParentClassId())) {
+                            return;
+                        }
+                    }
+                }
                 requestTwo.add(requestDto);
             }
         });
@@ -89,9 +92,10 @@ public class GoodsClassService {
      * @return
      */
     public Result addGoodsClass(WebGoodsClassRequestDto requestDto) {
-        AppGoodsclass one = repository.findOne(QAppGoodsclass.appGoodsclass.goodsClassName.eq(requestDto.getClassName()));
-        if (one!=null)
-            return new Result(0,"此分类已存在");
+        AppGoodsclass one = repository.findOne(QAppGoodsclass.appGoodsclass.goodsClassName.eq(requestDto.getClassName())
+                .and(QAppGoodsclass.appGoodsclass.goodsClassIdParent.longValue().eq(requestDto.getParentClassId())));
+        if (one != null)
+            return new Result(0, "此分类已存在");
         AppGoodsclass appGoodsclass = new AppGoodsclass();
         appGoodsclass.setGoodsClassIdParent(requestDto.getParentClassId());
         if (appGoodsclass.getGoodsClassIdParent() == 0)
@@ -178,7 +182,7 @@ public class GoodsClassService {
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
         if (user.getUserType() != null && user.getUserType() == 1) {
             String[] goodsClass = user.getGoodsClass().split(",");
-            if (goodsClass.length==0){
+            if (goodsClass.length == 0) {
                 return goodsTypeResponseDtos;
             }
             HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
@@ -216,7 +220,7 @@ public class GoodsClassService {
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
         if (user.getUserType() != null && user.getUserType() == 1) {
             String[] goodsClass = user.getGoodsClass().split(",");
-            if (goodsClass.length==0)
+            if (goodsClass.length == 0)
                 return goodsTypeResponseDtos;
             Predicate pre = appGoodsclass.id.isNull();
             for (String goodsclass : goodsClass) {
@@ -231,7 +235,7 @@ public class GoodsClassService {
                 goodsTypeResponseDtos.add(goodsTypeResponseDto);
             }
             return goodsTypeResponseDtos;
-        }else {
+        } else {
             Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
             for (AppGoodsclass goodsclass : goodsclasses) {
                 GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
@@ -305,7 +309,6 @@ public class GoodsClassService {
         }
         List<WebGoodsClassRequestDto> requestOne = new ArrayList<>();
         List<WebGoodsClassRequestDto> requestTwo = new ArrayList<>();
-        final String[] tag = {""};
         tuples.stream().forEach(one -> {
             WebGoodsClassRequestDto requestDto = new WebGoodsClassRequestDto(one.get(appGoodsclass.id), one.get(appGoodsclass.goodsClassName), one.get(appGoodsclass.goodsClassLevel)
                     , one.get(appGoodsclass.goodsClassIdParent), one.get(appGoodsPriceSystem.originatorRatio), one.get(appGoodsPriceSystem.lagshipRatio), one.get(appGoodsPriceSystem.storeRatio), one.get(appGoodsPriceSystem.factoryRatio),
@@ -313,9 +316,13 @@ public class GoodsClassService {
             if (one.get(appGoodsclass.goodsClassLevel) == 0)
                 requestOne.add(requestDto);
             else if (one.get(appGoodsclass.goodsClassLevel) == 1) {
-                if (tag[0].indexOf(requestDto.getClassName()) > -1)
-                    return;
-                tag[0] += requestDto.getClassName();
+                if (requestTwo.size() > 0) {
+                    for (int i = 0; i < requestTwo.size(); i++) {
+                        if (requestTwo.get(i).getClassName().equals(requestDto.getClassName()) && (requestTwo.get(i).getParentClassId().intValue() == requestDto.getParentClassId())) {
+                            return;
+                        }
+                    }
+                }
                 requestTwo.add(requestDto);
             }
         });
