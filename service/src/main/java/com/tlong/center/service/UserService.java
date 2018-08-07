@@ -484,6 +484,7 @@ public class UserService {
             }
         }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+        final WebOrg finalWebOrg=webOrg;
         tlongUser2.forEach(tlongUser1 -> {
             WebOrg webOrg1 = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser1.getOrgId()));
             if (user.getOrgId() == null || finalWebOrg.getOrgName().split("-").length == 3 || finalWebOrg.getOrgName().split("-").length - webOrg1.getOrgName().split("-").length == -1) {
