@@ -365,8 +365,7 @@ public class EsignService {
                 esignCompanies = ToListUtil.IterableToList(all);
             }
             if (esignCompanies.size()>0){
-                String serviceid = esignCompanies.get(0).getServiceId()
-                        .toString();
+                String serviceid = esignCompanies.get(0).getServiceId();
 
                 OrgPayAuthVo orgPayAuthVo = new OrgPayAuthVo();
                 orgPayAuthVo.setCash(Float.valueOf(cash));

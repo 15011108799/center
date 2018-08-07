@@ -1,4 +1,4 @@
-package com.tlong.center.api.dto;
+package com.tlong.center.api.dto.app.user;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 @ApiModel("APP登录返回模型")
-public class AppUserResponseDto implements Serializable{
+public class AppUserLoginResponseDto implements Serializable{
     private static final long serialVersionUID = 6836750200118874212L;
 
     @ApiModelProperty("处理结果")
@@ -14,6 +14,16 @@ public class AppUserResponseDto implements Serializable{
 
     @ApiModelProperty("用户Id")
     private Long UserId;
+
+    @ApiModelProperty("用户类型 1代理商 2供应商")
+    private Integer userType;
+
+    @ApiModelProperty("E签宝认证状态(1已认证 0未认证)")
+    private Integer esgin;
+
+
+
+
 
     public Integer getFlag() {
         return flag;
@@ -31,11 +41,12 @@ public class AppUserResponseDto implements Serializable{
         UserId = userId;
     }
 
-    public AppUserResponseDto() {
-    }
-
-    public AppUserResponseDto(Integer flag, Long userId) {
+    public AppUserLoginResponseDto(Integer flag, Long userId) {
         this.flag = flag;
         UserId = userId;
+    }
+
+    public AppUserLoginResponseDto() {
+
     }
 }

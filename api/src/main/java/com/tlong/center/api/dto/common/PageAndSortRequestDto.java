@@ -6,8 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 @ApiModel("分页排序请求模型")
-public class
-PageAndSortRequestDto implements Serializable{
+public class PageAndSortRequestDto implements Serializable{
     private static final long serialVersionUID = -6097290648750753950L;
 
     @ApiModelProperty("起始页")
@@ -108,4 +107,5 @@ PageAndSortRequestDto implements Serializable{
     public void setCurrentMonth(Integer currentMonth) {
         this.currentMonth = currentMonth;
     }
+
 }

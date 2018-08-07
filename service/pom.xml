@@ -18,7 +18,6 @@
 
 	<properties>
 		<skipSpringBootMavenPlugin>false</skipSpringBootMavenPlugin>
-		<maven.deploy.skip>true</maven.deploy.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -100,13 +99,8 @@
 	<distributionManagement>
 		<repository>
 			<id>snapshots</id>
-			<name>tlong-snapshot</name>
-			<url>http://192.168.1.192:8081/repository/tlong-snapshot/</url>
+			<url>http://192.168.1.134:8081/repository/tlong-snapshot/</url>
 		</repository>
-		<!--<snapshotRepository>-->
-		<!--<id>releases</id>-->
-		<!--<url>http://192.168.1.142:8081/repository/maven-public/</url>-->
-		<!--</snapshotRepository>-->
 	</distributionManagement>
 
 </project>

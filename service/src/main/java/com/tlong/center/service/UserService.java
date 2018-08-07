@@ -403,7 +403,7 @@ public class UserService {
         tlongUser.setCompanyName(requsetDto.getCompanyName());
         TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
         tlongUser.setUserCode(tlongUser1.getUserCode());
-        tlongUser.setPid(tlongUser1.getPid());
+        tlongUser.setParentId(tlongUser1.getParentId());
         if (requsetDto.getHeadImage1() != null && !requsetDto.getHeadImage1().equals("")) {
             tlongUser.setHeadImage(requsetDto.getHeadImage1());
         } else {
@@ -466,7 +466,7 @@ public class UserService {
                     tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()), pageRequest);
                 }
             } else
-                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.pid.longValue().eq(requestDto.getPid())), pageRequest);
+                tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.parentId.longValue().eq(requestDto.getPid())), pageRequest);
         } else {
             if (requestDto.getPid() == null) {
                 Predicate[] predicates = {tlongUser.id.isNull()};
@@ -484,7 +484,6 @@ public class UserService {
             }
         }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
-        WebOrg finalWebOrg = webOrg;
         tlongUser2.forEach(tlongUser1 -> {
             WebOrg webOrg1 = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser1.getOrgId()));
             if (user.getOrgId() == null || finalWebOrg.getOrgName().split("-").length == 3 || finalWebOrg.getOrgName().split("-").length - webOrg1.getOrgName().split("-").length == -1) {
@@ -528,7 +527,7 @@ public class UserService {
                     tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()));
                 }
             } else
-                tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.pid.longValue().eq(requestDto.getPid())));
+                tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.parentId.longValue().eq(requestDto.getPid())));
         } else {
             if (requestDto.getPid() == null) {
                 Predicate[] predicates = {tlongUser.id.isNull()};
@@ -542,7 +541,7 @@ public class UserService {
                 predicates[0] = ExpressionUtils.and(predicates[0], tlongUser.id.longValue().ne(user.getId()));
                 tlongUser3 = appUserRepository.findAll(predicates[0]);
             } else {
-                tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.pid.longValue().eq(requestDto.getPid()).and(tlongUser.id.longValue().ne(user.getId()))));
+                tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(requestDto.getType()).and(tlongUser.parentId.longValue().eq(requestDto.getPid()).and(tlongUser.id.longValue().ne(user.getId()))));
             }
         }
         tlongUser3.forEach(tlongUser1 -> {
