@@ -28,26 +28,26 @@ import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
 
 @Component
 @Transactional
-public class IndexService {
+    public class IndexService {
 
-    final EntityManager entityManager;
+        final EntityManager entityManager;
 
-    private final AppSlideshowRepository appSlideshowRepository;
+        private final AppSlideshowRepository appSlideshowRepository;
 
-    private final AppCategoryRepository appCategoryRepository;
+        private final AppCategoryRepository appCategoryRepository;
 
-    private final AppGoodsRepository appGoodsRepository;
+        private final AppGoodsRepository appGoodsRepository;
 
-    @Autowired
-    public IndexService(EntityManager entityManager, AppSlideshowRepository appSlideshowRepository, AppCategoryRepository appCategoryRepository, AppGoodsRepository appGoodsRepository) {
-        this.entityManager = entityManager;
-        this.appSlideshowRepository = appSlideshowRepository;
-        this.appCategoryRepository = appCategoryRepository;
-        this.appGoodsRepository = appGoodsRepository;
-    }
+        @Autowired
+        public IndexService(EntityManager entityManager, AppSlideshowRepository appSlideshowRepository, AppCategoryRepository appCategoryRepository, AppGoodsRepository appGoodsRepository) {
+            this.entityManager = entityManager;
+            this.appSlideshowRepository = appSlideshowRepository;
+            this.appCategoryRepository = appCategoryRepository;
+            this.appGoodsRepository = appGoodsRepository;
+        }
 
 
-    /**
+        /**
      * 获取轮播图方法
      */
     public AppSlidesShowResponseDto slideshow(Long picBatch) {

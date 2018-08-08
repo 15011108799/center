@@ -93,10 +93,10 @@ return k;
 public static void main(String[] args) {
 Md5("123456");
 System.out.println();
-String s = new String("123456");   
-System.out.println("原始：" + s);   
+String s = new String("13185055556");
+System.out.println("原始：" + s);
 System.out.println("MD5后：" + MD5(s));   
-System.out.println("MD5后再加密：" + KL(MD5(s)));   
-System.out.println("解密为MD5后的：" + JM(KL(MD5(s))));   
+System.out.println("MD5后再加密：" + KL(MD5(s)));
+System.out.println("解密为MD5后的：" + JM(KL(MD5(s))));
 }
 }

@@ -93,9 +93,11 @@ public class OrderService {
         Page<WebOrder> orders;
         final Predicate[] pre = {webOrder.id.isNull()};
         final Predicate[] pre2 = {webOrder.id.isNull()};
-        ids.forEach(one -> {
-            pre[0] = ExpressionUtils.or(pre[0], webOrder.goodsId.longValue().eq(one));
-        });
+        //TODO 内存溢出错误  拼接内容过长
+//        ids.forEach(one -> {
+//            pre[0] = ExpressionUtils.or(pre[0], webOrder.goodsId.longValue().eq(one));
+//        });
+        pre[0] = ExpressionUtils.or(pre[0], webOrder.goodsId.longValue().in(ids));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         if (requestDto.getCurrentMonth() == 1)
             pre[0] = ExpressionUtils.and(pre[0], webOrder.placeOrderTime.between(sdf.format(new Date()) + "-01 00:00:00", sdf.format(new Date()) + "-31 23:59:59"));

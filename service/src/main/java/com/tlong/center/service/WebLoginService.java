@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.web.TlongPowerDto;
 import com.tlong.center.api.dto.web.WebLoginRequestDto;
 import com.tlong.center.api.dto.web.WebLoginResponseDto;
 import com.tlong.center.common.code.CodeUtil;
+import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.TlongPowerRepository;
 import com.tlong.center.domain.repository.TlongRolePowerRepository;
@@ -16,12 +17,14 @@ import com.tlong.center.domain.web.TlongRolePower;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import sun.security.provider.MD5;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,9 +82,14 @@ public class WebLoginService {
     public WebLoginResponseDto webLogin(WebLoginRequestDto requestDto, HttpSession session) {
 
         //首先验证账号密码
-//        String password = MD5Util.KL(MD5Util.MD5(requestDto.getPassword()));
-        TlongUser findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+        String password = MD5Util.MD5(requestDto.getPassword());
+        TlongUser findResult;
+        findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                 .and(tlongUser.password.eq(requestDto.getPassword())));
+        if (Objects.isNull(findResult)){
+             findResult = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+                    .and(tlongUser.password.eq(password)));
+        }
         if (Objects.nonNull(findResult)) {
             session.setAttribute("tlongUser", findResult);
             logger.info("user" + requestDto.getUserName() + "Login Success!");
@@ -130,6 +138,34 @@ public class WebLoginService {
 //                .leftJoin(tlongPower).on(tlongPower.id.eq(tlongRolePower.powerId))
 //                .where(tlongUser.id.eq(findResult.getId()))
 //                .fetch();
+    }
+
+    private static String toMD5(String plainText) {
+        String mmm = "";
+        try {
+            //生成实现指定摘要算法的 MessageDigest 对象。
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //使用指定的字节数组更新摘要。
+            md.update(plainText.getBytes());
+            //通过执行诸如填充之类的最终操作完成哈希计算。
+            byte b[] = md.digest();
+            //生成具体的md5密码到buf数组
+            int i;
+            StringBuffer buf = new StringBuffer("");
+            for (int offset = 0; offset < b.length; offset++) {
+                i = b[offset];
+                if (i < 0)
+                    i += 256;
+                if (i < 16)
+                    buf.append("0");
+                buf.append(Integer.toHexString(i));
+            }
+            mmm = buf.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+        return mmm;
     }
 
 }

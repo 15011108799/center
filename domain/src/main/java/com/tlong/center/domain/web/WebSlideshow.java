@@ -8,7 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tlong_slide")
+@Table(name = "tlong_slideshow")
 @DynamicUpdate
 public class WebSlideshow extends BaseJpa {
 
