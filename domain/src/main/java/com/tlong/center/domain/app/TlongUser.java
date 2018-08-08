@@ -5,6 +5,7 @@ import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -29,6 +30,9 @@ public class TlongUser{
     //账户
     private String userName;
 
+    //父id
+    private Long pid;
+
     //密码
     private String password;
 
@@ -38,50 +42,23 @@ public class TlongUser{
     //用户类型（1 供应商  2 代理人）
     private Integer userType;
 
-    //用户机构id
-    private String orgId;
+    //E签宝认证状态（1 认证通过  0 未认证）
+    private Integer esgin;
 
-    //经营地
-    private String premises;
+   /* //加入时间
+    private LocalDateTime joinTime;*/
 
-    //是否企业
+    //是否为集团类型(1 是  0 不是)
     private Integer isCompany;
 
     //是否免检(1 免检  0 不是)
     private Integer isExemption;
-
-    //昵称
-    private String nickName;
 
     //头像地址
     private String headImage;
 
     //年龄
     private Integer age;
-
-    //性别
-    private String sex;
-
-    //微信
-    private String wx;
-
-    //真实姓名
-    private String realName;
-
-    //服务热线
-    private String serviceHotline;
-
-    //创建人原始用户名
-    private String orginPhone;
-
-    //E签宝认证状态（1 认证通过  0 未认证）
-    private Integer esgin;
-
-    //后台认证
-    private Integer authentication;
-
-//    //加入时间(注册时间)
-//    private Date joinTime;
 
     //绑定手机号
     private String phone;
@@ -95,6 +72,18 @@ public class TlongUser{
     //身份证反面照
     private String idcardReverse;
 
+    //微信
+    private String wx;
+
+    //昵称
+    private String nickName;
+
+    //服务热线
+    private String serviceHotline;
+
+    //后台认证
+    private Integer authentication;
+
     //父级代理id
     private Long parentId;
 
@@ -106,6 +95,8 @@ public class TlongUser{
 
     //当前状态(1启用 0禁用)
     private Integer curState = 1;
+    //所属部门
+    private Long orgId;
 
     //是否已删除(1已删除 0未删除)
     private Integer isDeleted;
@@ -125,7 +116,6 @@ public class TlongUser{
     //营业执照照片
     private String businessLicense;
 
-    //注册时间
     private String registDate;
 
     //商品发布个数
@@ -137,11 +127,20 @@ public class TlongUser{
     //企业名称
     private String companyName;
 
-    //所选区域
+    //所选大区
     private Integer area;
 
     //上货类别
     private String goodsClass;
+
+    //真实姓名
+    private String realName;
+
+    //性别
+    private String sex;
+
+    //经营地
+    private String premises;
 
     public Long getId() {
         return id;
@@ -157,6 +156,14 @@ public class TlongUser{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
     }
 
     public String getPassword() {
@@ -183,21 +190,21 @@ public class TlongUser{
         this.userType = userType;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public Integer getEsgin() {
+        return esgin;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
     }
 
-    public String getPremises() {
-        return premises;
+  /*  public LocalDateTime getJoinTime() {
+        return joinTime;
     }
 
-    public void setPremises(String premises) {
-        this.premises = premises;
-    }
+    public void setJoinTime(LocalDateTime joinTime) {
+        this.joinTime = joinTime;
+    }*/
 
     public Integer getIsCompany() {
         return isCompany;
@@ -215,14 +222,6 @@ public class TlongUser{
         this.isExemption = isExemption;
     }
 
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
     public String getHeadImage() {
         return headImage;
     }
@@ -237,62 +236,6 @@ public class TlongUser{
 
     public void setAge(Integer age) {
         this.age = age;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public String getWx() {
-        return wx;
-    }
-
-    public void setWx(String wx) {
-        this.wx = wx;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public String getServiceHotline() {
-        return serviceHotline;
-    }
-
-    public void setServiceHotline(String serviceHotline) {
-        this.serviceHotline = serviceHotline;
-    }
-
-    public String getOrginPhone() {
-        return orginPhone;
-    }
-
-    public void setOrginPhone(String orginPhone) {
-        this.orginPhone = orginPhone;
-    }
-
-    public Integer getEsgin() {
-        return esgin;
-    }
-
-    public void setEsgin(Integer esgin) {
-        this.esgin = esgin;
-    }
-
-    public Integer getAuthentication() {
-        return authentication;
-    }
-
-    public void setAuthentication(Integer authentication) {
-        this.authentication = authentication;
     }
 
     public String getPhone() {
@@ -327,6 +270,38 @@ public class TlongUser{
         this.idcardReverse = idcardReverse;
     }
 
+    public String getWx() {
+        return wx;
+    }
+
+    public void setWx(String wx) {
+        this.wx = wx;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getServiceHotline() {
+        return serviceHotline;
+    }
+
+    public void setServiceHotline(String serviceHotline) {
+        this.serviceHotline = serviceHotline;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
+    }
+
     public Long getParentId() {
         return parentId;
     }
@@ -357,6 +332,14 @@ public class TlongUser{
 
     public void setCurState(Integer curState) {
         this.curState = curState;
+    }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 
     public Integer getIsDeleted() {
@@ -453,5 +436,29 @@ public class TlongUser{
 
     public void setGoodsClass(String goodsClass) {
         this.goodsClass = goodsClass;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getPremises() {
+        return premises;
+    }
+
+    public void setPremises(String premises) {
+        this.premises = premises;
     }
 }
