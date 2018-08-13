@@ -5,13 +5,14 @@ import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "tlong_user")
 @DynamicUpdate
-public class TlongUser{
+public class TlongUser implements Serializable {
 
     public TlongUser() {
     }

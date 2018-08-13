@@ -1,5 +1,6 @@
 package com.tlong.center.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
@@ -20,6 +21,7 @@ import com.tlong.center.domain.repository.WebOrgRepository;
 import com.tlong.center.domain.web.QWebOrg;
 import com.tlong.center.domain.web.WebOrg;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,18 +42,19 @@ import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 public class WebGoodsService {
     final EntityManager entityManager;
     final GoodsRepository repository;
-    final AppUserRepository appUserRepository;
-    final GoodsClassRepository goodsClassRepository;
-    final WebOrgRepository webOrgRepository;
-    @Autowired
-    private CodeService codeService;
+    private final AppUserRepository appUserRepository;
+    private final GoodsClassRepository goodsClassRepository;
+    private final WebOrgRepository webOrgRepository;
+    private final CodeService codeService;
 
-    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository,WebOrgRepository webOrgRepository) {
+    @Autowired
+    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository, WebOrgRepository webOrgRepository, CodeService codeService) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
         this.goodsClassRepository = goodsClassRepository;
-        this.webOrgRepository=webOrgRepository;
+        this.webOrgRepository = webOrgRepository;
+        this.codeService = codeService;
     }
 
     /**
@@ -80,7 +83,7 @@ public class WebGoodsService {
             webGoods = repository.findAll(pageRequest);
         }
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
-        webGoods.forEach(webGoods1 -> {
+        for (WebGoods webGoods1 : webGoods) {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
             webGoodsDetailResponseDto.setIsCheck(webGoods1.getIsCheck() + "");
             if (webGoods1.getId() != null)
@@ -112,7 +115,7 @@ public class WebGoodsService {
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
-                WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser.getOrgId()));
+                WebOrg one = webOrgRepository.findOne(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setOrgId(one.getOrgName());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
             }
@@ -121,7 +124,7 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setGoodsClassId(appGoodsclass.getGoodsClassName());
             }
             requestDtos.add(webGoodsDetailResponseDto);
-        });
+        }
         responseDto.setList(requestDtos);
         final int[] count = {0};
         Iterable<WebGoods> appGoods1;

@@ -5,6 +5,7 @@ import com.tlong.center.api.dto.app.clazz.ClazzStyleResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginRequestDto;
 import com.tlong.center.api.dto.app.user.AppUserLoginResponseDto;
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
+import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.course.ClazzStyle;
@@ -15,6 +16,7 @@ import com.tlong.center.domain.repository.TlongUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +58,22 @@ public class AppService {
     /**
      * app登录业务
      */
-    public AppUserLoginResponseDto appLogin(AppUserLoginRequestDto requestDto){
-        TlongUser one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+    public AppUserLoginResponseDto appLogin(AppUserLoginRequestDto requestDto, HttpSession session){
+
+        //MD5加密后的密码
+        String md5Password = MD5Util.MD5(requestDto.getPassword());
+        TlongUser one;
+        //使用非加密密码进行登陆
+        one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                 .and(tlongUser.password.eq(requestDto.getPassword())));
         if (Objects.isNull(one)){
-            return new AppUserLoginResponseDto(0,null);
+            one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
+                    .and(tlongUser.password.eq(md5Password)));
+            if (Objects.isNull(one)){
+                return new AppUserLoginResponseDto(0,null);
+            }
         }
+        session.setAttribute("tlongUser", one);
         return new AppUserLoginResponseDto(1,one.getId());
     }
 

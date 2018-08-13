@@ -1,5 +1,7 @@
 package com.tlong.center.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.common.TlongResultDto;
@@ -91,7 +93,12 @@ public class WebLoginService {
                     .and(tlongUser.password.eq(password)));
         }
         if (Objects.nonNull(findResult)) {
-            session.setAttribute("tlongUser", findResult);
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            try {
+                session.setAttribute("tlongUser", findResult);
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
             logger.info("user" + requestDto.getUserName() + "Login Success!");
             List<Tuple> tuples = queryFactory.select(tlongRolePower.roleId, tlongRolePower.powerId, tlongPower.id, tlongPower.powerName, tlongPower.powerLevel, tlongPower.pid, tlongPower.url)
                     .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)

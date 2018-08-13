@@ -40,6 +40,30 @@ public class WebOrder {
     //下单时间
     private String placeOrderTime;
 
+//    //下单人用户名
+//    private String userName;
+//
+//    //下单人编码
+//    private String userCode;
+//
+//    //商品名称
+//    private String goodsName;
+//
+//    //商品编码
+//    private String goodsCode;
+//
+//    //发布人id
+//    private Long publishUserId;
+//
+//    //发布人编码
+//    private String publishUserCode;
+//
+//    //发布人手机号
+//    private String publishUserPhone;
+//
+//    //下单人手机号
+//    private String phone;
+
     public Long getId() {
         return id;
     }
@@ -79,4 +103,68 @@ public class WebOrder {
     public void setPlaceOrderTime(String placeOrderTime) {
         this.placeOrderTime = placeOrderTime;
     }
+
+//    public String getUserName() {
+//        return userName;
+//    }
+//
+//    public void setUserName(String userName) {
+//        this.userName = userName;
+//    }
+//
+//    public String getUserCode() {
+//        return userCode;
+//    }
+//
+//    public void setUserCode(String userCode) {
+//        this.userCode = userCode;
+//    }
+//
+//    public String getGoodsName() {
+//        return goodsName;
+//    }
+//
+//    public void setGoodsName(String goodsName) {
+//        this.goodsName = goodsName;
+//    }
+//
+//    public String getGoodsCode() {
+//        return goodsCode;
+//    }
+//
+//    public void setGoodsCode(String goodsCode) {
+//        this.goodsCode = goodsCode;
+//    }
+//
+//    public Long getPublishUserId() {
+//        return publishUserId;
+//    }
+//
+//    public void setPublishUserId(Long publishUserId) {
+//        this.publishUserId = publishUserId;
+//    }
+//
+//    public String getPublishUserCode() {
+//        return publishUserCode;
+//    }
+//
+//    public void setPublishUserCode(String publishUserCode) {
+//        this.publishUserCode = publishUserCode;
+//    }
+//
+//    public String getPublishUserPhone() {
+//        return publishUserPhone;
+//    }
+//
+//    public void setPublishUserPhone(String publishUserPhone) {
+//        this.publishUserPhone = publishUserPhone;
+//    }
+//
+//    public String getPhone() {
+//        return phone;
+//    }
+//
+//    public void setPhone(String phone) {
+//        this.phone = phone;
+//    }
 }

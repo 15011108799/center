@@ -95,6 +95,7 @@ import static com.tlong.center.domain.app.goods.QWebGoods.webGoods;
             responseDto.setGoodsName(one.getGoodsHead());
             responseDto.setGoodsCode(one.getGoodsCode());
             responseDto.setFactoryPrice(one.getFactoryPrice());
+            responseDto.setFactoryPrice(one.getFactoryPrice());
             String[] split = one.getGoodsPic().split(",");
             responseDto.setPicUrl(split[0]);
             return responseDto;

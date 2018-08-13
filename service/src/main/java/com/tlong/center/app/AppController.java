@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -27,8 +28,8 @@ public class AppController implements AppBaseApi {
      * App登录方法
      */
     @Override
-    public AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto) {
-        return appService.appLogin(requestDto);
+    public AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto, HttpSession session) {
+        return appService.appLogin(requestDto,session);
     }
 
     /**

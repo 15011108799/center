@@ -7,11 +7,12 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "tlong_org")
 @DynamicUpdate
-public class WebOrg extends BaseJpa {
+public class WebOrg {
 
     public WebOrg() {
 
@@ -33,13 +34,13 @@ public class WebOrg extends BaseJpa {
 
     private String orgName;
 
-    private LocalDateTime createDate;
+    private Date createDate;
 
     private Integer curState;
 
     private Integer isDeleted;
 
-    private LocalDateTime lastUpdateDate;
+    private Date lastUpdateDate;
 
     private String legalOrg;
 
@@ -55,7 +56,7 @@ public class WebOrg extends BaseJpa {
 
     private String orgSize;
 
-    private Integer parentOrgId;
+    private Long parentOrgId;
 
     public Long getId() {
         return id;
@@ -73,13 +74,11 @@ public class WebOrg extends BaseJpa {
         this.orgName = orgName;
     }
 
-    @Override
-    public LocalDateTime getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    @Override
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
@@ -99,11 +98,11 @@ public class WebOrg extends BaseJpa {
         this.isDeleted = isDeleted;
     }
 
-    public LocalDateTime getLastUpdateDate() {
+    public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -163,11 +162,11 @@ public class WebOrg extends BaseJpa {
         this.orgSize = orgSize;
     }
 
-    public Integer getParentOrgId() {
+    public Long getParentOrgId() {
         return parentOrgId;
     }
 
-    public void setParentOrgId(Integer parentOrgId) {
+    public void setParentOrgId(Long parentOrgId) {
         this.parentOrgId = parentOrgId;
     }
 }
