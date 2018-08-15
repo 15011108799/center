@@ -37,11 +37,11 @@ import static com.tlong.center.domain.web.QWebOrder.webOrder;
 public class EvaluateService {
     final WebEvaluateRepository repository;
     final EntityManager entityManager;
-    final AppUserRepository appUserRepository;
-    final GoodsRepository repository1;
-    final TlongUserRoleRepository tlongUserRoleRepository;
-    final WebOrgRepository webOrgRepository;
-    JPAQueryFactory queryFactory;
+    private final AppUserRepository appUserRepository;
+    private final GoodsRepository repository1;
+    private final TlongUserRoleRepository tlongUserRoleRepository;
+    private final WebOrgRepository webOrgRepository;
+    private JPAQueryFactory queryFactory;
 
     @PostConstruct
     public void init() {

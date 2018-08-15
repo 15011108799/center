@@ -22,8 +22,13 @@ public class AppUserLoginResponseDto implements Serializable{
     private Integer esgin;
 
 
+    public Integer getUserType() {
+        return userType;
+    }
 
-
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
 
     public Integer getFlag() {
         return flag;
@@ -41,9 +46,10 @@ public class AppUserLoginResponseDto implements Serializable{
         UserId = userId;
     }
 
-    public AppUserLoginResponseDto(Integer flag, Long userId) {
+    public AppUserLoginResponseDto(Integer flag, Long userId, Integer userType) {
         this.flag = flag;
         UserId = userId;
+        this.userType = userType;
     }
 
     public AppUserLoginResponseDto() {

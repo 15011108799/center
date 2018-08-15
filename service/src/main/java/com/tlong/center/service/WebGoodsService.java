@@ -110,8 +110,8 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setPublishPrice(webGoods1.getPublishPrice() + "");
             if (webGoods1.getStorePrice() != null)
                 webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
-            if (webGoods1.getState() != null)
-                webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+            if (webGoods1.getCurState() != null)
+                webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
@@ -161,8 +161,8 @@ public class WebGoodsService {
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebGoods webGoods = new WebGoods(reqDto);
         webGoods.setIsCheck(0);
-        if (reqDto.getState() != null && !reqDto.getState().equals(""))
-            webGoods.setState(Integer.valueOf(reqDto.getState()));
+        if (reqDto.getCurState() != null && !reqDto.getCurState().equals(""))
+            webGoods.setState(Integer.valueOf(reqDto.getCurState()));
         if (reqDto.getGoodsClassId() != null && !reqDto.getGoodsClassId().equals(""))
             webGoods.setGoodsClassId(Long.valueOf(reqDto.getGoodsClassId()));
         if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals(""))
@@ -251,7 +251,7 @@ public class WebGoodsService {
         if (webGoods1.getStorePrice() != null)
             webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
         if (webGoods1.getState() != null)
-            webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+            webGoodsDetailResponseDto.setCurState(webGoods1.getState() + "");
         return webGoodsDetailResponseDto;
     }
 
@@ -279,8 +279,8 @@ public class WebGoodsService {
         webGoods.setGoodsCode(webGoods1.getGoodsCode());
         webGoods.setPublishTime(webGoods1.getPublishTime());
         webGoods.setId(Long.valueOf(reqDto.getId()));
-        if (reqDto.getState() != null && !reqDto.getState().equals("null"))
-            webGoods.setState(Integer.valueOf(reqDto.getState()));
+        if (reqDto.getCurState() != null && !reqDto.getCurState().equals("null"))
+            webGoods.setState(Integer.valueOf(reqDto.getCurState()));
         if (reqDto.getGoodsClassId() != null && !reqDto.getGoodsClassId().equals("null"))
             webGoods.setGoodsClassId(Long.valueOf(reqDto.getGoodsClassId()));
         if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals("null"))
@@ -423,7 +423,7 @@ public class WebGoodsService {
             if (webGoods1.getStorePrice() != null)
                 webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
             if (webGoods1.getState() != null)
-                webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+                webGoodsDetailResponseDto.setCurState(webGoods1.getState() + "");
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());

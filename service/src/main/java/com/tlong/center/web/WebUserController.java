@@ -6,27 +6,33 @@ import com.tlong.center.api.dto.user.*;
 import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.http.HTTPBinding;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/web/user")
 public class WebUserController implements WebUserApi {
 
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public WebUserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * 获取下级代理商分页查询
+     */
+    @Override
+    public Page<AgentResponseDto> childrenAgents(@RequestParam Long userId, @RequestBody PageAndSortRequestDto pageAndSortRequestDto) {
+        return userService.childrenAgents(userId,pageAndSortRequestDto);
+    }
 
     @Override
     public Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto) {
-        SuppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(SuppliersRegisterRequsetDto.getHeadImage1()));
+        SuppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(SuppliersRegisterRequsetDto.getHeadImage()));
         return userService.suppliersRegister(SuppliersRegisterRequsetDto);
     }
 
@@ -67,8 +73,8 @@ public class WebUserController implements WebUserApi {
 
     @Override
     public Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto) {
-        if (suppliersRegisterRequsetDto.getHeadImage1() != null&&!suppliersRegisterRequsetDto.getHeadImage1().equals(""))
-            suppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getHeadImage1()));
+        if (suppliersRegisterRequsetDto.getHeadImage() != null&&!suppliersRegisterRequsetDto.getHeadImage().equals(""))
+            suppliersRegisterRequsetDto.setHeadImage1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getHeadImage()));
         if (suppliersRegisterRequsetDto.getIdcardReverse1() != null)
             suppliersRegisterRequsetDto.setIdcardReverse1(FileUploadUtils.readFile(suppliersRegisterRequsetDto.getIdcardReverse1()));
         if (suppliersRegisterRequsetDto.getBusinessLicense1() != null)

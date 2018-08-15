@@ -45,9 +45,9 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     private String nickName;
 
     @ApiModelProperty("头像 url")
-    private String headImage1;
+    private String headImage;
 
-    @ApiModelProperty("所属部门")
+    @ApiModelProperty("所属部门名称")
     private String orgId;
 
     @ApiModelProperty("经营地")
@@ -343,12 +343,12 @@ public class SuppliersRegisterRequsetDto implements Serializable {
         this.nickName = nickName;
     }
 
-    public String getHeadImage1() {
-        return headImage1;
+    public String getHeadImage() {
+        return headImage;
     }
 
-    public void setHeadImage1(String headImage1) {
-        this.headImage1 = headImage1;
+    public void setHeadImage1(String headImage) {
+        this.headImage = headImage;
     }
 
     public String getBusinessLicense1() {

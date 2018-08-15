@@ -28,8 +28,8 @@ public class AppController implements AppBaseApi {
      * App登录方法
      */
     @Override
-    public AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto, HttpSession session) {
-        return appService.appLogin(requestDto,session);
+    public AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto) {
+        return appService.appLogin(requestDto);
     }
 
     /**

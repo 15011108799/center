@@ -3,14 +3,12 @@ package com.tlong.center.service;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
-import com.tlong.center.api.dto.user.PageResponseDto;
-import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
-import com.tlong.center.api.dto.user.UserSearchRequestDto;
-import com.tlong.center.api.dto.user.UserSearchResponseDto;
+import com.tlong.center.api.dto.common.TlongResultDto;
+import com.tlong.center.api.dto.user.*;
+import com.tlong.center.common.user.UserSettingsSerivce;
 import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.common.utils.ToListUtil;
@@ -19,10 +17,10 @@ import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.QWebGoods;
 import com.tlong.center.domain.app.goods.WebGoods;
 import com.tlong.center.domain.common.user.QTlongUserSettings;
+import com.tlong.center.domain.common.user.TlongUserSettings;
 import com.tlong.center.domain.repository.*;
 import com.tlong.center.domain.web.*;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,58 +46,71 @@ import static com.tlong.center.domain.web.QWebOrder.webOrder;
 @Component
 @Transactional
 public class UserService {
-    @Autowired
-    private AppUserRepository appUserRepository;
-    @Autowired
-    private TlongUserRoleRepository tlongUserRoleRepository;
-    @Autowired
-    private TlongUserSettingsRepository settingsRepository;
-    @Autowired
-    private TlongRoleRepository tlongRoleRepository;
-    @Autowired
-    private CodeService codeService;
-    @Autowired
-    private OrderRepository repository;
-    JPAQueryFactory queryFactory;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private GoodsRepository repository1;
+    private final AppUserRepository appUserRepository;
+    private final TlongUserRoleRepository tlongUserRoleRepository;
+    private final TlongUserSettingsRepository settingsRepository;
+    private final TlongRoleRepository tlongRoleRepository;
+    private final CodeService codeService;
+    private final OrderRepository repository;
+    private final EntityManager entityManager;
+    private final GoodsRepository repository1;
+    private final WebOrgRepository webOrgRepository;
+    private final TlongUserSettingsRepository tlongUserSettingsRepository;
+    private final UserSettingsSerivce settingsService;
+
+    private JPAQueryFactory queryFactory;
 
     @Autowired
-    private WebOrgRepository webOrgRepository;
+    public UserService(AppUserRepository appUserRepository, TlongUserRoleRepository tlongUserRoleRepository, TlongUserSettingsRepository settingsRepository, TlongRoleRepository tlongRoleRepository, CodeService codeService, OrderRepository repository, EntityManager entityManager, GoodsRepository repository1, WebOrgRepository webOrgRepository, TlongUserSettingsRepository tlongUserSettingsRepository, UserSettingsSerivce settingsService) {
+        this.appUserRepository = appUserRepository;
+        this.tlongUserRoleRepository = tlongUserRoleRepository;
+        this.settingsRepository = settingsRepository;
+        this.tlongRoleRepository = tlongRoleRepository;
+        this.codeService = codeService;
+        this.repository = repository;
+        this.entityManager = entityManager;
+        this.repository1 = repository1;
+        this.webOrgRepository = webOrgRepository;
+        this.tlongUserSettingsRepository = tlongUserSettingsRepository;
+        this.settingsService = settingsService;
+    }
 
     @PostConstruct
     public void init() {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
+
     /**
-     * 供应商注册
-     *
-     * @param requsetDto
-     * @return
+     * 用户注册用户名判重
+     */
+    public TlongResultDto userNameCheck(String userName){
+        //TODO 用户名判空放到前台做  密码长度判断放到前台做
+        //用户名判重
+        TlongUser tlongUser1 = appUserRepository.findOne(QTlongUser.tlongUser.userName.eq(userName));
+        if (Objects.nonNull(tlongUser1)){
+            return new TlongResultDto(0, "用户名已存在");
+        }else {
+            return new TlongResultDto(1,"用户名可用");
+        }
+
+    }
+
+    /**
+     * 用户注册
      */
     public Result suppliersRegister(SuppliersRegisterRequsetDto requsetDto) {
         TlongUser tlongUser = new TlongUser();
-        if (requsetDto.getUserName() == null)
-            return new Result(0, "用户名不能为空");
-        tlongUser.setUserName(requsetDto.getUserName());
-
-        //TODO
-        if (requsetDto.getPassword() == null || requsetDto.getPassword().length() <= 6)
-            return new Result(0, "密码格式不正确");
-        TlongUser tlongUser1 = appUserRepository.findOne(QTlongUser.tlongUser.userName.eq(requsetDto.getUserName()));
-        if (tlongUser1 != null)
+        //用户名判重
+        TlongResultDto tlongResultDto = this.userNameCheck(requsetDto.getUserName());
+        if (tlongResultDto.getResult() == 0){
             return new Result(0, "用户名已存在");
-        /* tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));*/
-        WebOrg one = null;
-        if (requsetDto.getOrgId() != null)
-            one = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
-        tlongUser.setPassword(requsetDto.getPassword());
-        tlongUser.setUserType(requsetDto.getUserType());
+        }
+        //加密密码
+        tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));
+
+        //生成用户编码 TODO 需要看怎么优化
         if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
-            tlongUser.setGoodsPublishNum(settingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(0)).getGoodsReleaseNumber());
             if (requsetDto.getIsCompany() == 0)
                 tlongUser.setUserCode(codeService.createAllCode(3, 0, 1));
             else
@@ -111,6 +122,17 @@ public class UserService {
         } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 4) {
             tlongUser.setUserCode(codeService.createAllCode(2, 2, 1));
         }
+
+        //设置机构id 如果机构id不为空
+        if (requsetDto.getOrgId() != null) {
+            WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
+            if (Objects.nonNull(one)){
+                tlongUser.setOrgId(one.getId());
+            }
+        }
+
+        tlongUser.setPassword(requsetDto.getPassword());
+        tlongUser.setUserType(requsetDto.getUserType());
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setRealName(requsetDto.getRealName());
         tlongUser.setBirthday(requsetDto.getBirthday());
@@ -118,30 +140,40 @@ public class UserService {
         tlongUser.setArea(requsetDto.getArea());
         tlongUser.setWx(requsetDto.getWx());
         tlongUser.setServiceHotline(requsetDto.getServiceHotline());
-        tlongUser.setHeadImage(requsetDto.getHeadImage1());
+        tlongUser.setHeadImage(requsetDto.getHeadImage());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlongUser.setRegistDate(simpleDateFormat.format(new Date()));
         tlongUser.setPremises(requsetDto.getPremises());
-        if (requsetDto.getOrgId() != null && one == null) {
-            WebOrg webOrg = new WebOrg();
-            webOrg.setOrgName(requsetDto.getOrgId());
-            WebOrg webOrg1 = webOrgRepository.save(webOrg);
-            tlongUser.setOrgId(webOrg1.getId());
-        } else if (one != null)
-            tlongUser.setOrgId(one.getId());
         tlongUser.setPhone(requsetDto.getPhone());
         tlongUser.setNickName(requsetDto.getNickName());
         tlongUser.setIsExemption(requsetDto.getIsExemption());
         tlongUser.setEsgin(0);
         tlongUser.setAuthentication(0);
         tlongUser.setGoodsClass(requsetDto.getGoodsClass());
+        //设置用户发布数量
+        if (requsetDto.getUserType() != null){
+            //默认设置的用户类型总是比用户类型大2
+            TlongUserSettings one = settingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.eq(requsetDto.getUserType() + 2));
+            if (Objects.nonNull(one)){
+                tlongUser.setGoodsPublishNum(one.getGoodsReleaseNumber());
+            }
+        }
         TlongUser user = appUserRepository.save(tlongUser);
+
+        //给该用户设置基本发布商品的参数
+        if (requsetDto.getUserType() != null){
+            settingsService.addUserSettings(user.getId(),requsetDto.getUserType());
+
+        }
+
+        //设置用户 角色 关系表
         if (requsetDto.getRoleId() != null) {
             TlongUserRole tlongUserRole = new TlongUserRole();
             tlongUserRole.setRoleId(requsetDto.getRoleId());
             tlongUserRole.setUserId(user.getId());
             tlongUserRoleRepository.save(tlongUserRole);
         }
+
         if (user == null) {
             return new Result(0, "注册失败");
         }
@@ -149,10 +181,11 @@ public class UserService {
     }
 
     /**
+     * 新增用户时候
+     */
+
+    /**
      * 删除用户
-     *
-     * @param id
-     * @return
      */
     public Integer deleteUserById(Long id) {
         TlongUser tlongUser = appUserRepository.findOne(id);
@@ -165,8 +198,6 @@ public class UserService {
 
     /**
      * 查找用户
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(UserSearchRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
@@ -279,9 +310,6 @@ public class UserService {
 
     /**
      * 用户是否认证
-     *
-     * @param id
-     * @return
      */
     public Boolean authentication(Long id) {
         TlongUser tlongUser = appUserRepository.findOne(id);
@@ -290,8 +318,6 @@ public class UserService {
 
     /**
      * 查询所有供应商
-     *
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
@@ -409,8 +435,8 @@ public class UserService {
         TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
         tlongUser.setUserCode(tlongUser1.getUserCode());
         tlongUser.setParentId(tlongUser1.getParentId());
-        if (requsetDto.getHeadImage1() != null && !requsetDto.getHeadImage1().equals("")) {
-            tlongUser.setHeadImage(requsetDto.getHeadImage1());
+        if (requsetDto.getHeadImage() != null && !requsetDto.getHeadImage().equals("")) {
+            tlongUser.setHeadImage(requsetDto.getHeadImage());
         } else {
             tlongUser.setHeadImage(tlongUser1.getHeadImage());
         }
@@ -446,13 +472,11 @@ public class UserService {
 
     /**
      * 查询所有代理商
-     * @param requestDto
-     * @param session
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+        //处理分页信息
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         List<TlongUser> tlongUsers = null;
         //先看当前用户是不是超级管理员
@@ -467,7 +491,8 @@ public class UserService {
                 Iterable<TlongUser> all1 = appUserRepository.findAll(
                         tlongUser.orgId.in(orgIds)
                         .and(tlongUser.userType.isNotNull())
-                        .and(tlongUser.userType.eq(2)),pageRequest);
+                        .and(tlongUser.userType.eq(2)
+                        .and(tlongUser.level.eq(1))),pageRequest);
                 if (Objects.nonNull(all1)){
                     tlongUsers = ToListUtil.IterableToList(all1);
                 }
@@ -638,8 +663,6 @@ public class UserService {
 
     /**
      * 修改认证状态
-     *
-     * @param id
      */
     public void updateUserAuthentication(Long id) {
         TlongUser tlongUser = appUserRepository.findOne(id);
@@ -652,8 +675,6 @@ public class UserService {
 
     /**
      * 查询发布商品数量
-     *
-     * @param id
      */
     public Integer findUserPublishNumm(Long id) {
         TlongUser tlongUser = appUserRepository.findOne(id);
@@ -662,8 +683,6 @@ public class UserService {
 
     /**
      * 修改发布商品数量
-     *
-     * @param registerRequsetDto
      */
     public void updateUserPublishNumm(SuppliersRegisterRequsetDto registerRequsetDto) {
         TlongUser tlongUser = appUserRepository.findOne(registerRequsetDto.getId());
@@ -784,9 +803,6 @@ public class UserService {
 
     /**
      * 查找同一等级的代理商
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(PageAndSortRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
@@ -1150,9 +1166,6 @@ public class UserService {
 
     /**
      * 层级搜索代理商分公司
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(UserSearchRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
@@ -1378,9 +1391,6 @@ public class UserService {
 
     /**
      * 搜索代理商分公司
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(UserSearchRequestDto requestDto) {
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
@@ -1486,9 +1496,6 @@ public class UserService {
 
     /**
      * 查询某公司所有供应商
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<SuppliersRegisterRequsetDto> findSupplierByOrg(PageAndSortRequestDto requestDto) {
         Page<TlongUser> tlongUser2;
@@ -1651,5 +1658,30 @@ public class UserService {
         pageSuppliersResponseDto.setOrderNum(orderNumTotal[0]);
         pageSuppliersResponseDto.setPublishPrice(publishPriceTotal[0]);
         return pageSuppliersResponseDto;
+    }
+
+    /**
+     * 获取所有下级代理商
+     */
+    public Page<AgentResponseDto> childrenAgents(Long userId, PageAndSortRequestDto pageAndSortRequestDto) {
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(pageAndSortRequestDto);
+        Page<TlongUser> all = appUserRepository.findAll(tlongUser.parentId.eq(userId), pageRequest);
+        return all.map(one -> {
+            AgentResponseDto responseDto = new AgentResponseDto();
+            WebOrg webOrg = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(one.getOrgId()));
+            responseDto.setOrgId(webOrg.getOrgName());
+            responseDto.setAuthentication(one.getAuthentication());
+            responseDto.setBirthday(one.getBirthday());
+            responseDto.setEsgin(one.getEsgin());
+            responseDto.setId(one.getId());
+            responseDto.setRegistDate(one.getRegistDate());
+            responseDto.setSex(one.getSex());
+            responseDto.setUserCode(one.getUserCode());
+            responseDto.setUserName(one.getUserName());
+            responseDto.setUserType(one.getUserType());
+            responseDto.setRealName(one.getRealName());
+            responseDto.setWx(one.getWx());
+            return responseDto;
+        });
     }
 }

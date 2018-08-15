@@ -34,7 +34,7 @@ public class WebGoodsDetailResponseDto implements Serializable {
     private Long parentClassId;
 
     @ApiModelProperty("当前状态")
-    private String state;
+    private String curState;
 
     @ApiModelProperty("商品描述")
     private String des;
@@ -205,12 +205,12 @@ public class WebGoodsDetailResponseDto implements Serializable {
         this.goodsClassId = goodsClassId;
     }
 
-    public String getState() {
-        return state;
+    public String getCurState() {
+        return curState;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setCurState(String curState) {
+        this.curState = curState;
     }
 
     public String getDes() {

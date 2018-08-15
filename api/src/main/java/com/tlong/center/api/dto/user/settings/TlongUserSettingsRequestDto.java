@@ -4,11 +4,14 @@ import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
 
-@ApiModel("设置用户发布商品数量")
+@ApiModel("用户发布商品数量数据模型")
 public class TlongUserSettingsRequestDto implements Serializable {
 
+    //用户id
+    private Long userId;
+
     //用户类型
-//    private Integer userType;
+    private Integer userType;
 
     //个人发布数量
     private Integer personReleaseNumber;
@@ -31,6 +34,22 @@ public class TlongUserSettingsRequestDto implements Serializable {
     private String personBehind;
 
     private String companyBehind;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Integer getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
 
     public String getPersonBehind() {
         return personBehind;

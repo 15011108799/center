@@ -5,12 +5,18 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
 @Api("代理商供应商用户管理接口")
 public interface WebUserApi {
+
+    @ApiOperation("获取下级代理商分页")
+    @PostMapping("/childrenAgents")
+    Page<AgentResponseDto> childrenAgents(@RequestParam Long userId, @RequestBody PageAndSortRequestDto pageAndSortRequestDto);
+
 
     @ApiOperation("供应商注册接口")
     @PostMapping("/suppliersRegister")
@@ -114,4 +120,5 @@ public interface WebUserApi {
     @ApiOperation("用户搜索某公司所有供货商")
     @PostMapping("/searchSupplierByOrg")
     PageResponseDto<SuppliersRegisterRequsetDto> searchSupplierByOrg(@RequestBody UserSearchRequestDto requestDto);
+
 }

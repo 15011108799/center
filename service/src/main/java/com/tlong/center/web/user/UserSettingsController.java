@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/web/user")
 public class UserSettingsController implements UserSettingsApi {
 
-    final UserSettingsSerivce settingsSerivce;
+    private final UserSettingsSerivce settingsSerivce;
 
     public UserSettingsController(UserSettingsSerivce settingsSerivce) {
         this.settingsSerivce = settingsSerivce;

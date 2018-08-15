@@ -20,7 +20,7 @@ public interface AppBaseApi {
 
     @ApiOperation("APP登录接口")
     @PostMapping("/login")
-    AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto, HttpSession session);
+    AppUserLoginResponseDto appLogin(@RequestBody AppUserLoginRequestDto requestDto);
 
     @ApiOperation("根据id获取用户信息")
     @PostMapping("/userInfo/{userId}")

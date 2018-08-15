@@ -58,8 +58,7 @@ public class AppService {
     /**
      * app登录业务
      */
-    public AppUserLoginResponseDto appLogin(AppUserLoginRequestDto requestDto, HttpSession session){
-
+    public AppUserLoginResponseDto appLogin(AppUserLoginRequestDto requestDto){
         //MD5加密后的密码
         String md5Password = MD5Util.MD5(requestDto.getPassword());
         TlongUser one;
@@ -70,11 +69,10 @@ public class AppService {
             one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                     .and(tlongUser.password.eq(md5Password)));
             if (Objects.isNull(one)){
-                return new AppUserLoginResponseDto(0,null);
+                return new AppUserLoginResponseDto(0,null,null);
             }
         }
-        session.setAttribute("tlongUser", one);
-        return new AppUserLoginResponseDto(1,one.getId());
+        return new AppUserLoginResponseDto(1,one.getId(),one.getUserType());
     }
 
     /**

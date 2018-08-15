@@ -179,7 +179,7 @@ public class GoodsClassService {
     public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        if (user.getUserType() != null && user.getUserType() == 1) {
+        if (Objects.nonNull(user) && user.getUserType() != null && user.getUserType() == 1) {
             String[] goodsClass = user.getGoodsClass().split(",");
             if (goodsClass.length == 0) {
                 return goodsTypeResponseDtos;
