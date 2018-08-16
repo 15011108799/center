@@ -16,5 +16,5 @@ public interface AppGoodsApi {
 
     @ApiOperation("商品上传接口")
     @PostMapping("/upload")
-    TlongResultDto appGoodsUpload(@RequestParam("file") List<MultipartFile> file,@RequestBody AppGoodsUploadRequestDto reqDto);
+    TlongResultDto appGoodsUpload(@RequestParam("file") List<MultipartFile> file,@RequestBody AppGoodsUploadRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 }

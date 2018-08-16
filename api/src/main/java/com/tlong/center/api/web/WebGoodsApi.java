@@ -25,7 +25,7 @@ public interface WebGoodsApi {
 
     @ApiModelProperty("新增商品")
     @PostMapping("/addGoods")
-    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session);
+    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiModelProperty("删除商品")
     @PutMapping("/delGoods")
@@ -33,7 +33,7 @@ public interface WebGoodsApi {
 
     @ApiModelProperty("修改商品信息")
     @PostMapping("/updateGoods")
-    Result updateGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto);
+    Result updateGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiOperation("修改商品为通过状态")
     @PostMapping("/updateGoodsState")

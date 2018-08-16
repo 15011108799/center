@@ -24,7 +24,7 @@ public interface WebNewsApi {
 
     @ApiModelProperty("新增新闻")
     @PostMapping("/addNews")
-    Result addNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto);
+    Result addNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiModelProperty("删除新闻")
     @PutMapping("/delNews")
@@ -36,7 +36,7 @@ public interface WebNewsApi {
 
     @ApiModelProperty("修改新闻信息")
     @PostMapping("/updateNews")
-    Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto);
+    Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiOperation("修改新闻状态")
     @PostMapping("/updateNewsState")

@@ -28,11 +28,11 @@ import static com.tlong.center.domain.app.esign.QEsignCompany.esignCompany;
 public class EsignService {
 
     final EntityManager entityManager;
-    final EsignRecordHistoryRepository esignRecordHistoryRepository;
-    final EsignPersonRepository esignPersonRepository;
-    final EsignCompanyRepository esignCompanyRepository;
-    final TlongUserRepository tlongUserRepository;
-    final ESignSignService eSignSignService;
+    private final EsignRecordHistoryRepository esignRecordHistoryRepository;
+    private final EsignPersonRepository esignPersonRepository;
+    private final EsignCompanyRepository esignCompanyRepository;
+    private final TlongUserRepository tlongUserRepository;
+    private final ESignSignService eSignSignService;
 
     public EsignService(EntityManager entityManager, EsignRecordHistoryRepository esignRecordHistoryRepository, EsignPersonRepository esignPersonRepository, EsignCompanyRepository esignCompanyRepository, TlongUserRepository tlongUserRepository, ESignSignService eSignSignService) {
         this.entityManager = entityManager;

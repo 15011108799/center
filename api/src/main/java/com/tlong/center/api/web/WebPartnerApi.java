@@ -24,7 +24,7 @@ public interface WebPartnerApi {
 
     @ApiModelProperty("新增合伙人")
     @PostMapping("/addPartner")
-    Result addPartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto);
+    Result addPartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiModelProperty("删除合伙人")
     @PutMapping("/delPartner")
@@ -36,7 +36,7 @@ public interface WebPartnerApi {
 
     @ApiModelProperty("修改合伙人信息")
     @PostMapping("/updatePartner")
-    Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto);
+    Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiOperation("修改合伙人状态")
     @PostMapping("/updatePartnerState")

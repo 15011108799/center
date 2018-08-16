@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -31,7 +34,7 @@ public class FileController implements UploadApi{
      */
     @Override
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam MultipartFile file){
+    public String uploadFile(@RequestParam MultipartFile file,@RequestParam String contentClass,@RequestParam String contentType){
         if (file.isEmpty()){
             logger.error("上传文件为空");
             return "上传文件为空";
@@ -45,9 +48,17 @@ public class FileController implements UploadApi{
         String suffixName  = fileName.substring(fileName.lastIndexOf("."));
         logger.info("上传文件的后缀名为:"+suffixName );
 
+        //获取文件类别（用户 课程）contentClass
+
+        //获取文件类型（视频 图片）contentType
+
+        //获取时间
+        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
+        String format = sim.format(new Date());
+
         //文件上传后的路径
         //TODO 自定义控制文件目录
-        String filePath = "E://pic//";
+        String filePath = "E://pic//" +contentClass + "//" + contentType + "//" + format + "//";
 
         //解决中文问题,，liunx下中文路径，图片显示问题
         // fileName = UUID.randomUUID() + suffixName;
@@ -128,7 +139,7 @@ public class FileController implements UploadApi{
     //多文件上传
     @Override
     @PostMapping(value = "/batchUpload")
-    public String handleFileUpload(HttpServletRequest request) {
+    public String handleFileUpload(HttpServletRequest request,@RequestParam String contentType,@RequestParam String contentClass) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request)
                 .getFiles("file");
 //        MultipartFile file = null;
@@ -158,7 +169,7 @@ public class FileController implements UploadApi{
         if (!CollectionUtils.isEmpty(files)){
             for (MultipartFile file :files){
                 try {
-                    this.uploadFile(file);
+                    this.uploadFile(file,contentType,contentClass);
                 }catch (Exception e){
                     return "上传失败";
                 }

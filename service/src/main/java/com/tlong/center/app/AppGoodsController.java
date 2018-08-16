@@ -27,7 +27,7 @@ public class AppGoodsController implements AppGoodsApi {
      * APP商品上传
      */
     @Override
-    public TlongResultDto appGoodsUpload(@RequestParam("file") List<MultipartFile> file, @RequestBody AppGoodsUploadRequestDto reqDto) {
-        return appGoodsService.appGoodsUpload(FileUploadUtils.handleFileUpload(file),reqDto);
+    public TlongResultDto appGoodsUpload(@RequestParam("file") List<MultipartFile> file, @RequestBody AppGoodsUploadRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return appGoodsService.appGoodsUpload(FileUploadUtils.handleFileUpload(file,contentClass,contentType),reqDto);
     }
 }

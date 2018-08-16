@@ -13,9 +13,9 @@ public interface UploadApi {
 
     @ApiOperation("单个文件上传")
     @PostMapping("/upload")
-    String uploadFile(@RequestParam MultipartFile file);
+    String uploadFile(@RequestParam MultipartFile file, @RequestParam String contentType,@RequestParam String contentClass);
 
     @ApiOperation("批量文件上传")
     @PostMapping("/batchUpload")
-    String handleFileUpload(HttpServletRequest request); //TODO 需要更改为对象形式的参数集合
+    String handleFileUpload(HttpServletRequest request, @RequestParam String contentType,@RequestParam String contentClass); //TODO 需要更改为对象形式的参数集合
 }

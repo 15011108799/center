@@ -25,8 +25,8 @@ public class WebCourseController implements WebCourseApi {
     private CourseService courseService;
 
     @Override
-    public Result addCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto) {
-        String filePath = FileUploadUtils.upload(file);
+    public Result addCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        String filePath = FileUploadUtils.upload(file,contentClass,contentType);
         if (StringUtils.isNotEmpty(filePath))
             reqDto.setVideo(filePath.substring(0, filePath.length() - 1));
         return courseService.addCourse(reqDto);
@@ -43,9 +43,9 @@ public class WebCourseController implements WebCourseApi {
     }
 
     @Override
-    public Result updateCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto) {
+    public Result updateCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
         if (file!=null) {
-            String filePath = FileUploadUtils.upload(file);
+            String filePath = FileUploadUtils.upload(file,contentClass,contentType);
             if (StringUtils.isNotEmpty(filePath))
                 reqDto.setVideo(filePath.substring(0, filePath.length() - 1));
         }

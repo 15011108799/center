@@ -14,7 +14,7 @@ import java.util.UUID;
 public class FileUploadUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebUserController.class);
 
-    public static String upload(MultipartFile file) {
+    public static String upload(MultipartFile file,String contentClass,String contentType) {
         if (file.isEmpty()) {
             logger.error("上传文件为空");
         }
@@ -31,9 +31,9 @@ public class FileUploadUtils {
         //TODO 自定义控制文件目录、
 
         //C:\\resources
-        String filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongPic\\";
+        String filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongPic\\" + "\\" + contentClass + "\\" + contentType;
 
-        //解决中文问题,，liunx下中文路径，图片显示问题
+        //解决中文问题,，liunx下中文路径，monitor_control.restrict_backdoor = "true"
         // fileName = UUID.randomUUID() + suffixName;
         File newFile = new File(filePath + fileName);
 
@@ -104,12 +104,12 @@ public class FileUploadUtils {
         return tempFileName;
     }
 
-    public static String handleFileUpload(List<MultipartFile> files) {
+    public static String handleFileUpload(List<MultipartFile> files,String contentClass,String contentType) {
         StringBuilder picUrl = new StringBuilder();
         if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile file : files) {
                 try {
-                    picUrl.append(upload(file));
+                    picUrl.append(upload(file,contentClass,contentClass));
                 } catch (Exception e) {
                     return "上传失败";
                 }

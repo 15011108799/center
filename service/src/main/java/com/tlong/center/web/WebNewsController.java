@@ -32,8 +32,8 @@ public class WebNewsController implements WebNewsApi {
     }
 
     @Override
-    public Result addNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto) {
-        return newsService.addNews(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result addNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return newsService.addNews(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class WebNewsController implements WebNewsApi {
     }
 
     @Override
-    public Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto) {
-        return newsService.updateNews(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result updateNews(@RequestParam("file") List<MultipartFile> file, NewsRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return newsService.updateNews(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto);
     }
 
     @Override

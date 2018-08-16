@@ -29,8 +29,8 @@ public class WebPartnerController implements WebPartnerApi {
     }
 
     @Override
-    public Result addPartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto) {
-        return partnerService.addPartner(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result addPartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return partnerService.addPartner(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class WebPartnerController implements WebPartnerApi {
     }
 
     @Override
-    public Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto) {
-        return partnerService.updatePartner(FileUploadUtils.handleFileUpload(file), reqDto);
+    public Result updatePartner(@RequestParam("file") List<MultipartFile> file, PartnerRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return partnerService.updatePartner(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto);
     }
 
     @Override
