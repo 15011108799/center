@@ -113,18 +113,19 @@ public class UserService {
         tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));
 
         //生成用户编码 TODO 需要看怎么优化
-        if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
-            if (requsetDto.getIsCompany() == 0)
-                tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
-            else
-                tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
-        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 2) {
-            tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
-        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 3) {
-            tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
-        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 4) {
-            tlongUser.setUserCode(codeService.createAllCode(0, 2, 1,requsetDto.getIsCompany()));
-        }
+        tlongUser.setUserCode(codeService.createAllCode(0, requsetDto.getUserType(), 1,requsetDto.getIsCompany()));
+//        if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
+//            if (requsetDto.getIsCompany() == 0)
+//                tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
+//            else
+//                tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
+//        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 2) {
+//            tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
+//        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 3) {
+//            tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
+//        } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 4) {
+//            tlongUser.setUserCode(codeService.createAllCode(0, 2, 1,requsetDto.getIsCompany()));
+//        }
 
         //设置机构id 如果机构id不为空
         if (requsetDto.getOrgId() != null) {
