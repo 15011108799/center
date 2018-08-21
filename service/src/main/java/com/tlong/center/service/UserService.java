@@ -8,6 +8,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.user.*;
+import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
 import com.tlong.center.common.user.UserSettingsSerivce;
 import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.common.utils.PageAndSortUtil;
@@ -57,11 +58,12 @@ public class UserService {
     private final WebOrgRepository webOrgRepository;
     private final TlongUserSettingsRepository tlongUserSettingsRepository;
     private final UserSettingsSerivce settingsService;
+    private final WebOrgService webOrgService;
 
     private JPAQueryFactory queryFactory;
 
     @Autowired
-    public UserService(AppUserRepository appUserRepository, TlongUserRoleRepository tlongUserRoleRepository, TlongUserSettingsRepository settingsRepository, TlongRoleRepository tlongRoleRepository, CodeService codeService, OrderRepository repository, EntityManager entityManager, GoodsRepository repository1, WebOrgRepository webOrgRepository, TlongUserSettingsRepository tlongUserSettingsRepository, UserSettingsSerivce settingsService) {
+    public UserService(AppUserRepository appUserRepository, TlongUserRoleRepository tlongUserRoleRepository, TlongUserSettingsRepository settingsRepository, TlongRoleRepository tlongRoleRepository, CodeService codeService, OrderRepository repository, EntityManager entityManager, GoodsRepository repository1, WebOrgRepository webOrgRepository, TlongUserSettingsRepository tlongUserSettingsRepository, UserSettingsSerivce settingsService, WebOrgService webOrgService) {
         this.appUserRepository = appUserRepository;
         this.tlongUserRoleRepository = tlongUserRoleRepository;
         this.settingsRepository = settingsRepository;
@@ -73,6 +75,7 @@ public class UserService {
         this.webOrgRepository = webOrgRepository;
         this.tlongUserSettingsRepository = tlongUserSettingsRepository;
         this.settingsService = settingsService;
+        this.webOrgService = webOrgService;
     }
 
     @PostConstruct
@@ -112,15 +115,15 @@ public class UserService {
         //生成用户编码 TODO 需要看怎么优化
         if (requsetDto.getUserType() != null && requsetDto.getUserType() == 1) {
             if (requsetDto.getIsCompany() == 0)
-                tlongUser.setUserCode(codeService.createAllCode(3, 0, 1));
+                tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
             else
-                tlongUser.setUserCode(codeService.createAllCode(3, 1, 1));
+                tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
         } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 2) {
-            tlongUser.setUserCode(codeService.createAllCode(2, 0, 1));
+            tlongUser.setUserCode(codeService.createAllCode(0, 0, 1,requsetDto.getIsCompany()));
         } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 3) {
-            tlongUser.setUserCode(codeService.createAllCode(2, 1, 1));
+            tlongUser.setUserCode(codeService.createAllCode(0, 1, 1,requsetDto.getIsCompany()));
         } else if (requsetDto.getUserType() != null && requsetDto.getUserType() == 4) {
-            tlongUser.setUserCode(codeService.createAllCode(2, 2, 1));
+            tlongUser.setUserCode(codeService.createAllCode(0, 2, 1,requsetDto.getIsCompany()));
         }
 
         //设置机构id 如果机构id不为空
@@ -128,9 +131,17 @@ public class UserService {
             WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
             if (Objects.nonNull(one)){
                 tlongUser.setOrgId(one.getId());
+            }else {
+                //创建对应机构
+                AddOrgRequestDto addOrgRequestDto = new AddOrgRequestDto();
+                addOrgRequestDto.setOrgName(requsetDto.getOrgId());
+                TlongResultDto tlongResultDto1 = webOrgService.addOrg(addOrgRequestDto);
+                tlongUser.setOrgId(Long.valueOf(tlongResultDto1.getContent()));
             }
         }
 
+        tlongUser.setLevel(requsetDto.getUserType());
+        tlongUser.setUserName(requsetDto.getUserName());
         tlongUser.setPassword(requsetDto.getPassword());
         tlongUser.setUserType(requsetDto.getUserType());
         tlongUser.setIsCompany(requsetDto.getIsCompany());
@@ -513,7 +524,7 @@ public class UserService {
                 return pageSuppliersResponseDto;
             }
         }else {
-            //用户是供货商或者代理商
+            //用户是供应商 不存在此操作
             pageSuppliersResponseDto.setCount(0);
             return pageSuppliersResponseDto;
         }

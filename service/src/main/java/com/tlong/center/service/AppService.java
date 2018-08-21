@@ -62,6 +62,7 @@ public class AppService {
         //MD5加密后的密码
         String md5Password = MD5Util.MD5(requestDto.getPassword());
         TlongUser one;
+        AppUserLoginResponseDto responseDto = new AppUserLoginResponseDto();
         //使用非加密密码进行登陆
         one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                 .and(tlongUser.password.eq(requestDto.getPassword())));
@@ -69,10 +70,18 @@ public class AppService {
             one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                     .and(tlongUser.password.eq(md5Password)));
             if (Objects.isNull(one)){
-                return new AppUserLoginResponseDto(0,null,null);
+                responseDto.setFlag(0);
+                return responseDto;
             }
         }
-        return new AppUserLoginResponseDto(1,one.getId(),one.getUserType());
+        responseDto.setOrgId(one.getOrgId());
+        responseDto.setFlag(1);
+        responseDto.setUserType(one.getUserType());
+        responseDto.setEsgin(one.getEsgin());
+        responseDto.setUserId(one.getId());
+        responseDto.setIsCompany(one.getIsCompany());
+        responseDto.setIsChecked(one.getAuthentication());
+        return responseDto;
     }
 
     /**
@@ -83,6 +92,7 @@ public class AppService {
         AppUserResponseDto responseDto = new AppUserResponseDto();
         if (!Objects.isNull(one)){
            responseDto.setEvId(one.getEvId());
+           responseDto.setUserCode(one.getUserCode());
            responseDto.setHeadImage(one.getHeadImage());
            responseDto.setNickName(one.getNickName());
            responseDto.setServiceHotline(one.getServiceHotline());

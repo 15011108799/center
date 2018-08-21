@@ -8,6 +8,7 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
+import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.domain.app.TlongUser;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
@@ -63,17 +65,26 @@ public class WebGoodsService {
      * @param requestDto
      * @return
      */
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(PageAndSortRequestDto requestDto, HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(WebGoodsPageRequestDto requestDto) {
+        //商品状态 审核状态 商品发布人 商品编码 时间
+//        String curState = params.getFirst("curState");
+//        String isCheck = params.getFirst("isCheck");
+//        String curState = params.getFirst("curState");
+//        String goodsCode = params.getFirst("goodsCode");
+//        List<WebGoods> all = repository.findAll();
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+
+
+
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<WebGoods> webGoods = null;
-        if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
-                webGoods = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()), pageRequest);
+        if (requestDto.getUserType() != null && requestDto.getUserType() == 1) {
+            if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1)
+                webGoods = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()), pageRequest);
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -128,12 +139,12 @@ public class WebGoodsService {
         responseDto.setList(requestDtos);
         final int[] count = {0};
         Iterable<WebGoods> appGoods1;
-        if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
-                appGoods1 = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
+        if (requestDto.getUserType() != null && requestDto.getUserType() == 1) {
+            if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1)
+                appGoods1 = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()));
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -188,9 +199,9 @@ public class WebGoodsService {
         TlongUser tlongUser = (TlongUser) session.getAttribute("tlongUser");
         webGoods.setPublishUserId(tlongUser.getId());
         if (tlongUser.getIsCompany() == 0)
-            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 0, 1));
+            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 0, 1,tlongUser.getIsCompany()));
         else if (tlongUser.getIsCompany() == 1)
-            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 1, 1));
+            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 1, 1,tlongUser.getIsCompany()));
         WebGoods webGoods1 = repository.save(webGoods);
         if (webGoods1 != null)
             return new Result(1, "添加成功");
@@ -336,8 +347,8 @@ public class WebGoodsService {
         repository.save(webGoods);
     }
 
-    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(GoodsSearchRequestDto requestDto, HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(GoodsSearchRequestDto requestDto) {
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
         Page<WebGoods> webGoods = null;
@@ -361,13 +372,13 @@ public class WebGoodsService {
             pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
         else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
             pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
-        if (user.getUserType() != null && user.getUserType() == 1) {
-            if (user.getIsCompany() == 0 || user.getIsCompany() == 1) {
-                pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(user.getId()));
+        if (requestDto.getUserType() != null && requestDto.getUserType() == 1) {
+            if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1) {
+                pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()));
                 webGoods = repository.findAll(pre[0], pageRequest);
             } else {
 
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(user.getOrgId())));
+                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
                 tlongUser3.forEach(one -> {
                     pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
                 });
@@ -440,7 +451,7 @@ public class WebGoodsService {
         responseDto.setList(requestDtos);
         final int[] count = {0};
         Iterable<WebGoods> appGoods1;
-        if (user.getUserType() != null && user.getUserType() == 1 && user.getIsCompany() == 2)
+        if (requestDto.getUserType() != null && requestDto.getUserType() == 1 && requestDto.getIsCompany() == 2)
             appGoods1 = repository.findAll(pre1[0]);
         else
             appGoods1 = repository.findAll(pre[0]);

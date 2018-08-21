@@ -57,6 +57,9 @@ public class WebGoods extends BaseJpa {
     //商品详情
     private String detail;
 
+    //商品属性id
+    private Long goodsPropertyId;
+
     //商品星级
     private String star;
 
@@ -406,5 +409,13 @@ public class WebGoods extends BaseJpa {
 
     public void setCurState(Integer curState) {
         this.curState = curState;
+    }
+
+    public Long getGoodsPropertyId() {
+        return goodsPropertyId;
+    }
+
+    public void setGoodsPropertyId(Long goodsPropertyId) {
+        this.goodsPropertyId = goodsPropertyId;
     }
 }

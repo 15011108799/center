@@ -99,6 +99,7 @@ public class WebLoginService {
 //            } catch (JsonProcessingException e) {
 //                e.printStackTrace();
 //            }
+
             logger.info("user" + requestDto.getUserName() + "Login Success!");
             List<Tuple> tuples = queryFactory.select(tlongRolePower.roleId, tlongRolePower.powerId, tlongPower.id, tlongPower.powerName, tlongPower.powerLevel, tlongPower.pid, tlongPower.url)
                     .from(tlongUser, tlongUserRole, tlongRole, tlongRolePower, tlongPower)
@@ -127,6 +128,9 @@ public class WebLoginService {
                     powerLevelTwo.add(dto);
                 }
             });
+            webLoginResponseDto.setUserId(findResult.getId());
+            webLoginResponseDto.setUserType(findResult.getUserType());
+            webLoginResponseDto.setOrgId(findResult.getOrgId());
             webLoginResponseDto.setPowersLevelOne(powerLevelOne);
             webLoginResponseDto.setPowersLevelTwo(powerLevelTwo);
             webLoginResponseDto.setUserName(requestDto.getUserName());

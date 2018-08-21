@@ -1,10 +1,12 @@
 package com.tlong.center.service;
 
-import com.mchange.v2.lang.ObjectUtils;
 import com.tlong.center.api.dto.app.goods.AppGoodsUploadRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
+import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.common.utils.FileUploadUtils;
+import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
 import com.tlong.center.domain.app.goods.WebGoods;
+import com.tlong.center.domain.repository.GoodsPriceSystemRepository;
 import com.tlong.center.domain.repository.GoodsRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -13,23 +15,32 @@ import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.tlong.center.domain.app.goods.QAppGoodsPriceSystem.appGoodsPriceSystem;
+
 @Transactional
 @Component
 public class AppGoodsService {
 
     private final CodeService codeService;
+    private final CodeUtil codeUtil;
     private final GoodsRepository repository;
+    private final GoodsPriceSystemRepository goodsPriceSystemRepository;
 
-    public AppGoodsService(CodeService codeService, GoodsRepository repository) {
+    public AppGoodsService(CodeService codeService, CodeUtil codeUtil, GoodsRepository repository, GoodsPriceSystemRepository goodsPriceSystemRepository) {
         this.codeService = codeService;
+        this.codeUtil = codeUtil;
         this.repository = repository;
+        this.goodsPriceSystemRepository = goodsPriceSystemRepository;
     }
 
     //app商品上传
-    public TlongResultDto appGoodsUpload(String file, AppGoodsUploadRequestDto reqDto) {
-        reqDto.setGoodsPic(file.substring(0, file.length() - 1));
+    public TlongResultDto
+    appGoodsUpload(AppGoodsUploadRequestDto reqDto) {
+//        reqDto.setGoodsPic(file.substring(0, file.length() - 1));
+        reqDto.setGoodsPic(reqDto.getGoodsPic());
         reqDto.setCertificate(FileUploadUtils.readFile(reqDto.getCertificate()));
-        reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
+//        reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
+        reqDto.setVideo(reqDto.getVideo());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebGoods webGoods = new WebGoods(reqDto);
@@ -38,17 +49,38 @@ public class AppGoodsService {
             webGoods.setPublishUserId(Long.valueOf(reqDto.getPublishUserId()));
         }
         if (reqDto.getIsCompany() != null && reqDto.getIsCompany() == 0) {
-            webGoods.setGoodsCode(reqDto.getUserCode() + "-" + codeService.createAllCode(1, 0, 1));
+            webGoods.setGoodsCode(reqDto.getUserCode() + "-" + codeService.createAllCode(1, 0, 1,reqDto.getIsCompany()));
         }else if (reqDto.getIsCompany() != null && reqDto.getIsCompany() == 1)
-            webGoods.setGoodsCode(reqDto.getUserCode() + "-" + codeService.createAllCode(1, 1, 1));
+            webGoods.setGoodsCode(reqDto.getUserCode() + "-" + codeService.createAllCode(1, 1, 1,reqDto.getIsCompany()));
 
         //TODO 根据价格体系设定当前商品的各个价格
+        Double publishPrice = Double.valueOf(reqDto.getPublishPrice());
+        AppGoodsPriceSystem one = goodsPriceSystemRepository.findOne(appGoodsPriceSystem.goodsClassId.eq(Long.valueOf(reqDto.getGoodsClassId()))
+                .and(appGoodsPriceSystem.intervalUp.gt(publishPrice))
+                .and(appGoodsPriceSystem.intervalDown.lt(publishPrice)));
+
+        webGoods.setPublishPrice(publishPrice); //发布价格(最低基准价格)
+        webGoods.setFounderPrice(one.getOriginatorRatio() * publishPrice);  //总代
+        webGoods.setFlagshipPrice(one.getLagshipRatio() * publishPrice); //1级代
+        webGoods.setFactoryPrice(one.getFactoryRatio() * publishPrice);  //出厂价格(最高的)
+
+        //设置商品属性
+        webGoods.setGoodsPropertyId(reqDto.getGoodsPropertyId());
+
+        //商品编号
+        if (reqDto.getIsCompany() == 0)
+            webGoods.setGoodsCode(reqDto.getPublishCode() + "-" + codeService.createAllCode(1, 0, 1,reqDto.getIsCompany()));
+        else if (reqDto.getIsCompany() == 1)
+            webGoods.setGoodsCode(reqDto.getPublishCode() + "-" + codeService.createAllCode(1, 1, 1,reqDto.getIsCompany()));
 
         WebGoods webGoods1 = repository.save(webGoods);
         if (webGoods1 != null)
             return new TlongResultDto(1, "添加成功");
         else
             return new TlongResultDto(0, "添加失败");
+
+
+
     }
 
 }

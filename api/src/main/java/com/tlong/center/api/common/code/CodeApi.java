@@ -3,9 +3,7 @@ package com.tlong.center.api.common.code;
 import com.tlong.center.api.dto.user.settings.TlongUserSettingsRequestDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @Api("编号接口")
 public interface CodeApi {
@@ -17,4 +15,8 @@ public interface CodeApi {
     @ApiOperation("查询参数信息")
     @GetMapping("/findParam")
     TlongUserSettingsRequestDto findParam();
+
+    @ApiOperation("获取编码")
+    @PostMapping("/createCode")
+    String createCode(@RequestParam Integer codeType, @RequestParam Integer userType, @RequestParam Integer head);
 }

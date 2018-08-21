@@ -65,14 +65,14 @@
         <repository>
             <id>snapshots</id>
             <name>tlong-snapshot</name>
-            <url>http://192.168.1.8:8081/repository/tlong-snapshot/</url>
+            <url>http://192.168.1.11:8081/repository/tlong-snapshot/</url>
         </repository>
     </distributionManagement>
     <repositories>
         <repository>
             <id>snapshots</id>
             <name>tlong-snapshot</name>
-            <url>http://192.168.1.8:8081/repository/tlong-snapshot/</url>
+            <url>http://192.168.1.11:8081/repository/tlong-snapshot/</url>
         </repository>
     </repositories>
 </project>

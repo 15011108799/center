@@ -25,10 +25,10 @@ import static com.tlong.center.domain.common.code.QTlongCodeRule.tlongCodeRule;
 @Transactional
 public class CodeUtil {
     final static Logger logger = LoggerFactory.getLogger(CodeUtil.class);
-    final TlongCodeRuleRepository tlongCodeRuleRepository;
-    final TlongCodeRepository tlongCodeRepository;
-    final EntityManager entityManager;
-    JPAQueryFactory queryFactory;
+    private final TlongCodeRuleRepository tlongCodeRuleRepository;
+    private final TlongCodeRepository tlongCodeRepository;
+    private final EntityManager entityManager;
+    private JPAQueryFactory queryFactory;
 
     @PostConstruct
     public void init() {
@@ -46,7 +46,7 @@ public class CodeUtil {
     /**
      * 商品编码生成规则
      */
-    public String goodsCode(Integer codeType, Integer userType, int head) {
+    public String goodsCode(Integer codeType, Integer userType, Integer head, Integer isCompany) {
         String content;
         String code;
         String placeholder1 = "0";
@@ -60,7 +60,8 @@ public class CodeUtil {
 
         //读取规则
         TlongCodeRule tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
-                .and(tlongCodeRule.userType.eq(userType)));
+                .and(tlongCodeRule.userType.eq(userType))
+                .and(tlongCodeRule.isCompany.eq(isCompany)));
         if (Objects.isNull(tlongCodeRule1)) {
             logger.error("未获取到对应的编码规则");
             return "ERROR";

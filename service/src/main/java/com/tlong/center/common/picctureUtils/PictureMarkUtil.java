@@ -1,5 +1,7 @@
 package com.tlong.center.common.picctureUtils;
 
+import org.springframework.stereotype.Component;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,7 @@ import java.io.OutputStream;
 /**
  * 图片加水印工具类
  */
+@Component
 public class PictureMarkUtil {
 
     public static void main(String[] args){

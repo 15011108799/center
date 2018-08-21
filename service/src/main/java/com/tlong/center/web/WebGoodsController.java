@@ -5,9 +5,11 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
+import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import com.tlong.center.api.web.WebGoodsApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.WebGoodsService;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +29,8 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
-        return webGoodsService.findAllGoodsByPage(requestDto,session);
+    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto) {
+        return webGoodsService.findAllGoodsByPage(requestDto);
     }
 
     @Override
@@ -62,8 +64,8 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session) {
-        return webGoodsService.searchGoods(requestDto,session);
+    public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto) {
+        return webGoodsService.searchGoods(requestDto);
     }
 
     @Override

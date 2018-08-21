@@ -7,9 +7,11 @@ import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.center.api.dto.user.UserSearchRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
+import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +23,7 @@ public interface WebGoodsApi {
 
     @ApiOperation("获取商品列表")
     @PostMapping("/findAllGoods")
-    PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
+    PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto);
 
     @ApiModelProperty("新增商品")
     @PostMapping("/addGoods")
@@ -49,7 +51,7 @@ public interface WebGoodsApi {
 
     @ApiOperation("商品搜索")
     @PostMapping("/searchGoods")
-    PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto, HttpSession session);
+    PageResponseDto<WebGoodsDetailResponseDto> searchGoods(@RequestBody GoodsSearchRequestDto requestDto);
 
     @ApiModelProperty("批量删除商品")
     @PutMapping("/delBatchGoods")

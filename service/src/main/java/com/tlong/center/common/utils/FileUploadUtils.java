@@ -8,6 +8,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,16 +24,26 @@ public class FileUploadUtils {
         //获取文件名
         String fileName = file.getOriginalFilename();
         logger.info("上传的文件的文件名为:" + fileName);
+        String[] split = fileName.split("_");
+        String type = split[split.length - 1];
 
         //获取文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         logger.info("上传文件的后缀名为:" + suffixName);
 
-        //文件上传后的路径
-        //TODO 自定义控制文件目录、
 
-        //C:\\resources
-        String filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongPic\\" + "\\" + contentClass + "\\" + contentType;
+        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
+        String format = sim.format(new Date());
+        //文件上传后的路径
+        //TODO 自定义控制文件目录
+        String filePath;
+        if (suffixName.toUpperCase().equals("MP4")){
+            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
+        }else {
+            //C:\\resources
+            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
+        }
+
 
         //解决中文问题,，liunx下中文路径，monitor_control.restrict_backdoor = "true"
         // fileName = UUID.randomUUID() + suffixName;
@@ -109,7 +121,7 @@ public class FileUploadUtils {
         if (!CollectionUtils.isEmpty(files)) {
             for (MultipartFile file : files) {
                 try {
-                    picUrl.append(upload(file,contentClass,contentClass));
+                    picUrl.append(upload(file,contentClass,contentType));
                 } catch (Exception e) {
                     return "上传失败";
                 }

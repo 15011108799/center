@@ -8,17 +8,17 @@ import java.io.Serializable;
 @ApiModel("APP商品上传请求数据模型")
 public class AppGoodsUploadRequestDto implements Serializable {
 
-//    @ApiModelProperty("商品id")
-//    private String id;
+    @ApiModelProperty("文件类别")
+    private String contentClass;
 
     @ApiModelProperty("商品名称")
     private String goodsHead;
 
-//    @ApiModelProperty("商品编号")
-//    private String goodsCode;
+    @ApiModelProperty("商品编码")
+    private String goodsCode;
 
-//    @ApiModelProperty("出厂售价")
-//    private String factoryPrice;
+    @ApiModelProperty("商品属性id")
+    private Long goodsPropertyId;
 
     @ApiModelProperty("商品图片URL")
     private String goodsPic;
@@ -32,9 +32,6 @@ public class AppGoodsUploadRequestDto implements Serializable {
     @ApiModelProperty("商品分类父id")
     private Long parentClassId;
 
-//    @ApiModelProperty("当前状态")
-//    private String state;
-
     @ApiModelProperty("商品描述")
     private String des;
 
@@ -43,9 +40,6 @@ public class AppGoodsUploadRequestDto implements Serializable {
 
     @ApiModelProperty("商品星级")
     private String star;
-
-//    @ApiModelProperty("商品真实评星值")
-//    private String realStar;
 
     @ApiModelProperty("上传类别")
     private String publishClass;
@@ -74,20 +68,8 @@ public class AppGoodsUploadRequestDto implements Serializable {
     @ApiModelProperty("颜色")
     private String color;
 
-    @ApiModelProperty("创始人价格")
-    private String founderPrice;
-
     @ApiModelProperty("发布价")
     private String publishPrice;
-
-//    @ApiModelProperty("旗舰店价格")
-//    private String flagshipPrice;
-
-//    @ApiModelProperty("专卖店价格")
-//    private String storePrice;
-
-    @ApiModelProperty("价格区间")
-    private String priceRange;
 
     @ApiModelProperty("数量")
     private String num;
@@ -95,23 +77,17 @@ public class AppGoodsUploadRequestDto implements Serializable {
     @ApiModelProperty("价格类型")
     private String priceType;
 
-    @ApiModelProperty("微信客服")
-    private String wx;
-
-    @ApiModelProperty("服务电话")
-    private String phoneService;
-
     @ApiModelProperty("发布时间")
     private String publishTime;
 
     @ApiModelProperty("发布人姓名")
     private String publishName;
 
+    @ApiModelProperty("发布人编码")
+    private String publishCode;
+
     @ApiModelProperty("发布人电话")
     private String publishPhone;
-
-//    @ApiModelProperty("发布人部门")
-//    private String orgId;
 
     @ApiModelProperty("是否审核")
     private String isCheck;
@@ -121,6 +97,30 @@ public class AppGoodsUploadRequestDto implements Serializable {
 
     @ApiModelProperty("发布人是否是公司")
     private Integer isCompany;
+
+    public String getPublishCode() {
+        return publishCode;
+    }
+
+    public void setPublishCode(String publishCode) {
+        this.publishCode = publishCode;
+    }
+
+    public String getGoodsCode() {
+        return goodsCode;
+    }
+
+    public void setGoodsCode(String goodsCode) {
+        this.goodsCode = goodsCode;
+    }
+
+    public String getContentClass() {
+        return contentClass;
+    }
+
+    public void setContentClass(String contentClass) {
+        this.contentClass = contentClass;
+    }
 
     public String getGoodsHead() {
         return goodsHead;
@@ -258,28 +258,12 @@ public class AppGoodsUploadRequestDto implements Serializable {
         this.color = color;
     }
 
-    public String getFounderPrice() {
-        return founderPrice;
-    }
-
-    public void setFounderPrice(String founderPrice) {
-        this.founderPrice = founderPrice;
-    }
-
     public String getPublishPrice() {
         return publishPrice;
     }
 
     public void setPublishPrice(String publishPrice) {
         this.publishPrice = publishPrice;
-    }
-
-    public String getPriceRange() {
-        return priceRange;
-    }
-
-    public void setPriceRange(String priceRange) {
-        this.priceRange = priceRange;
     }
 
     public String getNum() {
@@ -298,21 +282,6 @@ public class AppGoodsUploadRequestDto implements Serializable {
         this.priceType = priceType;
     }
 
-    public String getWx() {
-        return wx;
-    }
-
-    public void setWx(String wx) {
-        this.wx = wx;
-    }
-
-    public String getPhoneService() {
-        return phoneService;
-    }
-
-    public void setPhoneService(String phoneService) {
-        this.phoneService = phoneService;
-    }
 
     public String getPublishTime() {
         return publishTime;
@@ -360,5 +329,13 @@ public class AppGoodsUploadRequestDto implements Serializable {
 
     public void setIsCompany(Integer isCompany) {
         this.isCompany = isCompany;
+    }
+
+    public Long getGoodsPropertyId() {
+        return goodsPropertyId;
+    }
+
+    public void setGoodsPropertyId(Long goodsPropertyId) {
+        this.goodsPropertyId = goodsPropertyId;
     }
 }

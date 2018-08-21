@@ -31,6 +31,17 @@ public class TlongCodeRule extends BaseJpa {
     //用户类型
     private Integer userType;
 
+    //是否是集团
+    private Integer isCompany;
+
+    public Integer getIsCompany() {
+        return isCompany;
+    }
+
+    public void setIsCompany(Integer isCompany) {
+        this.isCompany = isCompany;
+    }
+
     public Long getId() {
         return id;
     }

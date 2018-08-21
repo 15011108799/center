@@ -6,6 +6,7 @@ import com.tlong.center.api.dto.user.settings.TlongUserSettingsRequestDto;
 import com.tlong.center.service.CodeService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,6 +30,14 @@ public class CodeController implements CodeApi{
     @Override
     public TlongUserSettingsRequestDto findParam() {
         return codeService.findParam();
+    }
+
+    /**
+     * 生成编码
+     */
+    @Override
+    public String createCode(@RequestParam Integer codeType, @RequestParam Integer userType, @RequestParam Integer head) {
+        return codeService.createAllCode(codeType,userType,head,0);
     }
 
 

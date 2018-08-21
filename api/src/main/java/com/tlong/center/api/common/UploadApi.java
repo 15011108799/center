@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api("文件上传接口")
 public interface UploadApi {
@@ -17,5 +18,5 @@ public interface UploadApi {
 
     @ApiOperation("批量文件上传")
     @PostMapping("/batchUpload")
-    String handleFileUpload(HttpServletRequest request, @RequestParam String contentType,@RequestParam String contentClass); //TODO 需要更改为对象形式的参数集合
+    String handleFileUpload(@RequestParam("file") List<MultipartFile> files, @RequestParam String contentClass);
 }

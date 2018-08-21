@@ -11,6 +11,9 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("用户编码")
+    private String userCode;
+
     @ApiModelProperty("昵称")
     private String nickName;
 
@@ -25,6 +28,15 @@ public class AppUserResponseDto implements Serializable {
 
     @ApiModelProperty("头像URL")
     private String headImage;
+
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
 
     public Long getUserId() {
         return userId;

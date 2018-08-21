@@ -35,49 +35,92 @@ public class FileController implements UploadApi{
     @Override
     @PostMapping("/upload")
     public String uploadFile(@RequestParam MultipartFile file,@RequestParam String contentClass,@RequestParam String contentType){
-        if (file.isEmpty()){
+        if (file.isEmpty()) {
             logger.error("上传文件为空");
-            return "上传文件为空";
         }
 
         //获取文件名
         String fileName = file.getOriginalFilename();
-        logger.info("上传的文件的文件名为:"+fileName);
-
+        logger.info("上传的文件的文件名为:" + fileName);
+        String[] split = fileName.split("_");
+        String[] split1 = split[split.length - 1].split(".");
+        String type = split1[split1.length];
         //获取文件的后缀名
-        String suffixName  = fileName.substring(fileName.lastIndexOf("."));
-        logger.info("上传文件的后缀名为:"+suffixName );
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));
+        logger.info("上传文件的后缀名为:" + suffixName);
 
-        //获取文件类别（用户 课程）contentClass
 
-        //获取文件类型（视频 图片）contentType
-
-        //获取时间
         SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
         String format = sim.format(new Date());
-
         //文件上传后的路径
         //TODO 自定义控制文件目录
-        String filePath = "E://pic//" +contentClass + "//" + contentType + "//" + format + "//";
-
-        //解决中文问题,，liunx下中文路径，图片显示问题
-        // fileName = UUID.randomUUID() + suffixName;
-        File newFile = new File(filePath + fileName);
-
-        //检测是否存在目录就是看filepath这个文件夹是否存在
-        if (!newFile.getParentFile().exists()){
-            newFile.getParentFile().mkdirs();
+        String filePath;
+        if (suffixName.toUpperCase().equals("MP4")){
+            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
+        }else {
+            //C:\\resources
+            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
         }
-        try {
-            file.transferTo(newFile);
-            return "图片上传成功!";
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            //解决中文问题,，liunx下中文路径，monitor_control.restrict_backdoor = "true"
+            // fileName = UUID.randomUUID() + suffixName;
+            File newFile = new File(filePath + fileName);
+
+            //检测是否存在目录就是看filepath这个文件夹是否存在
+            if (!newFile.getParentFile().exists()) {
+                newFile.getParentFile().mkdirs();
+            }
+            try {
+                file.transferTo(newFile);
+                return fileName + ",";
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
-        return "图片上传失败!";
-    }
+//        if (file.isEmpty()){
+//            logger.error("上传文件为空");
+//            return "上传文件为空";
+//        }
+//
+//        //获取文件名
+//        String fileName = file.getOriginalFilename();
+//        logger.info("上传的文件的文件名为:"+fileName);
+//
+//        //获取文件的后缀名
+//        String suffixName  = fileName.substring(fileName.lastIndexOf("."));
+//        logger.info("上传文件的后缀名为:"+suffixName );
+//
+//        //获取文件类别（用户 课程）contentClass
+//
+//        //获取文件类型（视频 图片）contentType
+//
+//        //获取时间
+//        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
+//        String format = sim.format(new Date());
+//
+//        //文件上传后的路径
+//        //TODO 自定义控制文件目录
+//        String filePath = "E://pic//" +contentClass + "//" + contentType + "//" + format + "//";
+//
+//        //解决中文问题,，liunx下中文路径，图片显示问题
+//        // fileName = UUID.randomUUID() + suffixName;
+//        File newFile = new File(filePath + fileName);
+//
+//        //检测是否存在目录就是看filepath这个文件夹是否存在
+//        if (!newFile.getParentFile().exists()){
+//            newFile.getParentFile().mkdirs();
+//        }
+//        try {
+//            file.transferTo(newFile);
+//            return "图片上传成功!";
+//        } catch (IllegalStateException | IOException e) {
+//            e.printStackTrace();
+//        }
+//        return "图片上传失败!";
+//    }
 
     /**
      * 文件下载相关
@@ -137,11 +180,8 @@ public class FileController implements UploadApi{
     }
 
     //多文件上传
-    @Override
     @PostMapping(value = "/batchUpload")
-    public String handleFileUpload(HttpServletRequest request,@RequestParam String contentType,@RequestParam String contentClass) {
-        List<MultipartFile> files = ((MultipartHttpServletRequest) request)
-                .getFiles("file");
+    public String handleFileUpload(@RequestParam("file") List<MultipartFile> files, @RequestParam String contentClass) {
 //        MultipartFile file = null;
 //        BufferedOutputStream stream = null;
 //        for (int i = 0; i < files.size(); ++i) {
@@ -169,7 +209,7 @@ public class FileController implements UploadApi{
         if (!CollectionUtils.isEmpty(files)){
             for (MultipartFile file :files){
                 try {
-                    this.uploadFile(file,contentType,contentClass);
+                    this.uploadFile(file,contentClass,null);
                 }catch (Exception e){
                     return "上传失败";
                 }

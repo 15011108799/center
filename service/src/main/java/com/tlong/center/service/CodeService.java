@@ -55,7 +55,7 @@ public class CodeService {
             one.setHeadContent(req.getPersonHeadContent());
             one.setPlaceholder("0");
             repository.save(one);
-            createCode(0,head);
+            createCode(0,head,null);
         } else {
             createCodeRule(req, 0);
         }
@@ -64,14 +64,14 @@ public class CodeService {
             two.setHeadContent(req.getCompanyHeadContent());
             two.setPlaceholder("0");
             repository.save(two);
-            createCode(1,head);
+            createCode(1,head,null);
         } else {
             createCodeRule(req, 1);
         }
     }
 
-    public void createCode(Integer type,int head) {
-        new CodeUtil(repository, codeRepository, entityManager).goodsCode(1, type,head);
+    public void createCode(Integer type,Integer head,Integer isCompany) {
+        new CodeUtil(repository, codeRepository, entityManager).goodsCode(1, type,head,isCompany);
     }
 
 
@@ -85,7 +85,7 @@ public class CodeService {
             tlongCodeRule.setTotalLength(6);
             tlongCodeRule.setPlaceholder("0");
             repository.save(tlongCodeRule);
-            createCode(0,0);
+            createCode(0,0,null);
         } else {
             TlongCodeRule tlongCodeRule = new TlongCodeRule();
             tlongCodeRule.setHeadContent(req.getCompanyHeadContent());
@@ -94,7 +94,7 @@ public class CodeService {
             tlongCodeRule.setPlaceholder("0");
             tlongCodeRule.setTotalLength(6);
             repository.save(tlongCodeRule);
-            createCode(1,0);
+            createCode(1,0,null);
         }
 
     }
@@ -128,8 +128,8 @@ public class CodeService {
         return requestDto;
     }
 
-    public String createAllCode(Integer type,Integer userType,Integer head) {
-        return new CodeUtil(repository, codeRepository, entityManager).goodsCode(type, userType,head);
+    public String createAllCode(Integer type,Integer userType,Integer head,Integer isCompany) {
+        return new CodeUtil(repository, codeRepository, entityManager).goodsCode(type, userType,head,isCompany);
     }
 
 }
