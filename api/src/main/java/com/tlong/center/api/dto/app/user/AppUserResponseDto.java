@@ -23,12 +23,22 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("服务热线")
     private String serviceHotline;
 
+    @ApiModelProperty("手机号")
+    private String phone;
+
     @ApiModelProperty("电子协议存证编号")
     private String evId;
 
     @ApiModelProperty("头像URL")
     private String headImage;
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getUserCode() {
         return userCode;

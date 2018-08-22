@@ -74,7 +74,7 @@ public class WebGoodsService {
 //        List<WebGoods> all = repository.findAll();
 //        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
 
-
+        System.out.println(new Date().getTime());
 
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
@@ -156,6 +156,7 @@ public class WebGoodsService {
             count[0]++;
         });
         responseDto.setCount(count[0]);
+        System.out.println(new Date());
         return responseDto;
     }
 
@@ -360,51 +361,88 @@ public class WebGoodsService {
                 pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
             }
         }
-        if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
-        if (requestDto.getGoodsState() != 5)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.state.eq(requestDto.getGoodsState()));
-        if (requestDto.getCheckState() != 3)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.isCheck.eq(requestDto.getCheckState()));
-        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
-        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
-        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
-        if (requestDto.getUserType() != null && requestDto.getUserType() == 1) {
+        if (StringUtils.isNotEmpty(requestDto.getGoodsName())){
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsHead.like("%" + requestDto.getGoodsName() + "%"));
+        }
+        if (StringUtils.isNotEmpty(requestDto.getGoodsCode())) {
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsCode.like("%" + requestDto.getGoodsCode() + "%"));
+        }
+        if (requestDto.getGoodsState() != null)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
+        if (requestDto.getCheckState() != null)
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.state.eq(requestDto.getCheckState()));
+//        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+//            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+//        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+//            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+//        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+//            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+
+        //TODO 用户类型
+//        if (requestDto.getUserType() != null && requestDto.getUserType() == 0) {
+//            if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1) {
+//                pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()));
+//                webGoods = repository.findAll(pre[0], pageRequest);
+//            } else {
+//
+//                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
+//                tlongUser3.forEach(one -> {
+//                    pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+//                });
+//                if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
+//                    TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
+//                    if (tlongUser1 != null) {
+//                        pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
+//                    }
+//                }
+//                if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
+//                if (requestDto.getGoodsState() != 5)
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.state.eq(requestDto.getGoodsState()));
+//                if (requestDto.getCheckState() != 3)
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.isCheck.eq(requestDto.getCheckState()));
+//                if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+//                else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+//                else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+//                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+//                webGoods = repository.findAll(pre1[0], pageRequest);
+//            }
+//        } else {
+//            webGoods = repository.findAll(pre[0], pageRequest);
+//        }
+        if (requestDto.getIsCompany()!= null) {
             if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1) {
                 pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()));
-                webGoods = repository.findAll(pre[0], pageRequest);
-            } else {
-
-                Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
-                tlongUser3.forEach(one -> {
-                    pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
-                });
-                if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
-                    TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
-                    if (tlongUser1 != null) {
-                        pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
-                    }
-                }
-                if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
-                if (requestDto.getGoodsState() != 5)
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.state.eq(requestDto.getGoodsState()));
-                if (requestDto.getCheckState() != 3)
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.isCheck.eq(requestDto.getCheckState()));
-                if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
-                else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
-                else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
-                    pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
-                webGoods = repository.findAll(pre1[0], pageRequest);
             }
-        } else {
-            webGoods = repository.findAll(pre[0], pageRequest);
         }
+//        else {
+//            Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
+//            tlongUser3.forEach(one -> {
+//                pre1[0] = ExpressionUtils.or(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
+//            });
+//        }
+        if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
+            TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
+            if (tlongUser1 != null) {
+                pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
+            }
+        }
+        if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
+        if (requestDto.getGoodsState() != null && requestDto.getGoodsState() != 5)
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
+        if (requestDto.getCheckState()!= null && requestDto.getCheckState() != 3)
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.state.eq(requestDto.getCheckState()));
+        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.lt(requestDto.getEndTime() + " 23:59:59"));
+        else if (requestDto.getStartTime() != null && requestDto.getEndTime() == null)
+            pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.gt(requestDto.getStartTime() + " 00:00:00"));
+        webGoods = repository.findAll(pre[0], pageRequest);
+
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         webGoods.forEach(webGoods1 -> {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();

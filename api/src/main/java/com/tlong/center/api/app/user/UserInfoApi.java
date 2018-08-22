@@ -13,10 +13,10 @@ public interface UserInfoApi {
 
     @ApiOperation("校验用户名是否存在")
     @PostMapping("/checkUserName")
-    Integer checkUserName(@RequestParam String userName);
+    TlongResultDto checkUserName(@RequestParam String userName);
 
     @ApiOperation("修改用户密码")
-    @PutMapping("/{userId}")
-    TlongResultDto updateUserPassword(@PathVariable Long userId, @RequestParam String newPassword);
+    @PutMapping("/{phone}")
+    TlongResultDto updateUserPassword(@PathVariable Long phone, @RequestParam String newPassword);
 
 }

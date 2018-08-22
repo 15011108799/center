@@ -423,57 +423,63 @@ public class UserService {
 
     public Result update(SuppliersRegisterRequsetDto requsetDto) {
         WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
-        if (one1==null)
-            return new Result(0,"机构不存在");
-        TlongUser tlongUser = new TlongUser();
-        tlongUser.setId(requsetDto.getId());
-        tlongUser.setArea(requsetDto.getArea());
-        tlongUser.setUserName(requsetDto.getUserName());
-        tlongUser.setPassword(requsetDto.getPassword());
-        tlongUser.setUserType(requsetDto.getUserType());
-        tlongUser.setIsCompany(requsetDto.getIsCompany());
-        tlongUser.setIdcardNumber(requsetDto.getIdcardNumber());
-        tlongUser.setRealName(requsetDto.getRealName());
-        tlongUser.setBirthday(requsetDto.getBirthday());
-        tlongUser.setSex(requsetDto.getSex());
-        WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
-        tlongUser.setOrgId(one.getId());
-        tlongUser.setWx(requsetDto.getWx());
-        tlongUser.setEsgin(0);
-        tlongUser.setGoodsClass(requsetDto.getGoodsClass());
-        tlongUser.setAuthentication(0);
-        tlongUser.setServiceHotline(requsetDto.getServiceHotline());
-        tlongUser.setCompanyName(requsetDto.getCompanyName());
-        TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
-        tlongUser.setUserCode(tlongUser1.getUserCode());
-        tlongUser.setParentId(tlongUser1.getParentId());
-        if (requsetDto.getHeadImage() != null && !requsetDto.getHeadImage().equals("")) {
-            tlongUser.setHeadImage(requsetDto.getHeadImage());
-        } else {
-            tlongUser.setHeadImage(tlongUser1.getHeadImage());
+        if (one1==null) {
+            return new Result(0, "机构不存在");
         }
-        if (requsetDto.getIdcardFront1() != null && !requsetDto.getIdcardFront1().equals("")) {
-            tlongUser.setIdcardFront(requsetDto.getIdcardFront1());
-        } else
-            tlongUser.setIdcardFront(tlongUser1.getIdcardFront());
-        tlongUser.setPhone(requsetDto.getPhone());
-        if (requsetDto.getIdcardReverse1() != null && !requsetDto.getIdcardReverse1().equals(""))
-            tlongUser.setIdcardReverse(requsetDto.getIdcardReverse1());
-        else
-            tlongUser.setIdcardReverse(tlongUser1.getIdcardReverse());
-        tlongUser.setOrganizationCode(requsetDto.getOrganizationCode());
-        tlongUser.setSucc(requsetDto.getSucc());
-        tlongUser.setLegalPersonName(requsetDto.getLegalPersonName());
-        if (requsetDto.getBusinessLicense1() != null && !requsetDto.getBusinessLicense1().equals(""))
-            tlongUser.setBusinessLicense(requsetDto.getBusinessLicense1());
-        else
-            tlongUser.setBusinessLicense(tlongUser1.getBusinessLicense());
-        tlongUser.setRegistDate(tlongUser1.getRegistDate());
-        tlongUser.setPremises(requsetDto.getPremises());
-        tlongUser.setOrgId(one1.getId());
-        tlongUser.setNickName(requsetDto.getNickName());
-        tlongUser.setIsExemption(requsetDto.getIsExemption());
-        tlongUser.setPhone(requsetDto.getPhone());
+
+        TlongUser tlongUser = new TlongUser();
+        if (requsetDto.getIsApp() == 1){
+             tlongUser = new TlongUser(requsetDto);
+        }else {
+//        tlongUser.setId(requsetDto.getId());
+            tlongUser.setArea(requsetDto.getArea());
+            tlongUser.setUserName(requsetDto.getUserName());
+            tlongUser.setPassword(requsetDto.getPassword());
+            tlongUser.setUserType(requsetDto.getUserType());
+            tlongUser.setIsCompany(requsetDto.getIsCompany());
+            tlongUser.setIdcardNumber(requsetDto.getIdcardNumber());
+            tlongUser.setRealName(requsetDto.getRealName());
+            tlongUser.setBirthday(requsetDto.getBirthday());
+            tlongUser.setSex(requsetDto.getSex());
+            WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
+            tlongUser.setOrgId(one.getId());
+            tlongUser.setWx(requsetDto.getWx());
+            tlongUser.setEsgin(0);
+            tlongUser.setGoodsClass(requsetDto.getGoodsClass());
+            tlongUser.setAuthentication(0);
+            tlongUser.setServiceHotline(requsetDto.getServiceHotline());
+            tlongUser.setCompanyName(requsetDto.getCompanyName());
+            TlongUser tlongUser1 = appUserRepository.findOne(requsetDto.getId());
+            tlongUser.setUserCode(tlongUser1.getUserCode());
+            tlongUser.setParentId(tlongUser1.getParentId());
+            if (requsetDto.getHeadImage() != null && !requsetDto.getHeadImage().equals("")) {
+                tlongUser.setHeadImage(requsetDto.getHeadImage());
+            } else {
+                tlongUser.setHeadImage(tlongUser1.getHeadImage());
+            }
+            if (requsetDto.getIdcardFront1() != null && !requsetDto.getIdcardFront1().equals("")) {
+                tlongUser.setIdcardFront(requsetDto.getIdcardFront1());
+            } else
+                tlongUser.setIdcardFront(tlongUser1.getIdcardFront());
+            tlongUser.setPhone(requsetDto.getPhone());
+            if (requsetDto.getIdcardReverse1() != null && !requsetDto.getIdcardReverse1().equals(""))
+                tlongUser.setIdcardReverse(requsetDto.getIdcardReverse1());
+            else
+                tlongUser.setIdcardReverse(tlongUser1.getIdcardReverse());
+            tlongUser.setOrganizationCode(requsetDto.getOrganizationCode());
+            tlongUser.setSucc(requsetDto.getSucc());
+            tlongUser.setLegalPersonName(requsetDto.getLegalPersonName());
+            if (requsetDto.getBusinessLicense1() != null && !requsetDto.getBusinessLicense1().equals(""))
+                tlongUser.setBusinessLicense(requsetDto.getBusinessLicense1());
+            else
+                tlongUser.setBusinessLicense(tlongUser1.getBusinessLicense());
+            tlongUser.setRegistDate(tlongUser1.getRegistDate());
+            tlongUser.setPremises(requsetDto.getPremises());
+            tlongUser.setOrgId(one1.getId());
+            tlongUser.setNickName(requsetDto.getNickName());
+            tlongUser.setIsExemption(requsetDto.getIsExemption());
+            tlongUser.setPhone(requsetDto.getPhone());
+        }
         TlongUser tlongUser2 = appUserRepository.save(tlongUser);
         if (tlongUser2 == null) {
             return new Result(0, "修改失败");
@@ -502,8 +508,7 @@ public class UserService {
                 //然后查询出这些机构下所有的代理商
                 Iterable<TlongUser> all1 = appUserRepository.findAll(
                         tlongUser.orgId.in(orgIds)
-                        .and(tlongUser.userType.isNotNull())
-                        .and(tlongUser.userType.eq(2)
+                        .and(tlongUser.userType.eq(1)
                         .and(tlongUser.level.eq(1))),pageRequest);
                 if (Objects.nonNull(all1)){
                     tlongUsers = ToListUtil.IterableToList(all1);

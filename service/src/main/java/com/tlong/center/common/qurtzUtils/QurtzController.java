@@ -43,7 +43,7 @@ public class QurtzController {
         scheduler.scheduleJob(jobDetail, trigger);
         scheduler.start();
         try {
-            Long laterTime = 18000L;
+            Long laterTime = 7200L;
             if (requestDto.getLaterTime() != null) {
                 laterTime = requestDto.getLaterTime();
             }
@@ -100,7 +100,7 @@ public class QurtzController {
      */
     public Long unLockGoods(Long goodsId) {
         //修改商品的状态 TODO
-        webGoodsService.updateState(goodsId, 3);
+        webGoodsService.updateState(goodsId, 1);
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
     }

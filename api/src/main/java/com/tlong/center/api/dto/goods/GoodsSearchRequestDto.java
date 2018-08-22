@@ -36,11 +36,22 @@ public class GoodsSearchRequestDto implements Serializable {
     @ApiModelProperty("商品编码")
     private String goodsCode;
 
+    @ApiModelProperty("商品名称")
+    private String goodsName;
+
     @ApiModelProperty("开始时间")
     private String startTime;
 
     @ApiModelProperty("结束时间")
     private String endTime;
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
 
     public Integer getIsCompany() {
         return isCompany;

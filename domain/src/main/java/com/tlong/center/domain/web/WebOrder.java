@@ -5,6 +5,7 @@ import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tlong_order")
@@ -37,8 +38,11 @@ public class WebOrder {
     //订单状态
     private Integer state;
 
-    //下单时间
+    //成交时间
     private String placeOrderTime;
+
+    //下单时间
+    private Date createTime;
 
 //    //下单人用户名
 //    private String userName;
@@ -63,6 +67,15 @@ public class WebOrder {
 //
 //    //下单人手机号
 //    private String phone;
+
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public Long getId() {
         return id;

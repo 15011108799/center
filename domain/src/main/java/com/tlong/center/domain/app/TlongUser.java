@@ -1,6 +1,7 @@
 package com.tlong.center.domain.app;
 
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
+import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -21,6 +22,10 @@ public class TlongUser implements Serializable {
         AppUserResponseDto dto = new AppUserResponseDto();
         PropertyUtils.copyPropertiesOfNotNull(this,dto);
         return dto;
+    }
+
+    public TlongUser (SuppliersRegisterRequsetDto requsetDto){
+        PropertyUtils.copyPropertiesOfNotNull(requsetDto,this);
     }
 
 

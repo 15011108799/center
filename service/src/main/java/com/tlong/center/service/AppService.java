@@ -70,12 +70,12 @@ public class AppService {
             one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                     .and(tlongUser.password.eq(md5Password)));
             if (Objects.isNull(one)){
-                responseDto.setFlag(0);
+                responseDto.setFlag(1);
                 return responseDto;
             }
         }
         responseDto.setOrgId(one.getOrgId());
-        responseDto.setFlag(1);
+        responseDto.setFlag(0);
         responseDto.setUserType(one.getUserType());
         responseDto.setEsgin(one.getEsgin());
         responseDto.setUserId(one.getId());
@@ -94,6 +94,7 @@ public class AppService {
            responseDto.setEvId(one.getEvId());
            responseDto.setUserCode(one.getUserCode());
            responseDto.setHeadImage(one.getHeadImage());
+           responseDto.setPhone(one.getPhone());
            responseDto.setNickName(one.getNickName());
            responseDto.setServiceHotline(one.getServiceHotline());
            responseDto.setUserId(userId);
