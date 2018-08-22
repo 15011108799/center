@@ -3,6 +3,8 @@ package com.tlong.center.api.web;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.*;
+import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
+import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
@@ -71,11 +73,11 @@ public interface WebUserApi {
 
     @ApiOperation("查找供应商发布商品数量")
     @PostMapping("/findUserPublishNum")
-    Integer findUserPublishNumm(@RequestBody Long id);
+    FindUserPublishNumResponseDto findUserPublishNumm(@RequestBody Long id, @RequestParam Integer isCompany);
 
     @ApiOperation("修改供应商发布商品数量")
     @PostMapping("/updateUserPublishNum")
-    void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto);
+    void updateUserPublishNumm(@RequestBody UpdateUserPublishNumRequsetDto requsetDto);
 
     @ApiOperation("查找供应商认证通过人数")
     @PostMapping("/findCount")

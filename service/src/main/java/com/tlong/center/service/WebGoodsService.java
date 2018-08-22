@@ -21,6 +21,7 @@ import com.tlong.center.domain.repository.GoodsRepository;
 import com.tlong.center.domain.repository.WebOrgRepository;
 import com.tlong.center.domain.web.QWebOrg;
 import com.tlong.center.domain.web.WebOrg;
+import com.tlong.core.utils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -513,18 +514,22 @@ public class WebGoodsService {
 
     /**
      * 重新发布商品
-     *
-     * @param goodsId
-     * @return
      */
-    public Result publishAgain(String goodsId) {
-        WebGoods webGoods = repository.findOne(Long.valueOf(goodsId));
+    public Result publishAgain(WebGoodsDetailResponseDto reqDto) {
+        WebGoods webGoods = repository.findOne(Long.valueOf(reqDto.getId()));
+        WebGoods webGoods2 = joinWebGoods(webGoods, reqDto);
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         webGoods.setPublishTime(simpleDateFormat.format(new Date()));
-        WebGoods webGoods1 = repository.save(webGoods);
+        WebGoods webGoods1 = repository.save(webGoods2);
         if (webGoods1 != null)
             return new Result(1, "重新发布成功");
         else
             return new Result(1, "重新发布失败");
+    }
+
+    private WebGoods joinWebGoods(WebGoods webGoods,WebGoodsDetailResponseDto webGoodsDto){
+        PropertyUtils.copyPropertiesOfNotNull(webGoodsDto,webGoods);
+        return webGoods;
     }
 }

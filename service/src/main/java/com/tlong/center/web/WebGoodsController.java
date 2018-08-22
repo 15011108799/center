@@ -74,7 +74,7 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public Result publishAgain(@RequestBody String goodsId) {
-        return webGoodsService.publishAgain(goodsId);
+    public Result publishAgain(@RequestBody WebGoodsDetailResponseDto reqDto) {
+        return webGoodsService.publishAgain(reqDto);
     }
 }

@@ -8,6 +8,8 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.user.*;
+import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
+import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
 import com.tlong.center.common.user.UserSettingsSerivce;
 import com.tlong.center.common.utils.MD5Util;
@@ -21,6 +23,7 @@ import com.tlong.center.domain.common.user.QTlongUserSettings;
 import com.tlong.center.domain.common.user.TlongUserSettings;
 import com.tlong.center.domain.repository.*;
 import com.tlong.center.domain.web.*;
+import com.tlong.core.utils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -336,14 +339,16 @@ public class UserService {
         Page<TlongUser> tlongUser2;
         PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        if (user.getIsCompany() == null)
-            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)), pageRequest);
-        else if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
-            tlongUser2 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()), pageRequest);
-        else {
-            WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(user.getOrgId()));
-            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.longValue().eq(one1.getId())), pageRequest);
-        }
+
+        tlongUser2 = appUserRepository.findAll(tlongUser.userType.eq(0), pageRequest);
+//        if (user.getIsCompany() == null)
+//            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(0).and(tlongUser.isCompany.intValue().ne(2)), pageRequest);
+//        else if (user.getIsCompany() == 0 || user.getIsCompany() == 1)
+//            tlongUser2 = appUserRepository.findAll(tlongUser.id.longValue().eq(user.getId()), pageRequest);
+//        else {
+//            WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(user.getOrgId()));
+//            tlongUser2 = appUserRepository.findAll(tlongUser.userType.intValue().eq(0).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.longValue().eq(one1.getId())), pageRequest);
+//        }
         List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
         tlongUser2.forEach(tlongUser1 -> {
             final int[] count1 = {0};
@@ -384,7 +389,9 @@ public class UserService {
         tlongUser3.forEach(tlongUser1 -> {
             count[0]++;
         });
-        pageSuppliersResponseDto.setCount(count[0]);
+//        pageSuppliersResponseDto.setCount(count[0]);
+        String s = String.valueOf(tlongUser2.getTotalElements());
+        pageSuppliersResponseDto.setCount(Integer.valueOf(s));
         return pageSuppliersResponseDto;
     }
 
@@ -422,14 +429,15 @@ public class UserService {
     }
 
     public Result update(SuppliersRegisterRequsetDto requsetDto) {
-        WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
-        if (one1==null) {
-            return new Result(0, "机构不存在");
-        }
-
-        TlongUser tlongUser = new TlongUser();
+//        WebOrg one1 = webOrgRepository.findOne(QWebOrg.webOrg.orgName.eq(requsetDto.getOrgId()));
+//        if (one1==null) {
+//            return new Result(0, "机构不存在");
+//        }
+        TlongUser tlongUser2;
+        TlongUser tlongUser = appUserRepository.findOne(requsetDto.getId());
         if (requsetDto.getIsApp() == 1){
-             tlongUser = new TlongUser(requsetDto);
+            TlongUser tlongUser1 = setValues(tlongUser, requsetDto);
+            tlongUser2 = appUserRepository.save(tlongUser1);
         }else {
 //        tlongUser.setId(requsetDto.getId());
             tlongUser.setArea(requsetDto.getArea());
@@ -475,17 +483,23 @@ public class UserService {
                 tlongUser.setBusinessLicense(tlongUser1.getBusinessLicense());
             tlongUser.setRegistDate(tlongUser1.getRegistDate());
             tlongUser.setPremises(requsetDto.getPremises());
-            tlongUser.setOrgId(one1.getId());
+//            tlongUser.setOrgId(one1.getId());
             tlongUser.setNickName(requsetDto.getNickName());
             tlongUser.setIsExemption(requsetDto.getIsExemption());
             tlongUser.setPhone(requsetDto.getPhone());
+            tlongUser2 = appUserRepository.save(tlongUser);
         }
-        TlongUser tlongUser2 = appUserRepository.save(tlongUser);
+
         if (tlongUser2 == null) {
             return new Result(0, "修改失败");
         }
         return new Result(1, "修改成功");
 
+    }
+
+    private TlongUser setValues(TlongUser tlongUser, SuppliersRegisterRequsetDto requsetDto ){
+        PropertyUtils.copyPropertiesOfNotNull(requsetDto,tlongUser);
+        return tlongUser;
     }
 
     /**
@@ -691,19 +705,55 @@ public class UserService {
     }
 
     /**
-     * 查询发布商品数量
+     * 查询发布商品数量 重新发布数量
      */
-    public Integer findUserPublishNumm(Long id) {
+    public FindUserPublishNumResponseDto findUserPublishNumm(Long id, Integer isCompany) {
+        if (isCompany != null){
+            switch (isCompany){
+                case 0 :
+                    TlongUserSettings one = tlongUserSettingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.eq(0)
+                            .and(QTlongUserSettings.tlongUserSettings.userId.isNull()));
+                    return new FindUserPublishNumResponseDto(one.getGoodsReleaseNumber(),one.getGoodsReReleaseNumber());
+                case 1 :
+                    TlongUserSettings one1 = tlongUserSettingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userType.eq(1)
+                            .and(QTlongUserSettings.tlongUserSettings.userId.isNull()));
+                    return new FindUserPublishNumResponseDto(one1.getGoodsReleaseNumber(),one1.getGoodsReReleaseNumber());
+            }
+        }
         TlongUser tlongUser = appUserRepository.findOne(id);
-        return tlongUser.getGoodsPublishNum();
+
+        TlongUserSettings one = tlongUserSettingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userId.eq(id)
+                .and(QTlongUserSettings.tlongUserSettings.userType.eq(isCompany == null ? 0 : isCompany)));
+        if (Objects.isNull(one)){
+            if (null != tlongUser.getGoodsPublishNum()){
+                return new FindUserPublishNumResponseDto(tlongUser.getGoodsPublishNum(),0);
+            }
+            return new FindUserPublishNumResponseDto(0,0);
+        }
+        return new FindUserPublishNumResponseDto(one.getGoodsReleaseNumber(),one.getGoodsReReleaseNumber());
     }
 
     /**
-     * 修改发布商品数量
+     * 修改发布商品数量 重新发布数量
      */
-    public void updateUserPublishNumm(SuppliersRegisterRequsetDto registerRequsetDto) {
-        TlongUser tlongUser = appUserRepository.findOne(registerRequsetDto.getId());
-        tlongUser.setGoodsPublishNum(registerRequsetDto.getGoodsPublishNum());
+    public void updateUserPublishNumm(UpdateUserPublishNumRequsetDto requsetDto) {
+        TlongUser tlongUser = appUserRepository.findOne(requsetDto.getUserId());
+        tlongUser.setGoodsPublishNum(requsetDto.getPublishNumber());
+        TlongUserSettings one = tlongUserSettingsRepository.findOne(QTlongUserSettings.tlongUserSettings.userId.eq(requsetDto.getUserId()));
+        if (Objects.isNull(one)){
+            //创建个人的发布数量重新发布数量
+            TlongUserSettings tlongUserSettings = new TlongUserSettings();
+            tlongUserSettings.setUserId(requsetDto.getUserId());
+            tlongUserSettings.setUserType(requsetDto.getIsCompany());
+            tlongUserSettings.setGoodsReleaseNumber(requsetDto.getPublishNumber());
+            tlongUserSettings.setGoodsReReleaseNumber(requsetDto.getRePublishNumber());
+            tlongUserSettings.setUserType(requsetDto.getIsCompany());
+            tlongUserSettingsRepository.save(tlongUserSettings);
+        }else {
+            one.setGoodsReleaseNumber(requsetDto.getPublishNumber());
+            one.setGoodsReReleaseNumber(requsetDto.getRePublishNumber());
+            tlongUserSettingsRepository.save(one);
+        }
         appUserRepository.save(tlongUser);
     }
 

@@ -3,6 +3,8 @@ package com.tlong.center.web;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.user.*;
+import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
+import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.UserService;
@@ -90,13 +92,13 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public Integer findUserPublishNumm( @RequestBody Long id) {
-        return userService.findUserPublishNumm(id);
+    public FindUserPublishNumResponseDto findUserPublishNumm(@RequestBody Long id, @RequestParam Integer isCompany) {
+        return userService.findUserPublishNumm(id,isCompany);
     }
 
     @Override
-    public void updateUserPublishNumm(@RequestBody SuppliersRegisterRequsetDto registerRequsetDto) {
-        userService.updateUserPublishNumm(registerRequsetDto);
+    public void updateUserPublishNumm(@RequestBody UpdateUserPublishNumRequsetDto requsetDto) {
+        userService.updateUserPublishNumm(requsetDto);
     }
 
     @Override

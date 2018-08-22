@@ -17,7 +17,6 @@ public class WebGoods extends BaseJpa {
     public WebGoods() {
 
     }
-
     public WebGoods(WebGoodsDetailResponseDto dto) {
         PropertyUtils.copyPropertiesOfNotNull(dto, this);
     }

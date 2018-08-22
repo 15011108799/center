@@ -26,25 +26,13 @@ public class UserSettingsSerivce {
      * 修改设置商品发布 重新发布数量
      */
     public void updateGoodsReleaseNumber(TlongUserSettingsRequestDto req) {
-        TlongUserSettings one;
         //获取用户类型对应的可以上架的商品的数量 用户类型(0个人 1企业 2个人默认设置 3企业默认设置)
-         one = repository.findOne(tlongUserSettings.userType.eq(req.getUserType())
-                .and(tlongUserSettings.userId.eq(req.getUserId())));
-         if (one == null) {
-             one = repository.findOne(tlongUserSettings.userType.eq(req.getUserType() + 2));
-         }
+        TlongUserSettings one = repository.findOne(tlongUserSettings.userId.eq(req.getUserId()));
         if (Objects.nonNull(one)){
-            if (req.getUserType() == 0){
-                one.setUserId(req.getUserId());
-                one.setGoodsReleaseNumber(req.getPersonReleaseNumber());
-                one.setGoodsReReleaseNumber(req.getPersonReReleaseNumber());
-            }else if (req.getUserType() == 1){
-                one.setGoodsReleaseNumber(req.getCompanyReleaseNumber());
-                one.setGoodsReReleaseNumber(req.getCompanyReReleaseNumber());
-            }
-        }else {
-            //创建默认参数
-            createTlongUserSettings(req,2);
+            //个人的数量
+            one.setGoodsReleaseNumber(req.getPersonReleaseNumber());
+            one.setGoodsReReleaseNumber(req.getPersonReReleaseNumber());
+            repository.save(one);
         }
     }
 

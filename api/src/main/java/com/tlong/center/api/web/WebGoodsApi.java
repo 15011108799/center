@@ -59,5 +59,5 @@ public interface WebGoodsApi {
 
     @ApiModelProperty("重新发布商品")
     @PutMapping("/publishAgain")
-    Result publishAgain(@RequestParam String goodsId);
+    Result publishAgain(@RequestBody WebGoodsDetailResponseDto reqDto);
 }
