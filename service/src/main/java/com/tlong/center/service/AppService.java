@@ -91,6 +91,10 @@ public class AppService {
         TlongUser one = tlongUserRepository.findOne(userId);
         AppUserResponseDto responseDto = new AppUserResponseDto();
         if (!Objects.isNull(one)){
+           responseDto.setAge(one.getAge());
+           if (one.getSex() != null) {
+               responseDto.setSex(Integer.valueOf(one.getSex()));
+           }
            responseDto.setEvId(one.getEvId());
            responseDto.setUserCode(one.getUserCode());
            responseDto.setHeadImage(one.getHeadImage());
@@ -132,5 +136,20 @@ public class AppService {
         }
         List<Course> courses = ToListUtil.IterableToList(all);
         return courses.stream().map(Course::toClazzResponseDto).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取上级用户信息
+     */
+    public AppUserResponseDto parentInfo(Long userId) {
+        TlongUser one = tlongUserRepository.findOne(userId);
+        if (Objects.nonNull(one)){
+            AppUserResponseDto responseDto = new AppUserResponseDto();
+            responseDto.setWx(one.getWx());
+            responseDto.setPhone(one.getWx());
+            return responseDto;
+        }else {
+            return null;
+        }
     }
 }

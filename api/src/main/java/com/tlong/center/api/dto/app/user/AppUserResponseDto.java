@@ -11,6 +11,12 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("用户年龄")
+    private Integer age;
+
+    @ApiModelProperty("性别")
+    private Integer sex;
+
     @ApiModelProperty("用户编码")
     private String userCode;
 
@@ -94,5 +100,21 @@ public class AppUserResponseDto implements Serializable {
 
     public void setHeadImage(String headImage) {
         this.headImage = headImage;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 }

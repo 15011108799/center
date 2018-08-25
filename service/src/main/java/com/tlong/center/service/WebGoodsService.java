@@ -1,34 +1,27 @@
 package com.tlong.center.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.tlong.center.api.dto.Result;
-import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.goods.GoodsSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsDetailResponseDto;
 import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.common.utils.PageAndSortUtil;
+import com.tlong.center.common.utils.ToListUtil;
+import com.tlong.center.domain.app.QTlongUser;
 import com.tlong.center.domain.app.TlongUser;
-import com.tlong.center.domain.app.goods.AppGoodsclass;
-import com.tlong.center.domain.app.goods.QWebGoods;
-import com.tlong.center.domain.app.goods.WebGoods;
-import com.tlong.center.domain.repository.AppUserRepository;
-import com.tlong.center.domain.repository.GoodsClassRepository;
-import com.tlong.center.domain.repository.GoodsRepository;
-import com.tlong.center.domain.repository.WebOrgRepository;
+import com.tlong.center.domain.app.goods.*;
+import com.tlong.center.domain.repository.*;
 import com.tlong.center.domain.web.QWebOrg;
 import com.tlong.center.domain.web.WebOrg;
 import com.tlong.core.utils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
@@ -37,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.tlong.center.domain.app.QTlongUser.tlongUser;
 
@@ -49,22 +44,21 @@ public class WebGoodsService {
     private final GoodsClassRepository goodsClassRepository;
     private final WebOrgRepository webOrgRepository;
     private final CodeService codeService;
+    private final GoodsPriceSystemRepository goodsPriceSystemRepository;
 
     @Autowired
-    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository, WebOrgRepository webOrgRepository, CodeService codeService) {
+    public WebGoodsService(EntityManager entityManager, GoodsRepository repository, AppUserRepository appUserRepository, GoodsClassRepository goodsClassRepository, WebOrgRepository webOrgRepository, CodeService codeService, GoodsPriceSystemRepository goodsPriceSystemRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
         this.appUserRepository = appUserRepository;
         this.goodsClassRepository = goodsClassRepository;
         this.webOrgRepository = webOrgRepository;
         this.codeService = codeService;
+        this.goodsPriceSystemRepository = goodsPriceSystemRepository;
     }
 
     /**
      * 查询所有商品分页
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<WebGoodsDetailResponseDto> findAllGoodsByPage(WebGoodsPageRequestDto requestDto) {
         //商品状态 审核状态 商品发布人 商品编码 时间
@@ -79,16 +73,14 @@ public class WebGoodsService {
 
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<WebGoods> webGoods = null;
+        Page<WebGoods> webGoods;
         if (requestDto.getUserType() != null && requestDto.getUserType() == 1) {
             if (requestDto.getIsCompany() == 0 || requestDto.getIsCompany() == 1)
                 webGoods = repository.findAll(QWebGoods.webGoods.publishUserId.longValue().eq(requestDto.getUserId()), pageRequest);
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
                 Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.isCompany.intValue().ne(2)).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
-                tlongUser3.forEach(one -> {
-                    pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
-                });
+                tlongUser3.forEach(one -> pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId())));
                 webGoods = repository.findAll(pre[0], pageRequest);
             }
         } else {
@@ -97,7 +89,7 @@ public class WebGoodsService {
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         for (WebGoods webGoods1 : webGoods) {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
-            webGoodsDetailResponseDto.setIsCheck(webGoods1.getIsCheck() + "");
+            webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
             if (webGoods1.getId() != null)
                 webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
             if (webGoods1.getRealStar() != null)
@@ -124,6 +116,8 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
             if (webGoods1.getCurState() != null)
                 webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
+            if (webGoods1.getState() != null)
+                webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
@@ -146,16 +140,12 @@ public class WebGoodsService {
             else {
                 final Predicate[] pre = {QWebGoods.webGoods.id.isNull()};
                 Iterable<TlongUser> tlongUser3 = appUserRepository.findAll(tlongUser.userType.intValue().eq(1).and(tlongUser.orgId.isNotNull()).and(tlongUser.orgId.eq(requestDto.getOrgId())));
-                tlongUser3.forEach(one -> {
-                    pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId()));
-                });
+                tlongUser3.forEach(one -> pre[0] = ExpressionUtils.or(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(one.getId())));
                 appGoods1 = repository.findAll(pre[0]);
             }
         } else
             appGoods1 = repository.findAll();
-        appGoods1.forEach(goods -> {
-            count[0]++;
-        });
+        appGoods1.forEach(goods -> count[0]++);
         responseDto.setCount(count[0]);
         System.out.println(new Date());
         return responseDto;
@@ -163,10 +153,9 @@ public class WebGoodsService {
 
     /**
      * 添加商品
-     *
-     * @return
      */
-    public Result add(String s, WebGoodsDetailResponseDto reqDto, HttpSession session) {
+    public Result add(String s, WebGoodsDetailResponseDto reqDto) {
+        //TODO 是否免审核
         reqDto.setGoodsPic(s.substring(0, s.length() - 1));
         reqDto.setCertificate(FileUploadUtils.readFile(reqDto.getCertificate()));
         reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
@@ -174,36 +163,43 @@ public class WebGoodsService {
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebGoods webGoods = new WebGoods(reqDto);
         webGoods.setIsCheck(0);
-        if (reqDto.getCurState() != null && !reqDto.getCurState().equals(""))
-            webGoods.setState(Integer.valueOf(reqDto.getCurState()));
+        webGoods.setState(0);
+        //goodsCode state goodsClassId
+//        if (reqDto.getState() != null && !reqDto.getState().equals(""))
+            webGoods.setState(1);
         if (reqDto.getGoodsClassId() != null && !reqDto.getGoodsClassId().equals(""))
             webGoods.setGoodsClassId(Long.valueOf(reqDto.getGoodsClassId()));
-        if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals(""))
-            webGoods.setRealStar(Integer.valueOf(reqDto.getRealStar()));
+//        if (reqDto.getRealStar() != null && !reqDto.getRealStar().equals(""))
+//            webGoods.setRealStar(Integer.valueOf(reqDto.getRealStar()));
         if (reqDto.getPicType() != null && !reqDto.getPicType().equals(""))
             webGoods.setPicType(Integer.valueOf(reqDto.getPicType()));
         if (reqDto.getCircle() != null && !reqDto.getCircle().equals(""))
             webGoods.setCircle(Integer.valueOf(reqDto.getCircle()));
         if (reqDto.getNum() != null && !reqDto.getNum().equals(""))
             webGoods.setNum(Integer.valueOf(reqDto.getNum()));
-        if (reqDto.getPriceType() != null && !reqDto.getPriceType().equals(""))
-            webGoods.setPriceType(Integer.valueOf(reqDto.getPriceType()));
-        if (reqDto.getFactoryPrice() != null && !reqDto.getFactoryPrice().equals(""))
-            webGoods.setFactoryPrice(Double.valueOf(reqDto.getFactoryPrice()));
-        if (reqDto.getFlagshipPrice() != null && !reqDto.getFlagshipPrice().equals(""))
-            webGoods.setFlagshipPrice(Double.valueOf(reqDto.getFlagshipPrice()));
-        if (reqDto.getFounderPrice() != null && !reqDto.getFounderPrice().equals(""))
-            webGoods.setFounderPrice(Double.valueOf(reqDto.getFounderPrice()));
-        if (reqDto.getPublishPrice() != null && !reqDto.getPublishPrice().equals(""))
-            webGoods.setPublishPrice(Double.valueOf(reqDto.getPublishPrice()));
-        if (reqDto.getStorePrice() != null && !reqDto.getStorePrice().equals(""))
-            webGoods.setStorePrice(Double.valueOf(reqDto.getStorePrice()));
-        TlongUser tlongUser = (TlongUser) session.getAttribute("tlongUser");
-        webGoods.setPublishUserId(tlongUser.getId());
-        if (tlongUser.getIsCompany() == 0)
-            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 0, 1,tlongUser.getIsCompany()));
-        else if (tlongUser.getIsCompany() == 1)
-            webGoods.setGoodsCode(tlongUser.getUserCode() + "-" + codeService.createAllCode(1, 1, 1,tlongUser.getIsCompany()));
+
+        //设置价格信息
+        AppGoodsPriceSystem one = goodsPriceSystemRepository.findOne(QAppGoodsPriceSystem.appGoodsPriceSystem.goodsClassId.eq(Long.valueOf(reqDto.getGoodsClassId()))
+                .and(QAppGoodsPriceSystem.appGoodsPriceSystem.intervalDown.lt(Double.valueOf(reqDto.getPublishPrice())))
+                .and(QAppGoodsPriceSystem.appGoodsPriceSystem.intervalUp.gt(Double.valueOf(reqDto.getPublishPrice()))));
+        if (Objects.nonNull(one)) {
+            if (reqDto.getPriceType() != null && !reqDto.getPriceType().equals(""))
+                webGoods.setPriceType(Integer.valueOf(reqDto.getPriceType()));
+                webGoods.setFactoryPrice(one.getFactoryRatio() * Double.valueOf(reqDto.getPublishPrice()));
+                webGoods.setFlagshipPrice(one.getLagshipRatio() * Double.valueOf(reqDto.getPublishPrice()));
+                webGoods.setFounderPrice(one.getOriginatorRatio() * Double.valueOf(reqDto.getPublishPrice()));
+                webGoods.setPublishPrice(Double.valueOf(reqDto.getPublishPrice()));
+//                webGoods.setStorePrice(Double.valueOf(reqDto.getStorePrice()));
+        }
+
+
+//        TlongUser tlongUser = (TlongUser) session.getAttribute("tlongUser");
+        webGoods.setPublishUserId(Long.valueOf(reqDto.getPublishUserId()));
+        TlongUser one1 = appUserRepository.findOne(Long.valueOf(reqDto.getPublishUserId()));
+        if (one1.getIsCompany() == 0)
+            webGoods.setGoodsCode(one1.getUserCode() + "-" + codeService.createAllCode(1, 0, 1,one1.getIsCompany()));
+        else if (one1.getIsCompany() == 1)
+            webGoods.setGoodsCode(one1.getUserCode() + "-" + codeService.createAllCode(1, 1, 1,one1.getIsCompany()));
         WebGoods webGoods1 = repository.save(webGoods);
         if (webGoods1 != null)
             return new Result(1, "添加成功");
@@ -263,8 +259,11 @@ public class WebGoodsService {
             webGoodsDetailResponseDto.setPublishPrice(webGoods1.getPublishPrice() + "");
         if (webGoods1.getStorePrice() != null)
             webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
-        if (webGoods1.getState() != null)
-            webGoodsDetailResponseDto.setCurState(webGoods1.getState() + "");
+        if (webGoods1.getCurState() != null)
+            webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
+        if (webGoods1.getState() != null){
+            webGoods1.setState(webGoods1.getState());
+        }
         return webGoodsDetailResponseDto;
     }
 
@@ -326,52 +325,74 @@ public class WebGoodsService {
 
     /**
      * 修改商品状态（锁定，解除锁定，结缘）
-     *
-     * @param goodsId
      */
     public void updateState(Long goodsId, int state) {
         WebGoods webGoods = repository.findOne(goodsId);
         if (webGoods.getState() == 0)
             webGoods.setState(0);
         else
-            webGoods.setState(state);
+            webGoods.setCurState(state);
         repository.save(webGoods);
     }
 
     /**
      * 设置审核驳回
-     *
-     * @param id
      */
     public void updateGoodsStateReject(Long id) {
         WebGoods webGoods = repository.findOne(id);
-        webGoods.setIsCheck(2);
+//        webGoods.setIsCheck(2);
+        webGoods.setState(2);
         repository.save(webGoods);
     }
 
     public PageResponseDto<WebGoodsDetailResponseDto> searchGoods(GoodsSearchRequestDto requestDto) {
-//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto.getPageAndSortRequestDto());
-        Page<WebGoods> webGoods = null;
+        Page<WebGoods> webGoods;
         final Predicate[] pre = {QWebGoods.webGoods.id.isNotNull()};
         final Predicate[] pre1 = {QWebGoods.webGoods.id.isNull()};
+
+        //商品分类模糊
+        if (requestDto.getGoodsClassId() != null){
+            //判断分类id十一级分类还是二级分类
+            AppGoodsclass one = goodsClassRepository.findOne(requestDto.getGoodsClassId());
+            if (Objects.nonNull(one)){
+                Integer goodsClassLevel = one.getGoodsClassLevel();
+                if (goodsClassLevel == 0){ //一级分类
+                    //查出一级分类下所有的二级分类
+                    Iterable<AppGoodsclass> all = goodsClassRepository.findAll(QAppGoodsclass.appGoodsclass.goodsClassIdParent.eq(one.getId()));
+                    List<AppGoodsclass> appGoodsclasses = ToListUtil.IterableToList(all);
+                    List<Long> ids = appGoodsclasses.stream().map(AppGoodsclass::getId).collect(Collectors.toList());
+                    pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsClassId.in(ids));
+                }else {
+                    pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsClassId.eq(requestDto.getGoodsClassId()));
+                }
+            }
+        }
+
         if (StringUtils.isNotEmpty(requestDto.getPublishName())) {
             TlongUser tlongUser1 = appUserRepository.findOne(tlongUser.realName.eq(requestDto.getPublishName()));
             if (tlongUser1 != null) {
                 pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishUserId.longValue().eq(tlongUser1.getId()));
             }
         }
+
+        if (requestDto.getCheckState() != null){
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.state.eq(requestDto.getCheckState()));
+        }
+        if (requestDto.getGoodsState() != null){
+            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
+        }
+
         if (StringUtils.isNotEmpty(requestDto.getGoodsName())){
             pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsHead.like("%" + requestDto.getGoodsName() + "%"));
         }
         if (StringUtils.isNotEmpty(requestDto.getGoodsCode())) {
             pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.goodsCode.like("%" + requestDto.getGoodsCode() + "%"));
         }
-        if (requestDto.getGoodsState() != null)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
-        if (requestDto.getCheckState() != null)
-            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.state.eq(requestDto.getCheckState()));
+//        if (requestDto.getGoodsState() != null)
+//            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
+
 //        if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
 //            pre[0] = ExpressionUtils.and(pre[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
 //        else if (requestDto.getStartTime() == null && requestDto.getEndTime() != null)
@@ -432,9 +453,9 @@ public class WebGoodsService {
         }
         if (StringUtils.isNotEmpty(requestDto.getGoodsCode()))
             pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.goodsCode.eq(requestDto.getGoodsCode()));
-        if (requestDto.getGoodsState() != null && requestDto.getGoodsState() != 5)
+        if (requestDto.getGoodsState() != null)
             pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.curState.eq(requestDto.getGoodsState()));
-        if (requestDto.getCheckState()!= null && requestDto.getCheckState() != 3)
+        if (requestDto.getCheckState()!= null)
             pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.state.eq(requestDto.getCheckState()));
         if (requestDto.getStartTime() != null && requestDto.getEndTime() != null)
             pre1[0] = ExpressionUtils.and(pre1[0], QWebGoods.webGoods.publishTime.between(requestDto.getStartTime() + " 00:00:00", requestDto.getEndTime() + " 23:59:59"));
@@ -447,7 +468,7 @@ public class WebGoodsService {
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         webGoods.forEach(webGoods1 -> {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
-            webGoodsDetailResponseDto.setIsCheck(webGoods1.getIsCheck() + "");
+            webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
             if (webGoods1.getId() != null)
                 webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
             if (webGoods1.getRealStar() != null)
@@ -494,9 +515,7 @@ public class WebGoodsService {
             appGoods1 = repository.findAll(pre1[0]);
         else
             appGoods1 = repository.findAll(pre[0]);
-        appGoods1.forEach(goods -> {
-            count[0]++;
-        });
+        appGoods1.forEach(goods -> count[0]++);
         responseDto.setCount(count[0]);
         return responseDto;
     }
@@ -505,8 +524,8 @@ public class WebGoodsService {
         String[] goodsIds;
         if (StringUtils.isNotEmpty(goodsId)) {
             goodsIds = goodsId.split(",");
-            for (int i = 0; i < goodsIds.length; i++) {
-                delGoods(Long.valueOf(goodsIds[i]));
+            for (String goodsId1 : goodsIds) {
+                delGoods(Long.valueOf(goodsId1));
             }
         }
         return new Result(1, "删除成功");

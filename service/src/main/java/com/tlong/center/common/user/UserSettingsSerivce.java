@@ -50,14 +50,17 @@ public class UserSettingsSerivce {
     /**
      * 新增代理商或者供应商的设置
      */
-    public void addUserSettings(Long userId, Integer userType){
+    public void addUserSettings(Long userId, Integer userType,Integer isCompany){
         //获取用户类型支持的商品发布数量和重新发布数量
-        TlongUserSettings one1 = repository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(userType));
+        TlongUserSettings one1 = repository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(isCompany)
+            .and(QTlongUserSettings.tlongUserSettings.userId.isNull()));
 
         //在用户设置表中设置当前注册人的商品发布数量和重新发布数量
         TlongUserSettings tlongUserSettings = new TlongUserSettings();
         tlongUserSettings.setGoodsReleaseNumber(one1.getGoodsReleaseNumber());
         tlongUserSettings.setGoodsReReleaseNumber(one1.getGoodsReReleaseNumber());
+        tlongUserSettings.setUserType(isCompany);
         tlongUserSettings.setUserId(userId);
+        repository.save(tlongUserSettings);
     }
 }

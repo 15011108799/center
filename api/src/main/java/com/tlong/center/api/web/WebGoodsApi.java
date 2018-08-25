@@ -27,7 +27,7 @@ public interface WebGoodsApi {
 
     @ApiModelProperty("新增商品")
     @PostMapping("/addGoods")
-    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session, @RequestParam String contentClass,@RequestParam String contentType);
+    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
 
     @ApiModelProperty("删除商品")
     @PutMapping("/delGoods")

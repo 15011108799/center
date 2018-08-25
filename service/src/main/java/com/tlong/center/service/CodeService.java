@@ -74,6 +74,9 @@ public class CodeService {
         new CodeUtil(repository, codeRepository, entityManager).goodsCode(1, type,head,isCompany);
     }
 
+    public String createUserCode(Integer UserType,Integer head,Integer isCompany) {
+        return new CodeUtil(repository, codeRepository, entityManager).goodsCode(0, UserType, head, isCompany);
+    }
 
     private void createCodeRule(TlongUserSettingsRequestDto req, Integer userType) {
 

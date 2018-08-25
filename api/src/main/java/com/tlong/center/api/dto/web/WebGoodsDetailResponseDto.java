@@ -115,7 +115,7 @@ public class WebGoodsDetailResponseDto implements Serializable {
     private String orgId;
 
     @ApiModelProperty("是否审核")
-    private String isCheck;
+    private String state;
 
     public String getOrgId() {
         return orgId;
@@ -125,12 +125,12 @@ public class WebGoodsDetailResponseDto implements Serializable {
         this.orgId = orgId;
     }
 
-    public String getIsCheck() {
-        return isCheck;
+    public String getState() {
+        return state;
     }
 
-    public void setIsCheck(String isCheck) {
-        this.isCheck = isCheck;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getPublishPhone() {

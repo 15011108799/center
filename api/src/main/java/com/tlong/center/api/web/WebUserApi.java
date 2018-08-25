@@ -8,6 +8,7 @@ import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -43,7 +44,7 @@ public interface WebUserApi {
 
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
-    PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, HttpSession session);
+    Page<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, @RequestParam MultiValueMap<String,String> params);
 
 
     @ApiOperation("用户认证(供应商代理商)")
@@ -73,7 +74,7 @@ public interface WebUserApi {
 
     @ApiOperation("查找供应商发布商品数量")
     @PostMapping("/findUserPublishNum")
-    FindUserPublishNumResponseDto findUserPublishNumm(@RequestBody Long id, @RequestParam Integer isCompany);
+    FindUserPublishNumResponseDto findUserPublishNumm(@RequestParam Long id, @RequestParam Integer isCompany);
 
     @ApiOperation("修改供应商发布商品数量")
     @PostMapping("/updateUserPublishNum")

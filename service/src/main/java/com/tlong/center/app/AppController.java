@@ -34,8 +34,6 @@ public class AppController implements AppBaseApi {
 
     /**
      * 根据用户id获取用户基本信息
-     * @param userId
-     * @return
      */
     @Override
     public AppUserResponseDto userInfo(@PathVariable Long userId) {
@@ -43,9 +41,15 @@ public class AppController implements AppBaseApi {
     }
 
     /**
+     * 获取上级用户信息
+     */
+    @Override
+    public AppUserResponseDto parentInfo(@PathVariable Long userId) {
+        return appService.parentInfo(userId);
+    }
+
+    /**
      * 根据用户id获取下级代理商信息
-     * @param userId
-     * @return
      */
     @Override
     public List<AppUserResponseDto> children(@PathVariable Long userId) {

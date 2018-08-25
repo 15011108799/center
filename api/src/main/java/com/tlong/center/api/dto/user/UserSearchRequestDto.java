@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 public class UserSearchRequestDto implements Serializable {
     private static final long serialVersionUID = -6773010187440278171L;
 
+    @ApiModelProperty("用户id")
+    private Long userId;
+
     @ApiModelProperty("分页排序")
     private PageAndSortRequestDto pageAndSortRequestDto;
 
@@ -30,7 +33,7 @@ public class UserSearchRequestDto implements Serializable {
     private Integer authentication;
 
     @ApiModelProperty("身份类型")
-    private Integer ptype;
+    private Integer pType;
 
     @ApiModelProperty("代理商等级")
     private Long level;
@@ -44,6 +47,13 @@ public class UserSearchRequestDto implements Serializable {
     @ApiModelProperty("是否展示当月")
     private Integer currentMonth;
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public PageAndSortRequestDto getPageAndSortRequestDto() {
         return pageAndSortRequestDto;
@@ -85,12 +95,12 @@ public class UserSearchRequestDto implements Serializable {
         this.authentication = authentication;
     }
 
-    public Integer getPtype() {
-        return ptype;
+    public Integer getpType() {
+        return pType;
     }
 
-    public void setPtype(Integer ptype) {
-        this.ptype = ptype;
+    public void setpType(Integer pType) {
+        this.pType = pType;
     }
 
     public String getStartTime() {

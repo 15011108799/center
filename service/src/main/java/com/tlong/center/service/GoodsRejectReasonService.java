@@ -3,9 +3,7 @@ package com.tlong.center.service;
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.web.WebGoodsReasonResponseDto;
 import com.tlong.center.domain.repository.GoodsRejectReasonRepository;
-import com.tlong.center.domain.web.QWebGoodsRejectReason;
 import com.tlong.center.domain.web.WebGoodsRejectReason;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -15,8 +13,12 @@ import static com.tlong.center.domain.web.QWebGoodsRejectReason.webGoodsRejectRe
 @Component
 @Transactional
 public class GoodsRejectReasonService {
-    @Autowired
-    private GoodsRejectReasonRepository repository;
+    private final GoodsRejectReasonRepository repository;
+
+    public GoodsRejectReasonService(GoodsRejectReasonRepository repository) {
+        this.repository = repository;
+    }
+
 
     /**
      * 增加驳回原因

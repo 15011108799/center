@@ -34,8 +34,8 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session, @RequestParam String contentClass,@RequestParam String contentType) {
-        return webGoodsService.add(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto,session);
+    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
+        return webGoodsService.add(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto);
     }
 
     @Override

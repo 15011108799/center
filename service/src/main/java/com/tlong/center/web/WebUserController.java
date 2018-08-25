@@ -9,6 +9,7 @@ import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -49,8 +50,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
-        return userService.searchUser(requestDto,session);
+    public Page<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, @RequestParam MultiValueMap<String,String> params) {
+        return userService.searchUser(requestDto,params);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public FindUserPublishNumResponseDto findUserPublishNumm(@RequestBody Long id, @RequestParam Integer isCompany) {
+    public FindUserPublishNumResponseDto findUserPublishNumm(@RequestParam Long id, @RequestParam Integer isCompany) {
         return userService.findUserPublishNumm(id,isCompany);
     }
 

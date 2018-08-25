@@ -26,6 +26,10 @@ public interface AppBaseApi {
     @PostMapping("/userInfo/{userId}")
     AppUserResponseDto userInfo(@PathVariable Long userId);
 
+    @ApiOperation("获取上级用户信息")
+    @PostMapping("/parentInfo/{userId}")
+    AppUserResponseDto parentInfo(@PathVariable Long userId);
+
     //供应商
     @ApiOperation("获取下级代理商")
     @PostMapping("/children/{userId}")
@@ -38,6 +42,7 @@ public interface AppBaseApi {
     @ApiOperation("根据课程id获取课程列表")
     @PostMapping("/clazzList/{clazzId}")
     List<ClazzResponseDto> clazzList(@PathVariable Long clazzId);
+
 
     //消息通知  复用-- com.tlong.center.api.web.WebMessageApi
 

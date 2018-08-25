@@ -43,12 +43,11 @@ public class FileController implements UploadApi{
         String fileName = file.getOriginalFilename();
         logger.info("上传的文件的文件名为:" + fileName);
         String[] split = fileName.split("_");
-        String[] split1 = split[split.length - 1].split(".");
-        String type = split1[split1.length];
+        String[] split1 = split[split.length - 1].split("\\.");
+        String type = split1[0];
         //获取文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         logger.info("上传文件的后缀名为:" + suffixName);
-
 
         SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
         String format = sim.format(new Date());
