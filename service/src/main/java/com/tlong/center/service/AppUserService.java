@@ -2,13 +2,14 @@ package com.tlong.center.service;
 
 import com.tlong.center.api.dto.app.user.AppUserRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
-import com.tlong.center.common.code.CodeUtil;
 import com.tlong.center.common.utils.MD5Util;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.repository.TlongUserRepository;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Component
 @Transactional
@@ -29,7 +30,8 @@ public class AppUserService {
         TlongUser tlongUser = new TlongUser();
         tlongUser.setUserName(requestDto.getUserName());
         tlongUser.setPassword(MD5Util.MD5(requestDto.getPassword()));
-//        tlongUser.setRegistDate(new Date());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        tlongUser.setRegistDate(simpleDateFormat.format(new Date()));
         tlongUser.setLevel(2);
         tlongUser.setPhone(requestDto.getPhone());
         tlongUser.setUserType(2);

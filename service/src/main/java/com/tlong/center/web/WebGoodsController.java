@@ -49,8 +49,8 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public void updateGoodsState(@RequestBody Long id) {
-        webGoodsService.updateGoodsState(id);
+    public void updateGoodsState(@RequestBody Long id, @RequestParam Long checkUserId) {
+        webGoodsService.updateGoodsState(id,checkUserId);
     }
 
     @Override

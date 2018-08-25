@@ -20,7 +20,7 @@ public class WebLoginController implements WebLoginApi {
     WebLoginService webLoginService;
 
     /**
-     * App登录方法
+     * 后台登录方法
      */
     @Override
     public WebLoginResponseDto webLogin(@RequestBody WebLoginRequestDto requestDto, HttpSession session) {

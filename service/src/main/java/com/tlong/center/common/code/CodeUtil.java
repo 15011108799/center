@@ -52,16 +52,24 @@ public class CodeUtil {
         String placeholder1 = "0";
         List<String> codes = queryFactory.select(tlongCode.code)
                 .from(tlongCode, tlongCodeRule)
-                .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue())
-                        .and(tlongCodeRule.type.intValue().eq(codeType))
-                        .and(tlongCodeRule.userType.intValue().eq(userType)))
+                .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue()))
+//                        .and(tlongCodeRule.type.intValue().eq(codeType)))
+//                        .and(tlongCodeRule.userType.intValue().eq(userType)))
                 .orderBy(tlongCode.id.desc())
                 .fetch();
+//        tlongCodeRepository.findAll(tlongCode.ruleId.eq());
 
         //读取规则
-        TlongCodeRule tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
-                .and(tlongCodeRule.userType.eq(userType))
-                .and(tlongCodeRule.isCompany.eq(isCompany)));
+        //判断是不是管理员要生成编码
+        TlongCodeRule tlongCodeRule1;
+        if (userType != null) {
+            tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
+                    .and(tlongCodeRule.userType.eq(userType))
+                    .and(tlongCodeRule.isCompany.eq(isCompany)));
+        }else {
+            tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
+                    .and(tlongCodeRule.userType.isNull()));
+        }
         if (Objects.isNull(tlongCodeRule1)) {
             logger.error("未获取到对应的编码规则");
             return "ERROR";

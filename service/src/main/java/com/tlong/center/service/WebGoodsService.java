@@ -68,9 +68,6 @@ public class WebGoodsService {
 //        String goodsCode = params.getFirst("goodsCode");
 //        List<WebGoods> all = repository.findAll();
 //        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
-
-        System.out.println(new Date().getTime());
-
         PageResponseDto<WebGoodsDetailResponseDto> responseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<WebGoods> webGoods;
@@ -89,7 +86,7 @@ public class WebGoodsService {
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         for (WebGoods webGoods1 : webGoods) {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
-            webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+            webGoodsDetailResponseDto.setState(webGoods1.getState());
             if (webGoods1.getId() != null)
                 webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
             if (webGoods1.getRealStar() != null)
@@ -117,13 +114,19 @@ public class WebGoodsService {
             if (webGoods1.getCurState() != null)
                 webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
             if (webGoods1.getState() != null)
-                webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+                webGoodsDetailResponseDto.setState(webGoods1.getState());
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
                 WebOrg one = webOrgRepository.findOne(tlongUser.getOrgId());
                 webGoodsDetailResponseDto.setOrgId(one.getOrgName());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
+            }
+            if (webGoods1.getCheckUserId() != null){
+                TlongUser one = appUserRepository.findOne(webGoods1.getCheckUserId());
+                if (Objects.nonNull(one)){
+                    webGoodsDetailResponseDto.setCheckUserName(one.getUserName());
+                }
             }
             if (webGoods1.getGoodsClassId() != null) {
                 AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
@@ -147,7 +150,6 @@ public class WebGoodsService {
             appGoods1 = repository.findAll();
         appGoods1.forEach(goods -> count[0]++);
         responseDto.setCount(count[0]);
-        System.out.println(new Date());
         return responseDto;
     }
 
@@ -162,6 +164,8 @@ public class WebGoodsService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebGoods webGoods = new WebGoods(reqDto);
+        webGoods.setCertificate(reqDto.getCertificate());
+        webGoods.setNewstime(new Date().getTime());
         webGoods.setIsCheck(0);
         webGoods.setState(0);
         //goodsCode state goodsClassId
@@ -174,7 +178,7 @@ public class WebGoodsService {
         if (reqDto.getPicType() != null && !reqDto.getPicType().equals(""))
             webGoods.setPicType(Integer.valueOf(reqDto.getPicType()));
         if (reqDto.getCircle() != null && !reqDto.getCircle().equals(""))
-            webGoods.setCircle(Integer.valueOf(reqDto.getCircle()));
+            webGoods.setCircle(reqDto.getCircle());
         if (reqDto.getNum() != null && !reqDto.getNum().equals(""))
             webGoods.setNum(Integer.valueOf(reqDto.getNum()));
 
@@ -221,9 +225,12 @@ public class WebGoodsService {
     /**
      * 修改商品为审核通过状态
      */
-    public void updateGoodsState(Long id) {
+    public void updateGoodsState(Long id, Long checkUserId) {
         WebGoods webGoods = repository.findOne(id);
         webGoods.setIsCheck(1);
+        webGoods.setState(1);
+        //修改审核人id
+        webGoods.setCheckUserId(checkUserId);
         repository.save(webGoods);
     }
 
@@ -235,35 +242,21 @@ public class WebGoodsService {
         WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
         AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
         webGoodsDetailResponseDto.setParentClassId(appGoodsclass.getGoodsClassIdParent());
-        if (webGoods1.getId() != null)
             webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
-        if (webGoods1.getRealStar() != null)
+            webGoodsDetailResponseDto.setPublishUserId(webGoods1.getPublishUserId() + "");
             webGoodsDetailResponseDto.setRealStar(webGoods1.getRealStar() + "");
-        if (webGoods1.getGoodsClassId() != null)
             webGoodsDetailResponseDto.setGoodsClassId(webGoods1.getGoodsClassId() + "");
-        if (webGoods1.getPicType() != null)
             webGoodsDetailResponseDto.setPicType(webGoods1.getPicType() + "");
-        if (webGoods1.getCircle() != null)
             webGoodsDetailResponseDto.setCircle(webGoods1.getCircle() + "");
-        if (webGoods1.getNum() != null)
             webGoodsDetailResponseDto.setNum(webGoods1.getNum() + "");
-        if (webGoods1.getPriceType() != null)
             webGoodsDetailResponseDto.setPriceType(webGoods1.getPriceType() + "");
-        if (webGoods1.getFactoryPrice() != null)
             webGoodsDetailResponseDto.setFactoryPrice(webGoods1.getFactoryPrice() + "");
-        if (webGoods1.getFlagshipPrice() != null)
             webGoodsDetailResponseDto.setFlagshipPrice(webGoods1.getFlagshipPrice() + "");
-        if (webGoods1.getFounderPrice() != null)
             webGoodsDetailResponseDto.setFounderPrice(webGoods1.getFounderPrice() + "");
-        if (webGoods1.getPublishPrice() != null)
             webGoodsDetailResponseDto.setPublishPrice(webGoods1.getPublishPrice() + "");
-        if (webGoods1.getStorePrice() != null)
             webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
-        if (webGoods1.getCurState() != null)
             webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
-        if (webGoods1.getState() != null){
-            webGoods1.setState(webGoods1.getState());
-        }
+            webGoodsDetailResponseDto.setState(webGoods1.getState());
         return webGoodsDetailResponseDto;
     }
 
@@ -300,7 +293,7 @@ public class WebGoodsService {
         if (reqDto.getPicType() != null && !reqDto.getPicType().equals("null"))
             webGoods.setPicType(Integer.valueOf(reqDto.getPicType()));
         if (reqDto.getCircle() != null && !reqDto.getCircle().equals("null"))
-            webGoods.setCircle(Integer.valueOf(reqDto.getCircle()));
+            webGoods.setCircle(reqDto.getCircle());
         if (reqDto.getNum() != null && !reqDto.getNum().equals("null"))
             webGoods.setNum(Integer.valueOf(reqDto.getNum()));
         if (reqDto.getPriceType() != null && !reqDto.getPriceType().equals("null"))
@@ -468,7 +461,9 @@ public class WebGoodsService {
         List<WebGoodsDetailResponseDto> requestDtos = new ArrayList<>();
         webGoods.forEach(webGoods1 -> {
             WebGoodsDetailResponseDto webGoodsDetailResponseDto = webGoods1.toDto();
-            webGoodsDetailResponseDto.setState(webGoods1.getState() + "");
+            if (webGoods1.getNewstime() != null){
+                webGoodsDetailResponseDto.setNewstime(webGoods1.getNewstime());
+            }
             if (webGoods1.getId() != null)
                 webGoodsDetailResponseDto.setId(webGoods1.getId() + "");
             if (webGoods1.getRealStar() != null)
@@ -493,14 +488,23 @@ public class WebGoodsService {
                 webGoodsDetailResponseDto.setPublishPrice(webGoods1.getPublishPrice() + "");
             if (webGoods1.getStorePrice() != null)
                 webGoodsDetailResponseDto.setStorePrice(webGoods1.getStorePrice() + "");
-            if (webGoods1.getState() != null)
-                webGoodsDetailResponseDto.setCurState(webGoods1.getState() + "");
+            if (webGoods1.getState() != null){
+                webGoodsDetailResponseDto.setState(webGoods1.getState());
+            }
+            if (webGoods1.getCurState() != null)
+                webGoodsDetailResponseDto.setCurState(webGoods1.getCurState() + "");
             if (webGoods1.getPublishUserId() != null) {
                 TlongUser tlongUser = appUserRepository.findOne(webGoods1.getPublishUserId());
                 webGoodsDetailResponseDto.setPublishName(tlongUser.getRealName());
                 WebOrg one = webOrgRepository.findOne(QWebOrg.webOrg.id.longValue().eq(tlongUser.getOrgId()));
                 webGoodsDetailResponseDto.setOrgId(one.getOrgName());
                 webGoodsDetailResponseDto.setPublishPhone(tlongUser.getPhone());
+            }
+            if (webGoods1.getCheckUserId() != null) {
+                TlongUser one = appUserRepository.findOne(webGoods1.getCheckUserId());
+                if (Objects.nonNull(one)) {
+                    webGoodsDetailResponseDto.setCheckUserName(one.getUserName());
+                }
             }
             if (webGoods1.getGoodsClassId() != null) {
                 AppGoodsclass appGoodsclass = goodsClassRepository.findOne(webGoods1.getGoodsClassId());
@@ -540,6 +544,7 @@ public class WebGoodsService {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         webGoods.setPublishTime(simpleDateFormat.format(new Date()));
+        webGoods.setNewstime(new Date().getTime());
         WebGoods webGoods1 = repository.save(webGoods2);
         if (webGoods1 != null)
             return new Result(1, "重新发布成功");

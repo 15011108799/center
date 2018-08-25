@@ -81,7 +81,7 @@ public class WebGoods extends BaseJpa {
     private Integer picType;
 
     //圈口大小
-    private Integer circle;
+    private String circle;
 
     //题材
     private String theme;
@@ -136,6 +136,36 @@ public class WebGoods extends BaseJpa {
 
     //是否删除
     private Integer isDeleted;
+
+    //时间戳
+    private Long newstime;
+
+    //审核人
+    private Long checkUserId;
+
+    public Long getCheckUserId() {
+        return checkUserId;
+    }
+
+    public void setCheckUserId(Long checkUserId) {
+        this.checkUserId = checkUserId;
+    }
+
+    public String getCircle() {
+        return circle;
+    }
+
+    public void setCircle(String circle) {
+        this.circle = circle;
+    }
+
+    public Long getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(Long newstime) {
+        this.newstime = newstime;
+    }
 
     public Integer getIsCheck() {
         return isCheck;
@@ -271,14 +301,6 @@ public class WebGoods extends BaseJpa {
 
     public void setPicType(Integer picType) {
         this.picType = picType;
-    }
-
-    public Integer getCircle() {
-        return circle;
-    }
-
-    public void setCircle(Integer circle) {
-        this.circle = circle;
     }
 
     public String getTheme() {

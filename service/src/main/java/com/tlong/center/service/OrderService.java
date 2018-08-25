@@ -82,6 +82,14 @@ public class OrderService {
         List<Long> userIds = new ArrayList<>();
         //判断当前用户是不是管理员
         if (requestDto.getUserType() == null) {
+//            //判断是不是特殊身份的管理员 总公司部门管理员
+//            TlongUserRole one = tlongUserRoleRepository.findOne(requestDto.getUserId());
+//            if (Objects.nonNull(one)){
+//                //获取身份 是不是财务部
+//                if (one.getRoleId() == 16){
+//                    requestDto.setOrgId(1426L);
+//                }
+//            }
             //先查出当前管理员所属机构下的所有用户id
             Iterable<WebOrg> all = webOrgRepository.findAll(QWebOrg.webOrg.parentOrgId.eq(requestDto.getOrgId()));
             List<WebOrg> webOrgs = ToListUtil.IterableToList(all);
@@ -123,9 +131,13 @@ public class OrderService {
         webOrders.forEach(one ->{
 
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
+                TlongUser one4 = appUserRepository.findOne(one.getUserId());
+                if (Objects.nonNull(one4)) {
+                    orderRequestDto.setUserName(one4.getUserName());
+                    orderRequestDto.setUserCode(one4.getUserCode());
+                    orderRequestDto.setUserType(one4.getUserType());
+                }
 
-                orderRequestDto.setUserName(one.getUserName());
-                orderRequestDto.setUserCode(one.getUserCode());
                 orderRequestDto.setGoodsName(one.getGoodsName());
                 orderRequestDto.setGoodsCode(one.getGoodsCode());
 
@@ -167,7 +179,7 @@ public class OrderService {
                 TlongUser one2 = appUserRepository.findOne(one.getUserId());
                 if (Objects.nonNull(one2)){
                     orderRequestDto.setUserName(one2.getUserName());
-                    orderRequestDto.setRealName(one2.getUserName());
+                    orderRequestDto.setRealName(one2.getRealName());
                     orderRequestDto.setUserCode(one2.getUserCode());
                     orderRequestDto.setUserPhone(one2.getPhone());
                 }
@@ -179,6 +191,7 @@ public class OrderService {
 //                orderRequestDto.setFounderPrice(one.get(webGoods.founderPrice));
 //                orderRequestDto.setPublishPrice(one.get(webGoods.publishPrice));
 //                orderRequestDto.setGoodsPrice(userType == null ? 0.0 : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
+                orderRequestDto.setPlaceOrderTime(one.getPlaceOrderTime());
                 orderRequestDto.setPlaceOrderTime(one.getPlaceOrderTime());
                 orderRequestDto.setState(one.getState());
 //                if (one.get(QWebGoods.webGoods.publishUserId) != null) {

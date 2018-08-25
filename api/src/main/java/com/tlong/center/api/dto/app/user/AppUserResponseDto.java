@@ -11,6 +11,9 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("机构id")
+    private Long orgId;
+
     @ApiModelProperty("用户年龄")
     private Integer age;
 
@@ -37,6 +40,14 @@ public class AppUserResponseDto implements Serializable {
 
     @ApiModelProperty("头像URL")
     private String headImage;
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
 
     public String getPhone() {
         return phone;

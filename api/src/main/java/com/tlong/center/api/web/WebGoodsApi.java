@@ -39,7 +39,7 @@ public interface WebGoodsApi {
 
     @ApiOperation("修改商品为通过状态")
     @PostMapping("/updateGoodsState")
-    void updateGoodsState(@RequestBody Long id);
+    void updateGoodsState(@RequestBody Long id, @RequestParam Long checkUserId);
 
     @ApiOperation("修改商品为驳回状态")
     @PostMapping("/updateGoodsStateReject")

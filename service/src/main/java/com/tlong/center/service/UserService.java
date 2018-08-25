@@ -117,7 +117,7 @@ public class UserService {
             return new Result(0, "用户名已存在");
         }
         //加密密码
-        tlongUser.setPassword(MD5Util.KL(MD5Util.MD5(requsetDto.getPassword())));
+        tlongUser.setPassword(MD5Util.MD5(requsetDto.getPassword()));
 
         //生成用户编码 TODO 需要看怎么优化
         tlongUser.setUserCode(codeService.createAllCode(0, requsetDto.getUserType(), 1,requsetDto.getIsCompany()));
@@ -148,9 +148,10 @@ public class UserService {
             }
         }
 
+
         tlongUser.setLevel(requsetDto.getUserType());
         tlongUser.setUserName(requsetDto.getUserName());
-        tlongUser.setPassword(requsetDto.getPassword());
+//        tlongUser.setPassword(requsetDto.getPassword());
         tlongUser.setUserType(requsetDto.getUserType());
         tlongUser.setIsCompany(requsetDto.getIsCompany());
         tlongUser.setRealName(requsetDto.getRealName());
@@ -179,18 +180,19 @@ public class UserService {
         }
         TlongUser user = appUserRepository.save(tlongUser);
 
+        //判断注册的人是不是管理员 设置用户角色关系表
+        if (requsetDto.getUserType() == null){
+            //设置关系表
+            TlongUserRole tlongUserRole = new TlongUserRole();
+            tlongUserRole.setUserId(user.getId());
+            tlongUserRole.setRoleId(requsetDto.getRoleId());
+            tlongUserRoleRepository.save(tlongUserRole);
+        }
+
         //给该用户设置基本发布商品的参数
         if (requsetDto.getUserType() != null){
             settingsService.addUserSettings(user.getId(),requsetDto.getUserType(),requsetDto.getIsCompany());
 
-        }
-
-        //设置用户 角色 关系表
-        if (requsetDto.getRoleId() != null) {
-            TlongUserRole tlongUserRole = new TlongUserRole();
-            tlongUserRole.setRoleId(requsetDto.getRoleId());
-            tlongUserRole.setUserId(user.getId());
-            tlongUserRoleRepository.save(tlongUserRole);
         }
 
         if (user == null) {
@@ -199,9 +201,6 @@ public class UserService {
         return new Result(1, "注册成功");
     }
 
-    /**
-     * 新增用户时候
-     */
 
     /**
      * 删除用户

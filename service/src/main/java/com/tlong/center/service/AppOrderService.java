@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -86,6 +87,9 @@ public class AppOrderService {
         }
 
         webOrder.setState(1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = simpleDateFormat.format(new Date());
+        webOrder.setPlaceOrderTime(format);
         webOrder.setCreateTime(new Date());
         webOrderRepository.save(webOrder);
         //修改商品表中的商品状态

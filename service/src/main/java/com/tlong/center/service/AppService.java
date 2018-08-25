@@ -16,7 +16,6 @@ import com.tlong.center.domain.repository.TlongUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +94,7 @@ public class AppService {
            if (one.getSex() != null) {
                responseDto.setSex(Integer.valueOf(one.getSex()));
            }
+           responseDto.setOrgId(one.getOrgId());
            responseDto.setEvId(one.getEvId());
            responseDto.setUserCode(one.getUserCode());
            responseDto.setHeadImage(one.getHeadImage());

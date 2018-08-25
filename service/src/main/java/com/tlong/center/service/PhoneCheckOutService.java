@@ -44,13 +44,13 @@ public class PhoneCheckOutService {
         }
 
         String text="【天珑网络科技】您的验证码是" + b;
-        Map<String, String> params = new HashMap<String, String>();//请求参数集合
-        params.put("apikey", apikey);
-        params.put("text", text);
-        params.put("mobile", phone);
-        String post = HttpClientUtil.post(url, params);
-        JSONObject json =JSONObject.parseObject(post);
-        if(json.get("code").toString().equals("0")){
+            Map<String, String> params = new HashMap<String, String>();//请求参数集合
+            params.put("apikey", apikey);
+            params.put("text", text);
+            params.put("mobile", phone);
+            String post = HttpClientUtil.post(url, params);
+            JSONObject json =JSONObject.parseObject(post);
+            if(json.get("code").toString().equals("0")){
             //写入验证码记录表
             PhoneCheckOut phoneCheckOut = new PhoneCheckOut();
             phoneCheckOut.setCheckOutCode(b);

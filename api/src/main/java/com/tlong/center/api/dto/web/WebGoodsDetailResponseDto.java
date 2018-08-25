@@ -115,7 +115,29 @@ public class WebGoodsDetailResponseDto implements Serializable {
     private String orgId;
 
     @ApiModelProperty("是否审核")
-    private String state;
+    private Integer state;
+
+    @ApiModelProperty("newstime")
+    private Long newstime;
+
+    @ApiModelProperty("审核人名称")
+    private String checkUserName;
+
+    public String getCheckUserName() {
+        return checkUserName;
+    }
+
+    public void setCheckUserName(String checkUserName) {
+        this.checkUserName = checkUserName;
+    }
+
+    public Long getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(Long newstime) {
+        this.newstime = newstime;
+    }
 
     public String getOrgId() {
         return orgId;
@@ -125,11 +147,11 @@ public class WebGoodsDetailResponseDto implements Serializable {
         this.orgId = orgId;
     }
 
-    public String getState() {
+    public Integer getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(Integer state) {
         this.state = state;
     }
 
