@@ -48,7 +48,7 @@ public class AppGoodsService {
      */
     public TlongResultDto appGoodsUpload(AppGoodsUploadRequestDto reqDto) {
         reqDto.setGoodsPic(reqDto.getGoodsPic());
-        reqDto.setCertificate(FileUploadUtils.readFile(reqDto.getCertificate()));
+        reqDto.setCertificate(reqDto.getCertificate());
         reqDto.setVideo(reqDto.getVideo());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));

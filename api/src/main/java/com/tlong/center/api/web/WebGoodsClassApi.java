@@ -5,6 +5,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.api.dto.web.user.UserRequestDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,11 +44,11 @@ public interface WebGoodsClassApi {
 
     @ApiOperation("查询一级分类接口")
     @PostMapping("/findGoodsClass")
-    List<GoodsTypeResponseDto> findGoodsClass(HttpSession session);
+    List<GoodsTypeResponseDto> findGoodsClass(@RequestBody UserRequestDto requestDto);
 
     @ApiOperation("查询二级分类接口")
     @PostMapping("/findGoodsTwoClass")
-    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id,HttpSession session);
+    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id, @RequestBody UserRequestDto requestDto);
 
     @ApiOperation("商品分类搜索")
     @PostMapping("/searchGoodsType")

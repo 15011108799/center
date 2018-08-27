@@ -9,6 +9,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.api.dto.web.user.UserRequestDto;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
@@ -171,13 +172,107 @@ public class GoodsClassService {
         return new Result(0, "修改失败");
     }
 
+//    /**
+//     * 查询一级分类
+//     *
+//     * @return
+//     */
+//    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+//        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+//        if (Objects.nonNull(user) && user.getUserType() != null && user.getUserType() == 1) {
+//            String[] goodsClass = user.getGoodsClass().split(",");
+//            if (goodsClass.length == 0) {
+//                return goodsTypeResponseDtos;
+//            }
+//            HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
+//
+//
+////            ArrayList<Long> a1 = new ArrayList<>();
+////            Arrays.asList(goodsClass).forEach(one -> a1.add(Long.valueOf(one)));
+////            Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.id.in(a1));
+////            List<AppGoodsclass> appGoodsClassesN = ToListUtil.IterableToList(all);
+//
+////            List<Long> collect = appGoodsClassesN.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
+////            Iterable<AppGoodsclass> all1 = repository.findAll(appGoodsclass.id.in(collect));
+////            List<AppGoodsclass> appGoodsclasses1 = ToListUtil.IterableToList(all1);
+////            appGoodsclasses1.forEach(AppGoodsclass::toDto);
+////            return appGoodsclasses1;
+//
+//
+//            for (String goodsclass : goodsClass) {
+//                AppGoodsclass appGoodsclass = repository.findOne(Long.valueOf(goodsclass));
+//                AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.getGoodsClassIdParent());
+//                appGoodsclasses.add(appGoodsclass1);
+//            }
+//            for (AppGoodsclass goodsclass : appGoodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        } else {
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        }
+//    }
+//
+//    /**
+//     * 查询二级分类
+//     *
+//     * @return
+//     */
+//    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id, HttpSession session) {
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+//        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+//        if (user.getUserType() != null && user.getUserType() == 1) {
+//            String[] goodsClass = user.getGoodsClass().split(",");
+//            if (goodsClass.length == 0)
+//                return goodsTypeResponseDtos;
+//            Predicate pre = appGoodsclass.id.isNull();
+//            for (String goodsclass : goodsClass) {
+//                pre = ExpressionUtils.or(pre, appGoodsclass.id.longValue().eq(Long.valueOf(goodsclass)));
+//            }
+//            pre = ExpressionUtils.and(pre, appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(pre);
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        } else {
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        }
+//    }
+
     /**
      * 查询一级分类
      *
      * @return
      */
-    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+    public List<GoodsTypeResponseDto> findGoodsClass(/*HttpSession session*/UserRequestDto request) {
+        //TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        TlongUser user = new TlongUser();
+        request.setGoodsClass(user.getGoodsClass());
+        //request.setId(user.getId());
+        request.setUserType(user.getUserType());
+        //BeanUtils.copyProperties(request,user);
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
         if (Objects.nonNull(user) && user.getUserType() != null && user.getUserType() == 1) {
             String[] goodsClass = user.getGoodsClass().split(",");
@@ -228,8 +323,14 @@ public class GoodsClassService {
      *
      * @return
      */
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id, HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id,UserRequestDto request/*HttpSession session*/) {
+        //TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        //TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+        TlongUser user = new TlongUser();
+        user.setUserType(request.getUserType());
+        user.setGoodsClass(request.getGoodsClass());
+        user.setId(request.getUserId());
+        //id = request.getId();
         List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
         if (user.getUserType() != null && user.getUserType() == 1) {
             String[] goodsClass = user.getGoodsClass().split(",");

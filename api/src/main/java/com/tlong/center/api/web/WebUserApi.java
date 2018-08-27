@@ -23,12 +23,10 @@ public interface WebUserApi {
 
     @ApiOperation("供应商注册接口")
     @PostMapping("/suppliersRegister")
-        //TODO
     Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto);
 
     @ApiOperation("代理商注册接口")
     @PostMapping("/agentRegister")
-        //TODO
     Long agentRegister(@RequestBody AgentRegisterRequestDto requestDto);
 
 

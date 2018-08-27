@@ -47,14 +47,15 @@ public class CodeUtil {
      * 商品编码生成规则
      */
     public String goodsCode(Integer codeType, Integer userType, Integer head, Integer isCompany) {
+        // 1 0 1 0
         String content;
         String code;
         String placeholder1 = "0";
         List<String> codes = queryFactory.select(tlongCode.code)
                 .from(tlongCode, tlongCodeRule)
-                .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue()))
-//                        .and(tlongCodeRule.type.intValue().eq(codeType)))
-//                        .and(tlongCodeRule.userType.intValue().eq(userType)))
+                .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue())
+                        .and(tlongCodeRule.type.intValue().eq(codeType))
+                        .and(tlongCodeRule.userType.intValue().eq(userType)))
                 .orderBy(tlongCode.id.desc())
                 .fetch();
 //        tlongCodeRepository.findAll(tlongCode.ruleId.eq());

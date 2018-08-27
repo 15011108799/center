@@ -5,6 +5,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.api.dto.web.user.UserRequestDto;
 import com.tlong.center.api.web.WebGoodsClassApi;
 import com.tlong.center.service.GoodsClassService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +54,13 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     }
 
     @Override
-    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
-        return goodsClassService.findGoodsClass(session);
+    public List<GoodsTypeResponseDto> findGoodsClass(@RequestBody UserRequestDto requestDto) {
+        return goodsClassService.findGoodsClass(requestDto);
     }
 
     @Override
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody Long id,HttpSession session) {
-        return goodsClassService.findGoodsTwoClass(id,session);
+    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestParam Long id, @RequestBody UserRequestDto requestDto) {
+        return goodsClassService.findGoodsTwoClass(id,requestDto);
     }
 
     @Override

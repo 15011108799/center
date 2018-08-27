@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Api("商品驳回原因接口")
 public interface WebGoodsRejectReasonApi {
@@ -16,10 +17,10 @@ public interface WebGoodsRejectReasonApi {
 
     @ApiModelProperty("查询商品驳回原因")
     @PostMapping("/findReason")
-    WebGoodsReasonResponseDto findReason(@RequestBody Long id);
+    WebGoodsReasonResponseDto findReason(@RequestParam Long id);
 
     @ApiModelProperty("删除驳回原因")
     @PostMapping("/delReason")
-    Result delReason(@RequestBody Long id);
+    Result delReason(@RequestParam Long id);
 
 }
