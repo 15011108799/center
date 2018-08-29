@@ -157,7 +157,7 @@ public class OrderService {
                 if (one.getPublishUserId() != null) {
                     TlongUser one3 = appUserRepository.findOne(one.getPublishUserId());
                     if (Objects.nonNull(one3)) {
-                        orderRequestDto.setPublishName(one3.getUserName());
+                        orderRequestDto.setPublishName(one3.getRealName());
                         //设置成交价格
                         if (Objects.nonNull(one1)) {
                             switch (one3.getLevel()) {

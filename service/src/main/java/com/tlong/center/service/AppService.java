@@ -142,14 +142,20 @@ public class AppService {
      * 获取上级用户信息
      */
     public AppUserResponseDto parentInfo(Long userId) {
-        TlongUser one = tlongUserRepository.findOne(userId);
+        TlongUser one = tlongUserRepository.findOne(tlongUser.id.eq(userId));
         if (Objects.nonNull(one)){
-            AppUserResponseDto responseDto = new AppUserResponseDto();
-            responseDto.setWx(one.getWx());
-            responseDto.setPhone(one.getWx());
-            return responseDto;
-        }else {
-            return null;
+            if (one.getParentId() != null) {
+                TlongUser one1 = tlongUserRepository.findOne(tlongUser.id.eq(one.getParentId()));
+                if (Objects.nonNull(one1)) {
+                    AppUserResponseDto responseDto = new AppUserResponseDto();
+                    responseDto.setWx(one.getWx());
+                    responseDto.setPhone(one.getWx());
+                    return responseDto;
+                }
+            }else {
+                return new AppUserResponseDto();
+            }
         }
+        return new AppUserResponseDto();
     }
 }

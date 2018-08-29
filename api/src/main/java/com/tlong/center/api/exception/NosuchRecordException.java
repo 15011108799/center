@@ -1,6 +1,6 @@
 package com.tlong.center.api.exception;
 
-public class NosuchRecordException extends Exception {
+public class NosuchRecordException extends RuntimeException {
     public NosuchRecordException() {
     }
 

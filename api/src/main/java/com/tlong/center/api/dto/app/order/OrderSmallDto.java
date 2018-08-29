@@ -29,7 +29,7 @@ public class OrderSmallDto implements Serializable {
     private String goodsName;
 
     @ApiModelProperty("下单时间")
-    private Date orderTime;
+    private String orderTime;
 
     public Long getGoodsId() {
         return goodsId;
@@ -87,11 +87,11 @@ public class OrderSmallDto implements Serializable {
         this.goodsName = goodsName;
     }
 
-    public Date getOrderTime() {
+    public String getOrderTime() {
         return orderTime;
     }
 
-    public void setOrderTime(Date orderTime) {
+    public void setOrderTime(String orderTime) {
         this.orderTime = orderTime;
     }
 }

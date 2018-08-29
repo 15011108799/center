@@ -55,7 +55,7 @@ public class CodeUtil {
                 .from(tlongCode, tlongCodeRule)
                 .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue())
                         .and(tlongCodeRule.type.intValue().eq(codeType))
-                        .and(tlongCodeRule.userType.intValue().eq(userType)))
+                        .and(userType == null ? null : tlongCodeRule.userType.intValue().eq(userType)))
                 .orderBy(tlongCode.id.desc())
                 .fetch();
 //        tlongCodeRepository.findAll(tlongCode.ruleId.eq());
@@ -69,7 +69,8 @@ public class CodeUtil {
                     .and(tlongCodeRule.isCompany.eq(isCompany)));
         }else {
             tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
-                    .and(tlongCodeRule.userType.isNull()));
+                    .and(tlongCodeRule.userType.isNull())
+                    .and(tlongCodeRule.isCompany.eq(isCompany)));
         }
         if (Objects.isNull(tlongCodeRule1)) {
             logger.error("未获取到对应的编码规则");

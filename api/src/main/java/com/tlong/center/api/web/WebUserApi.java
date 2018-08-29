@@ -2,10 +2,16 @@ package com.tlong.center.api.web;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
+import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.user.*;
 import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
 import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
+import com.tlong.center.api.dto.web.user.AddManagerRequestDto;
+import com.tlong.center.api.dto.web.user.TlongUserResponseDto;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
@@ -13,32 +19,29 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
-@Api("代理商供应商用户管理接口")
+@Api("用户管理接口")
 public interface WebUserApi {
+
+    @ApiModelProperty("创建管理员用户")
+    @PostMapping("/createManager")
+    TlongResultDto createManager(@RequestBody AddManagerRequestDto requestDto);
 
     @ApiOperation("获取下级代理商分页")
     @PostMapping("/childrenAgents")
     Page<AgentResponseDto> childrenAgents(@RequestParam Long userId, @RequestBody PageAndSortRequestDto pageAndSortRequestDto);
 
-
-    @ApiOperation("供应商注册接口")
+    @ApiOperation("用户注册接口")
     @PostMapping("/suppliersRegister")
     Result suppliersRegister(@RequestBody SuppliersRegisterRequsetDto SuppliersRegisterRequsetDto);
 
-    @ApiOperation("代理商注册接口")
-    @PostMapping("/agentRegister")
-    Long agentRegister(@RequestBody AgentRegisterRequestDto requestDto);
-
+//    @ApiOperation("代理商注册接口")
+//    @PostMapping("/agentRegister")
+//    Long agentRegister(@RequestBody AgentRegisterRequestDto requestDto);
 
     @ApiOperation("用户删除(代理商丶供货商)")
     @PutMapping("/deleteUser")
     Integer deleteUser(@RequestParam Long id);
 
-
-//    @ApiOperation("用户修改(代理商丶供货商)")
-//    @PutMapping("/updateUser")
-    //TODO 可能接口要分开写
-//    Integer updateUser(@RequestBody )
 
     @ApiOperation("用户搜索(代理商丶供货商)")
     @PostMapping("/searchUser")
@@ -49,13 +52,14 @@ public interface WebUserApi {
     @PutMapping("/authentication")
     Boolean authentication(@RequestParam Long id);
 
-    @ApiOperation("查询所有用户供货商")
-    @PostMapping("/findAllSuppliers")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
+    @ApiOperation("查询所有供货商")
+    @PostMapping("/findAllSuppliers/{userId}")
+    Page<TlongUserResponseDto> findAllSuppliers(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long userId, @RequestParam MultiValueMap<String,String> params);
 
     @ApiOperation("查询所有用户代理商")
-    @PostMapping("/findAllAgents")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto, HttpSession session);
+    @PostMapping("/findAllAgents/{userId}")
+
+    Page<TlongUserResponseDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long userId);
 
     @ApiOperation("根据id查询用户")
     @PutMapping("/findSupplierById")
@@ -64,7 +68,6 @@ public interface WebUserApi {
     @ApiOperation("修改用户信息")
     @PutMapping("/updateUserInfo")
     Result updateUserInfo(@RequestBody SuppliersRegisterRequsetDto suppliersRegisterRequsetDto);
-    //TODO 代理商下级信息拉取
 
     @ApiOperation("修改供应商状态")
     @PostMapping("/updateUserAuthentication")
@@ -88,15 +91,15 @@ public interface WebUserApi {
 
     @ApiOperation("查询同一层级所有代理商")
     @PostMapping("/findAgentByLevel")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAgentByLevel(@RequestBody PageAndSortRequestDto requestDto);
+    Page<SuppliersCompanyResponseDto> findAgentByLevel(@RequestBody SuppliersCompanyRequestDto requestDto);
 
     @ApiOperation("查询所有供货商分公司")
     @PostMapping("/findSupplirtCompany")
-    PageResponseDto<SuppliersRegisterRequsetDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto);
+    Page<SuppliersCompanyResponseDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("查询所有高级管理员")
     @PostMapping("/findAllManager")
-    PageResponseDto<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto);
+    Page<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("查询某个部门管理员")
     @PostMapping("/findOrgManager")

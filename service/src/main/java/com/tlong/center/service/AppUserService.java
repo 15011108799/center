@@ -32,7 +32,10 @@ public class AppUserService {
         tlongUser.setPassword(MD5Util.MD5(requestDto.getPassword()));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         tlongUser.setRegistDate(simpleDateFormat.format(new Date()));
+        tlongUser.setParentId(requestDto.getParentId());
+        tlongUser.setOrgId(requestDto.getOrgId());
         tlongUser.setLevel(2);
+        tlongUser.setSex("1");
         tlongUser.setPhone(requestDto.getPhone());
         tlongUser.setUserType(2);
         tlongUser.setOrgId(1426L);

@@ -57,8 +57,8 @@ public class QurtzController {
             //这里去调用业务的技术逻辑
             Long goodsId = null;
             if (requestDto.getGoodsId() != null) {
-                goodsId = this.unLockGoods(requestDto.getGoodsId());
                 this.orderStateChange(requestDto.getGoodsId());
+                goodsId = this.unLockGoods(requestDto.getGoodsId());
             }
             if (goodsId != null) {
                 logger.info("商品id为" + goodsId + "的商品已被成功解除锁定");

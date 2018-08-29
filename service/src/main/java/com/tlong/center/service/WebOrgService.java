@@ -3,6 +3,8 @@ package com.tlong.center.service;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
 import com.tlong.center.api.dto.web.org.TlongOrgResponseDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.common.utils.ToListUtil;
@@ -37,19 +39,44 @@ public class WebOrgService {
         WebOrg webOrg = new WebOrg();
         webOrg.setOrgName(requestDto.getOrgName());
         webOrg.setCreateDate(new Date());
-        webOrg.setCurState(1);
-        webOrg.setIsDeleted(0);
         webOrg.setOrgEmail(requestDto.getOrgEmail());
         webOrg.setOrgPhone(requestDto.getOrgPhone());
         webOrg.setOrgDesc(requestDto.getOrgDesc());
-        webOrg.setOrgLevel(1);
-        webOrg.setParentOrgId(1426L);
+        webOrg.setOrgLevel(requestDto.getOrgLevel());
+        webOrg.setOrgClass(requestDto.getOrgClass());
+        webOrg.setParentOrgId(requestDto.getParentOrgId());
+        webOrg.setCurState(1);
+        webOrg.setIsDeleted(0);
         WebOrg save = webOrgRepository.save(webOrg);
+
+        //机构新增完成之后要创建对应的管理员用户
+
         if (Objects.nonNull(save)){
             return new TlongResultDto(0,save.getId()+"");
         }
         return new TlongResultDto(1,"新增机构失败!");
 
+    }
+
+    /**
+     * 查询省 市 区(县)机构列表
+     */
+    public Page<SuppliersCompanyResponseDto> supplierOrgList(SuppliersCompanyRequestDto requestDto) {
+        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+        //根据级别查询出所有的代理商分公司
+        Page<WebOrg> all = webOrgRepository.findAll(QWebOrg.webOrg.orgClass.eq(requestDto.getOrgClass()), pageRequest);
+        return all.map(one ->{
+            SuppliersCompanyResponseDto responseDto = new SuppliersCompanyResponseDto();
+            responseDto.setOrgName(one.getOrgName());
+            responseDto.setOrgId(one.getId());
+            responseDto.setOrgClass(one.getOrgClass());
+            WebOrg one1 = webOrgRepository.findOne(one.getParentOrgId());
+            if (Objects.nonNull(one1)) {
+                responseDto.setBelongToOrgName(one1.getOrgName());
+            }
+            responseDto.setRegistDate(one.getCreateDate() + "");
+            return responseDto;
+        });
     }
 
     /**
@@ -80,4 +107,6 @@ public class WebOrgService {
         }
         return null;
     }
+
+
 }

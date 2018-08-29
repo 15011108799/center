@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.app.order.OrderOverResponseDto;
 import com.tlong.center.api.dto.app.order.OrderSmallDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.quertz.QuartzRequestDto;
+import com.tlong.center.api.exception.CustomException;
 import com.tlong.center.common.qurtzUtils.QurtzController;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.common.utils.ToListUtil;
@@ -89,8 +90,8 @@ public class AppOrderService {
         webOrder.setState(1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String format = simpleDateFormat.format(new Date());
-        webOrder.setPlaceOrderTime(format);
-        webOrder.setCreateTime(new Date());
+        webOrder.setPlaceOrderTime(new Date().getTime() /1000 + "");
+        webOrder.setCreateTime(format);
         webOrderRepository.save(webOrder);
         //修改商品表中的商品状态
         WebGoods one2 = appGoodsRepository.findOne(requestDto.getGoodsId());
@@ -123,12 +124,13 @@ public class AppOrderService {
     public Page<OrderSmallDto> orderOverLists(OrderOverRequestDto requestDto) {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
 
-        TlongUser tlongUser = new TlongUser();
+        TlongUser tlongUser;
         if (Objects.isNull(requestDto.getUserId())){
 //            throw new RuntimeException("用户不存在");
             //用户是游客
             tlongUser = new TlongUser();
-            tlongUser.setUserType(100);
+            tlongUser.setUserType(null);
+            tlongUser.setOrgId(1426L);
         }else {
             tlongUser = userInfo(requestDto.getUserId());
             if (Objects.isNull(tlongUser)){
@@ -149,7 +151,7 @@ public class AppOrderService {
             Iterable<TlongUser> all = appUserRepository.findAll(QTlongUser.tlongUser.parentId.eq(tlongUser.getId()));
             List<TlongUser> tlongUsers = ToListUtil.IterableToList(all);
             userIds = tlongUsers.stream().map(TlongUser::getId).collect(Collectors.toList());
-        }else if (tlongUser.getUserType() == 1){
+        }else {
             userIds.add(tlongUser.getId());
         }
         BooleanExpression in = QWebOrder.webOrder.userId.in(userIds);

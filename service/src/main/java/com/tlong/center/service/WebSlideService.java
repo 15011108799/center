@@ -43,7 +43,7 @@ public class WebSlideService {
      * 轮播图新增
      */
     public Result addSlide(WebSlideDto reqDto) {
-        reqDto.setPicUrl(FileUploadUtils.readFile(reqDto.getPicUrl()));
+//        reqDto.setPicUrl(FileUploadUtils.readFile(reqDto.getPicUrl()));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebSlideshow webSlideshow = repository.save(new WebSlideshow(reqDto));

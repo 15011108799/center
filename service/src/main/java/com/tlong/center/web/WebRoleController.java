@@ -6,6 +6,7 @@ import com.tlong.center.api.dto.user.PageResponseDto;
 import com.tlong.center.api.dto.web.WebRoleDto;
 import com.tlong.center.api.web.WebRoleApi;
 import com.tlong.center.service.WebRoleService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class WebRoleController implements WebRoleApi {
      * 角色列表查询
      */
     @Override
-    public PageResponseDto<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto) {
+    public Page<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto) {
         return webRoleService.roleList(requestDto);
     }
 

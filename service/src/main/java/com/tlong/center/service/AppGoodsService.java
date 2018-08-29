@@ -54,7 +54,7 @@ public class AppGoodsService {
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         WebGoods webGoods = new WebGoods(reqDto);
         webGoods.setCertificate(reqDto.getCertificate());
-        webGoods.setNewstime(new Date().getTime());
+        webGoods.setNewstime(new Date().getTime() / 1000);
         webGoods.setPicType(Integer.valueOf(reqDto.getPicType()));
         webGoods.setPriceType(Integer.valueOf(reqDto.getPriceType()));
         webGoods.setNum(Integer.valueOf(reqDto.getNum()));

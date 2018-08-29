@@ -114,6 +114,9 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("发布人部门")
     private String orgId;
 
+    @ApiModelProperty("部门名称")
+    private String orgName;
+
     @ApiModelProperty("是否审核")
     private Integer state;
 
@@ -122,6 +125,14 @@ public class WebGoodsDetailResponseDto implements Serializable {
 
     @ApiModelProperty("审核人名称")
     private String checkUserName;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public String getCheckUserName() {
         return checkUserName;

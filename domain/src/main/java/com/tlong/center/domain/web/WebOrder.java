@@ -1,6 +1,5 @@
 package com.tlong.center.domain.web;
 
-import com.tlong.center.api.dto.app.order.OrderOverResponseDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
 import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
@@ -26,11 +25,6 @@ public class WebOrder {
         return dto;
     }
 
-    public OrderOverResponseDto toOrderOverResponseDto(){
-        OrderOverResponseDto dto = new OrderOverResponseDto();
-        PropertyUtils.copyPropertiesOfNotNull(this,dto);
-        return dto;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,7 +43,7 @@ public class WebOrder {
     private String placeOrderTime;
 
     //下单时间
-    private Date createTime;
+    private String createTime;
 
     //下单人用户名
     private String userName;
@@ -139,11 +133,11 @@ public class WebOrder {
         this.phone = phone;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 

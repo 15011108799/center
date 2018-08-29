@@ -51,8 +51,11 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("头像 url")
     private String headImage;
 
-    @ApiModelProperty("所属部门名称")
-    private String orgId;
+    @ApiModelProperty("所属部门id")
+    private Long orgId;
+
+    @ApiModelProperty("机构名称")
+    private String orgName;
 
     @ApiModelProperty("经营地")
     private String premises;
@@ -134,6 +137,14 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     @ApiModelProperty("已售商品个数统计")
     private Integer soldGoodsNum;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public Integer getIsApp() {
         return isApp;
@@ -263,11 +274,15 @@ public class SuppliersRegisterRequsetDto implements Serializable {
         this.serviceHotline = serviceHotline;
     }
 
-    public String getOrgId() {
+    public void setHeadImage(String headImage) {
+        this.headImage = headImage;
+    }
+
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(String orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 

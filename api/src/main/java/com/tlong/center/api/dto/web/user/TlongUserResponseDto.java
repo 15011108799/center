@@ -30,9 +30,6 @@ public class TlongUserResponseDto implements Serializable {
     @ApiModelProperty("E签宝认证状态（1 认证通过  0 未认证）")
     private Integer esgin;
 
-   /* //加入时间
-    private LocalDateTime joinTime;*/
-
     @ApiModelProperty("是否为集团类型(1 是  0 不是)")
     private Integer isCompany;
 
@@ -85,6 +82,9 @@ public class TlongUserResponseDto implements Serializable {
     @ApiModelProperty("所属部门")
     private Long orgId;
 
+    @ApiModelProperty("机构名称")
+    private String orgName;
+
     @ApiModelProperty("是否已删除(1已删除 0未删除)")
     private Integer isDeleted;
 
@@ -129,6 +129,14 @@ public class TlongUserResponseDto implements Serializable {
 
     @ApiModelProperty("经营地")
     private String premises;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public Long getId() {
         return id;

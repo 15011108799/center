@@ -3,6 +3,8 @@ package com.tlong.center.web.org;
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
+import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
 import com.tlong.center.api.dto.web.org.TlongOrgResponseDto;
 import com.tlong.center.api.web.org.WebOrgApi;
 import com.tlong.center.service.WebOrgService;
@@ -24,12 +26,19 @@ public class WebOrgController implements WebOrgApi {
 
     /**
      * 新增机构
-     * @param requestDto
-     * @return
      */
     @Override
     public TlongResultDto addOrg(@RequestBody AddOrgRequestDto requestDto) {
         return webOrgService.addOrg(requestDto);
+    }
+
+
+    /**
+     * 查询省 市 区(县)机构列表
+     */
+    @Override
+    public Page<SuppliersCompanyResponseDto> supplierOrgList(@RequestBody SuppliersCompanyRequestDto requestDto) {
+        return webOrgService.supplierOrgList(requestDto);
     }
 
     /**
