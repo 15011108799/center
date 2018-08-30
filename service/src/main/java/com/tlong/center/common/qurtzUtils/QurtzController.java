@@ -47,7 +47,7 @@ public class QurtzController {
         Trigger trigger = this.creatGoodsLockTrigger();
         scheduler.scheduleJob(jobDetail, trigger);
         scheduler.start();
-        Long laterTime = 60000L;
+        Long laterTime = 7200000L;
         try {
 //            Long laterTime = 1L;
             if (requestDto.getLaterTime() != null) {

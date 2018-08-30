@@ -55,10 +55,10 @@ public class FileController implements UploadApi{
         //TODO 自定义控制文件目录
         String filePath;
         if (suffixName.toUpperCase().equals("MP4")){
-            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
+            filePath = "C:\\servers\\resources\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
         }else {
             //C:\\resources
-            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
+            filePath = "C:\\servers\\resources\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
         }
 
             //解决中文问题,，liunx下中文路径，monitor_control.restrict_backdoor = "true"
