@@ -65,8 +65,7 @@ public class DepartmentService {
      */
     public Page<DepartmentInfoResponseDto> departmentPage(Long orgId, PageAndSortRequestDto pageAndSortRequestDto) {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(pageAndSortRequestDto);
-        Page<TlongRole> all = roleRepository.findAll(QTlongRole.tlongRole.type.eq(2)
-                .and(QTlongRole.tlongRole.orgId.eq(orgId)), pageRequest);
+        Page<TlongRole> all = roleRepository.findAll(QTlongRole.tlongRole.type.eq(2), pageRequest);
         return all.map(one ->{
             DepartmentInfoResponseDto responseDto = new DepartmentInfoResponseDto();
             responseDto.setOrgName("中国国际珠宝交易平台机构");
