@@ -37,8 +37,8 @@ public class WebOrgController implements WebOrgApi {
      * 查询省 市 区(县)机构列表
      */
     @Override
-    public Page<SuppliersCompanyResponseDto> supplierOrgList(@RequestBody SuppliersCompanyRequestDto requestDto) {
-        return webOrgService.supplierOrgList(requestDto);
+    public Page<SuppliersCompanyResponseDto> orgList(@RequestBody SuppliersCompanyRequestDto requestDto) {
+        return webOrgService.orgList(requestDto);
     }
 
     /**

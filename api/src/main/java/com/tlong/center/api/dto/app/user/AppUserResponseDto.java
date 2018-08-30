@@ -41,6 +41,17 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("头像URL")
     private String headImage;
 
+    @ApiModelProperty("供应商可上传分类")
+    private String goodsClass;
+
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
+    }
+
     public Long getOrgId() {
         return orgId;
     }

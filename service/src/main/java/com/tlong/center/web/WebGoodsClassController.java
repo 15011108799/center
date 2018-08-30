@@ -9,10 +9,7 @@ import com.tlong.center.api.dto.web.user.UserRequestDto;
 import com.tlong.center.api.web.WebGoodsClassApi;
 import com.tlong.center.service.GoodsClassService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -53,14 +50,20 @@ public class WebGoodsClassController implements WebGoodsClassApi{
         return goodsClassService.updateGoodsType(requestDto);
     }
 
+    /**
+     * 查询所有的一级分类
+     */
     @Override
-    public List<GoodsTypeResponseDto> findGoodsClass(@RequestBody UserRequestDto requestDto) {
-        return goodsClassService.findGoodsClass(requestDto);
+    public List<GoodsTypeResponseDto> findGoodsClassLevelOne() {
+        return goodsClassService.findGoodsClassLevelOne();
     }
 
+    /**
+     * 根据一级分类id查询二级分类
+     */
     @Override
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestParam Long id, @RequestBody UserRequestDto requestDto) {
-        return goodsClassService.findGoodsTwoClass(id,requestDto);
+    public List<GoodsTypeResponseDto> findGoodsLevelTwo(@PathVariable Long goodsClassId) {
+        return goodsClassService.findGoodsLevelTwo(goodsClassId);
     }
 
     @Override
@@ -71,5 +74,21 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     @Override
     public GoodsTypeResponseDto findOneGoodsClass(@RequestBody Long id) {
         return goodsClassService.findOneGoodsClass(id);
+    }
+
+    /**
+     * 获取供应商可上货分类
+     */
+    @Override
+    public List<GoodsTypeResponseDto> supplierGoodsClass(@PathVariable Long userId) {
+        return goodsClassService.supplierGoodsClass(userId);
+    }
+
+    /**
+     * 获取供应商可上货二级分类
+     */
+    @Override
+    public List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(@PathVariable Long userId, @PathVariable Long goodsClassId) {
+        return goodsClassService.supplierGoodsClassLevelTwo(userId,goodsClassId);
     }
 }

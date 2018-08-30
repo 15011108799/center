@@ -61,7 +61,7 @@ public class WebOrgService {
     /**
      * 查询省 市 区(县)机构列表
      */
-    public Page<SuppliersCompanyResponseDto> supplierOrgList(SuppliersCompanyRequestDto requestDto) {
+    public Page<SuppliersCompanyResponseDto> orgList(SuppliersCompanyRequestDto requestDto) {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         //根据级别查询出所有的代理商分公司
         Page<WebOrg> all = webOrgRepository.findAll(QWebOrg.webOrg.orgClass.eq(requestDto.getOrgClass()), pageRequest);

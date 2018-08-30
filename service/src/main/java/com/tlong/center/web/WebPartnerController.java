@@ -8,6 +8,7 @@ import com.tlong.center.api.web.WebPartnerApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +25,7 @@ public class WebPartnerController implements WebPartnerApi {
     private PartnerService partnerService;
 
     @Override
-    public PageResponseDto<PartnerRequestDto> findAllPartners(@RequestBody PageAndSortRequestDto requestDto) {
+    public Page<PartnerRequestDto> findAllPartners(@RequestBody PageAndSortRequestDto requestDto) {
         return partnerService.findAllPartners(requestDto);
     }
 

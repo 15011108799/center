@@ -15,6 +15,7 @@ import com.tlong.center.api.dto.web.user.AddManagerRequestDto;
 import com.tlong.center.api.dto.web.user.TlongUserResponseDto;
 import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
+import com.tlong.center.domain.app.QTlongUser;
 import com.tlong.center.domain.app.goods.QWebGoods;
 import com.tlong.center.service.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -66,10 +67,10 @@ public class WebUserController implements WebUserApi {
         return userService.deleteUserById(id);
     }
 
-    @Override
-    public Page<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, @RequestParam MultiValueMap<String,String> params) {
-        return userService.searchUser(requestDto,params);
-    }
+//    @Override
+//    public Page<SuppliersRegisterRequsetDto> searchUser(@RequestBody UserSearchRequestDto requestDto, @RequestParam MultiValueMap<String,String> params) {
+//        return userService.searchUser(requestDto,params);
+//    }
 
     @Override
     public Boolean authentication(Long id) {
@@ -89,8 +90,8 @@ public class WebUserController implements WebUserApi {
      * 查询所有代理商
      */
     @Override
-    public Page<TlongUserResponseDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long userId) {
-        return userService.findAllAgents(requestDto,userId);
+    public Page<TlongUserResponseDto> findAllAgents(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long userId, @RequestParam MultiValueMap<String,String> params) {
+        return userService.findAllAgents(requestDto,userId,params);
     }
 
     @Override
@@ -126,25 +127,12 @@ public class WebUserController implements WebUserApi {
         userService.updateUserPublishNumm(requsetDto);
     }
 
-    @Override
-    public Integer findCount(@RequestBody Integer type,HttpSession session) {
-        return userService.findCount(type,session);
-    }
 
-    @Override
-    public Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
-        return userService.findCount1(requestDto,session);
-    }
-
-    @Override
-    public Page<SuppliersCompanyResponseDto> findAgentByLevel(@RequestBody SuppliersCompanyRequestDto requestDto) {
-        return userService.findAgentByLevel(requestDto);
-    }
-
-    @Override
-    public Page<SuppliersCompanyResponseDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findSupplirtCompany(requestDto);
-    }
+//
+//    @Override
+//    public Page<SuppliersCompanyResponseDto> findAgentByLevel(@RequestBody SuppliersCompanyRequestDto requestDto) {
+//        return userService.findAgentByLevel(requestDto);
+//    }
 
     @Override
     public Page<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto) {
@@ -161,46 +149,80 @@ public class WebUserController implements WebUserApi {
         userService.delManage(id,roleId);
     }
 
-    @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(@RequestBody UserSearchRequestDto requestDto) {
-        return userService.searchAgentByLevel(requestDto);
-    }
-
-    @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto) {
-        return userService.searchSupplirtCompany(requestDto);
-    }
-
-    @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplierByOrg(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findSupplierByOrg(requestDto);
-    }
-
-    @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplierByOrg(@RequestBody UserSearchRequestDto requestDto) {
-        return userService.searchSupplierByOrg(requestDto);
-    }
+//    @Override
+//    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplirtCompany(@RequestBody UserSearchRequestDto requestDto) {
+//        return userService.searchSupplirtCompany(requestDto);
+//    }
+//
+//    @Override
+//    public PageResponseDto<SuppliersRegisterRequsetDto> findSupplierByOrg(@RequestBody PageAndSortRequestDto requestDto) {
+//        return userService.findSupplierByOrg(requestDto);
+//    }
+//
+//    @Override
+//    public PageResponseDto<SuppliersRegisterRequsetDto> searchSupplierByOrg(@RequestBody UserSearchRequestDto requestDto) {
+//        return userService.searchSupplierByOrg(requestDto);
+//    }
 
 
     /**
-     * 商品多条件模糊查询
+     * 用户多条件模糊查询
      */
     public Predicate[] resove(MultiValueMap<String,String> params) {
 
+        String userType = params.getFirst("userType");
         String checkState = params.getFirst("checkState");
+        String esignState = params.getFirst("esignState");
+        String userName = params.getFirst("userName");
+        String userCode = params.getFirst("userCode");
+        String realName = params.getFirst("realName");
         String beginTime = params.getFirst("beginTime");
         String endTime = params.getFirst("endTime");
 
-        BooleanExpression beforeEndTime = StringUtils.isNotBlank(endTime) ? QWebGoods.webGoods.newstime.lt(Long.valueOf(endTime)) : null;
-        BooleanExpression AfterBeginTime = StringUtils.isNotBlank(endTime) ? QWebGoods.webGoods.newstime.gt(Long.valueOf(beginTime)) : null;
+
+        BooleanExpression userTypeEq = StringUtils.isNotBlank(userType) ? QTlongUser.tlongUser.userType.eq(Integer.valueOf(userType)) : null;
+        BooleanExpression checkStateEq = StringUtils.isNotBlank(checkState) ? QTlongUser.tlongUser.authentication.eq(Integer.valueOf(checkState)) : null;
+        BooleanExpression esignStateEq = StringUtils.isNotBlank(esignState) ? QTlongUser.tlongUser.esgin.eq(Integer.valueOf(esignState)) : null;
+        BooleanExpression userNameLike = StringUtils.isNotBlank(userName) ? QTlongUser.tlongUser.userName.like("%" + userName + "%") : null;
+        BooleanExpression userCodeLike = StringUtils.isNotBlank(userCode) ? QTlongUser.tlongUser.userCode.like("%" + userCode + "%") : null;
+        BooleanExpression realNameLike = StringUtils.isNotBlank(realName) ? QTlongUser.tlongUser.realName.like("%" + realName + "%") : null;
+//        BooleanExpression beforeEndTime = StringUtils.isNotBlank(endTime) ? QTlongUser.tlongUser.newstime.lt(Long.valueOf(endTime)) : null;
+//        BooleanExpression AfterBeginTime = StringUtils.isNotBlank(endTime) ? QWebGoods.webGoods.newstime.gt(Long.valueOf(beginTime)) : null;
 
         List<BooleanExpression> list = new ArrayList<>();
-        list.add(beforeEndTime);
-        list.add(AfterBeginTime);
+        list.add(userTypeEq);
+        list.add(checkStateEq);
+        list.add(esignStateEq);
+        list.add(userNameLike);
+        list.add(userCodeLike);
+        list.add(realNameLike);
+//        list.add(beforeEndTime);
+//        list.add(AfterBeginTime);
 
         List<BooleanExpression> collect = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
         Predicate[] pre = {QWebGoods.webGoods.id.isNotNull()};
         collect.forEach(one -> pre[0] = ExpressionUtils.and(pre[0], one));
         return pre;
     }
+
+
+    //    @Override
+//    public Integer findCount(@RequestBody Integer type,HttpSession session) {
+//        return userService.findCount(type,session);
+//    }
+//
+//    @Override
+//    public Integer findCount(@RequestBody UserSearchRequestDto requestDto, HttpSession session) {
+//        return userService.findCount1(requestDto,session);
+//    }
+
+//    @Override
+//    public Page<SuppliersCompanyResponseDto> findSupplirtCompany(@RequestBody PageAndSortRequestDto requestDto) {
+//        return userService.findSupplirtCompany(requestDto);
+//    }
+
+//    @Override
+//    public PageResponseDto<SuppliersRegisterRequsetDto> searchAgentByLevel(@RequestBody UserSearchRequestDto requestDto) {
+//        return userService.searchAgentByLevel(requestDto);
+//    }
 }

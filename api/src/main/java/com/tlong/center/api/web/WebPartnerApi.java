@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.user.PageResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public interface WebPartnerApi {
 
     @ApiOperation("获取合伙人列表")
     @PostMapping("/findAllPartners")
-    PageResponseDto<PartnerRequestDto> findAllPartners(@RequestBody PageAndSortRequestDto requestDto);
+    Page<PartnerRequestDto> findAllPartners(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiModelProperty("新增合伙人")
     @PostMapping("/addPartner")

@@ -101,6 +101,7 @@ public class AppService {
            responseDto.setPhone(one.getPhone());
            responseDto.setNickName(one.getNickName());
            responseDto.setServiceHotline(one.getServiceHotline());
+           responseDto.setGoodsClass(one.getGoodsClass());
            responseDto.setUserId(userId);
            responseDto.setWx(one.getWx());
         }
@@ -149,7 +150,7 @@ public class AppService {
                 if (Objects.nonNull(one1)) {
                     AppUserResponseDto responseDto = new AppUserResponseDto();
                     responseDto.setWx(one.getWx());
-                    responseDto.setPhone(one.getWx());
+                    responseDto.setPhone(one.getPhone());
                     return responseDto;
                 }
             }else {

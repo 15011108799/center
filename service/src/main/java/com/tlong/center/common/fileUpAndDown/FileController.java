@@ -72,12 +72,10 @@ public class FileController implements UploadApi{
             try {
                 file.transferTo(newFile);
                 return fileName + ",";
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IllegalStateException | IOException e) {
                 e.printStackTrace();
             }
-            return null;
+        return null;
         }
 //        if (file.isEmpty()){
 //            logger.error("上传文件为空");
@@ -181,30 +179,6 @@ public class FileController implements UploadApi{
     //多文件上传
     @PostMapping(value = "/batchUpload")
     public String handleFileUpload(@RequestParam("file") List<MultipartFile> files, @RequestParam String contentClass) {
-//        MultipartFile file = null;
-//        BufferedOutputStream stream = null;
-//        for (int i = 0; i < files.size(); ++i) {
-//            file = files.get(i);
-//            if (!file.isEmpty()) {
-//                try {
-//                    byte[] bytes = file.getBytes();
-//                    stream = new BufferedOutputStream(new FileOutputStream(
-//                            new File(file.getOriginalFilename())));
-//                    stream.write(bytes);
-//                    stream.close();
-//
-//                } catch (Exception e) {
-//                    stream = null;
-//                    return "You failed to upload " + i + " => "
-//                            + e.getMessage();
-//                }
-//            } else {
-//                return "You failed to upload " + i
-//                        + " because the file was empty.";
-//            }
-//        }
-//        return "upload successful";
-
         if (!CollectionUtils.isEmpty(files)){
             for (MultipartFile file :files){
                 try {

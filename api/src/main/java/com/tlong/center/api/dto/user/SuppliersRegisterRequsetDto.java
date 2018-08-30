@@ -57,6 +57,7 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("机构名称")
     private String orgName;
 
+
     @ApiModelProperty("经营地")
     private String premises;
 

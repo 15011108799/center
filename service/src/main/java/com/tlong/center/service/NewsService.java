@@ -33,10 +33,6 @@ public class NewsService {
 
     /**
      * 添加新闻
-     *
-     * @param s
-     * @param reqDto
-     * @return
      */
     public Result addNews(String s, NewsRequestDto reqDto) {
         reqDto.setPic(s.substring(0, s.length() - 1));
@@ -54,9 +50,6 @@ public class NewsService {
 
     /**
      * 删除新闻
-     *
-     * @param id
-     * @return
      */
     public Result delNews(Long id) {
         WebNews webNews = repository.findOne(id);
@@ -68,10 +61,6 @@ public class NewsService {
 
     /**
      * 修改新闻信息
-     *
-     * @param s
-     * @param reqDto
-     * @return
      */
     public Result updateNews(String s, NewsRequestDto reqDto) {
         WebNews webNews1 = repository.findOne(Long.valueOf(reqDto.getId()));
@@ -102,8 +91,6 @@ public class NewsService {
 
     /**
      * 更新审核状态
-     *
-     * @param id
      */
     public void updateNewsState(Long id) {
         WebNews webNews = repository.findOne(id);
@@ -116,9 +103,6 @@ public class NewsService {
 
     /**
      * 查找合伙人通过id
-     *
-     * @param id
-     * @return
      */
     public NewsRequestDto findNewsById(Long id) {
         WebNews webNews = repository.findOne(id);
@@ -127,36 +111,23 @@ public class NewsService {
 
     /**
      * 查询所有分页
-     *
-     * @param requestDto
-     * @return
      */
-    public PageResponseDto<NewsRequestDto> findAllNews(PageAndSortRequestDto requestDto) {
-        PageResponseDto<NewsRequestDto> newsRequestDtoPageResponseDto = new PageResponseDto<>();
+    public Page<NewsRequestDto> findAllNews(PageAndSortRequestDto requestDto) {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<WebNews> webNews = repository.findAll(pageRequest);
-        List<NewsRequestDto> requestDtos = new ArrayList<>();
-        webNews.forEach(webNews1 -> {
+        return webNews.map(webNews1 -> {
             NewsRequestDto newsRequestDto = webNews1.toDto();
             newsRequestDto.setId(webNews1.getId() + "");
-            requestDtos.add(newsRequestDto);
+            return newsRequestDto;
         });
-        newsRequestDtoPageResponseDto.setList(requestDtos);
-        final int[] count = {0};
-        Iterable<WebNews> webNews1 = repository.findAll();
-        webNews1.forEach(webNews2 -> {
-            count[0]++;
-        });
-        newsRequestDtoPageResponseDto.setCount(count[0]);
-        return newsRequestDtoPageResponseDto;
     }
 
     public Result delBatchNews(String id) {
         String[] goodsIds;
         if (StringUtils.isNotEmpty(id)) {
             goodsIds = id.split(",");
-            for (int i = 0; i < goodsIds.length; i++) {
-                delNews(Long.valueOf(goodsIds[i]));
+            for (String goodsId : goodsIds) {
+                delNews(Long.valueOf(goodsId));
             }
         }
         return new Result(1, "删除成功");
@@ -166,8 +137,8 @@ public class NewsService {
         String[] goodsIds;
         if (StringUtils.isNotEmpty(id)) {
             goodsIds = id.split(",");
-            for (int i = 0; i < goodsIds.length; i++) {
-                updateNewsState(Long.valueOf(goodsIds[i]));
+            for (String goodsId : goodsIds) {
+                updateNewsState(Long.valueOf(goodsId));
             }
         }
     }

@@ -264,8 +264,8 @@ public class WebGoodsService {
             webGoodsDetailResponseDto.setGoodsClassId(webGoods1.getGoodsClassId() + "");
             webGoodsDetailResponseDto.setPicType(webGoods1.getPicType() + "");
             webGoodsDetailResponseDto.setCircle(webGoods1.getCircle() + "");
-//            webGoodsDetailResponseDto.setNum(webGoods1.getNum() + "");
-//            webGoodsDetailResponseDto.setPriceType(webGoods1.getPriceType() + "");
+            webGoodsDetailResponseDto.setNum(webGoods1.getNum() + "");
+            webGoodsDetailResponseDto.setPriceType(webGoods1.getPriceType() + "");
             webGoodsDetailResponseDto.setFactoryPrice(webGoods1.getFactoryPrice() + "");
             webGoodsDetailResponseDto.setFlagshipPrice(webGoods1.getFlagshipPrice() + "");
             webGoodsDetailResponseDto.setFounderPrice(webGoods1.getFounderPrice() + "");

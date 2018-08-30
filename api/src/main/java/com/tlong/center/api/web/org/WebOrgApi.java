@@ -21,10 +21,9 @@ public interface WebOrgApi {
     @PostMapping("")
     TlongResultDto addOrg(@RequestBody AddOrgRequestDto requestDto);
 
-    @ApiOperation("查询省 市 区(县)机构列表")
-    @PostMapping("/supplierOrgList")
-    Page<SuppliersCompanyResponseDto> supplierOrgList(SuppliersCompanyRequestDto requestDto);
-
+    @ApiOperation("查询省 市 区(县)机构列表 供应商分公司列表")
+    @PostMapping("/orgList")
+    Page<SuppliersCompanyResponseDto> orgList(SuppliersCompanyRequestDto requestDto);
 
     @ApiOperation("获取下级代理商信息列表")
     @PostMapping("/agentList/{orgId}")

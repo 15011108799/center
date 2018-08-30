@@ -11,6 +11,7 @@ import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.NewsService;
 import com.tlong.center.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +28,7 @@ public class WebNewsController implements WebNewsApi {
     private NewsService newsService;
 
     @Override
-    public PageResponseDto<NewsRequestDto> findAllNews(@RequestBody PageAndSortRequestDto requestDto) {
+    public Page<NewsRequestDto> findAllNews(@RequestBody PageAndSortRequestDto requestDto) {
         return newsService.findAllNews(requestDto);
     }
 

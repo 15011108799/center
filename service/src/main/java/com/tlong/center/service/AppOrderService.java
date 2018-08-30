@@ -90,8 +90,8 @@ public class AppOrderService {
         webOrder.setState(1);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String format = simpleDateFormat.format(new Date());
-        webOrder.setPlaceOrderTime(new Date().getTime() /1000 + "");
-        webOrder.setCreateTime(format);
+        webOrder.setPlaceOrderTime(format);
+        webOrder.setCreateTime(new Date().getTime() /1000 + "");
         webOrderRepository.save(webOrder);
         //修改商品表中的商品状态
         WebGoods one2 = appGoodsRepository.findOne(requestDto.getGoodsId());
@@ -158,8 +158,7 @@ public class AppOrderService {
         Page<WebOrder> webOrders = webOrderRepository.findAll(QWebOrder.webOrder.state.eq(requestDto.getState())
                 .and(Objects.isNull(requestDto.getUserId()) ? null : in), pageRequest);
 
-//        List<WebOrder> webOrders = ToListUtil.IterableToList(all);
-        Page<OrderSmallDto> map = webOrders.map(one -> {
+        return webOrders.map(one -> {
             OrderSmallDto dto = new OrderSmallDto();
             TlongUser one1 = appUserRepository.findOne(one.getUserId());
             if (Objects.nonNull(one1)) {
@@ -196,7 +195,6 @@ public class AppOrderService {
             dto.setOrderTime(one.getCreateTime());
             return dto;
         });
-        return map;
 //        OrderOverResponseDto dto = new OrderOverResponseDto();
 //        dto.setOrderLists(map);
 //        String s = String.valueOf(map.getTotalElements());

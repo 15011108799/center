@@ -38,7 +38,7 @@ public class AppUserService {
         tlongUser.setSex("1");
         tlongUser.setPhone(requestDto.getPhone());
         tlongUser.setUserType(2);
-        tlongUser.setOrgId(1426L);
+        tlongUser.setOrgId(1450L);
         tlongUser.setIsCompany(0);
 
         //生成用户编码
