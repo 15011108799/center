@@ -11,6 +11,12 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("E签宝认证状态（1 认证通过  0 未认证）")
+    private Integer esgin;
+
+    @ApiModelProperty("后台认证")
+    private Integer authentication;
+
     @ApiModelProperty("机构id")
     private Long orgId;
 
@@ -43,6 +49,22 @@ public class AppUserResponseDto implements Serializable {
 
     @ApiModelProperty("供应商可上传分类")
     private String goodsClass;
+
+    public Integer getEsgin() {
+        return esgin;
+    }
+
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
+    }
 
     public String getGoodsClass() {
         return goodsClass;

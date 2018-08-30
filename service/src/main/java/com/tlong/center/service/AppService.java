@@ -31,9 +31,7 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 public class AppService {
 
     private final TlongUserRepository tlongUserRepository;
-
     private final ClazzStyleRepository clazzStyleRepository;
-
     private final CourseRepository courseRepository;
 
     @Autowired
@@ -42,17 +40,6 @@ public class AppService {
         this.clazzStyleRepository = clazzStyleRepository;
         this.courseRepository = courseRepository;
     }
-
-//    @Autowired
-//    private EntityManager entityManager;
-//
-//    private JPAQueryFactory queryFactory;
-//
-//
-//    @PostConstruct
-//    public void init() {
-//        queryFactory = new JPAQueryFactory(entityManager);
-//    }
 
     /**
      * app登录业务
@@ -94,6 +81,8 @@ public class AppService {
            if (one.getSex() != null) {
                responseDto.setSex(Integer.valueOf(one.getSex()));
            }
+           responseDto.setAuthentication(one.getAuthentication());
+           responseDto.setEsgin(one.getEsgin());
            responseDto.setOrgId(one.getOrgId());
            responseDto.setEvId(one.getEvId());
            responseDto.setUserCode(one.getUserCode());

@@ -11,6 +11,7 @@ import com.tlong.center.common.utils.SignHelper;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.esign.EsignCompany;
 import com.tlong.center.domain.app.esign.EsignPerson;
+import com.tlong.center.domain.app.esign.QEsignPerson;
 import com.tlong.center.domain.repository.EsignCompanyRepository;
 import com.tlong.center.domain.repository.EsignPersonRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
@@ -142,7 +143,7 @@ public class ESignSignService {
                 case 0:
                     scene = 0;
                     //<-- 获取个人信息 -->
-                    EsignPerson user1 = esignPersonRepository.findOne(userid);
+                    EsignPerson user1 = esignPersonRepository.findOne(QEsignPerson.esignPerson.userId.eq(2689L));
 //                    sql = String.format("select * from tsign_person where peopleid = '%s'", userid);
 //                    map.put("sql", sql);
 //                    peopleInfoList = informationMapper.runSql(map);
