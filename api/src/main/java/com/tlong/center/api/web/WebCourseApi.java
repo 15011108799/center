@@ -23,7 +23,7 @@ import java.util.List;
 public interface WebCourseApi {
     @ApiModelProperty("课程添加接口")
     @PostMapping("/addCourse")
-    Result addCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
+    Result addCourse(AppCourseRequestDto reqDto);
 
     @ApiOperation("课程查询接口")
     @PostMapping("/findAllCourse")

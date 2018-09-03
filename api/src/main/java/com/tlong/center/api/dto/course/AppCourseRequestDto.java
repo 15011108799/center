@@ -35,6 +35,17 @@ public class AppCourseRequestDto implements Serializable {
     @ApiModelProperty("发布时间")
     private String publishTime;
 
+    @ApiModelProperty("newstime")
+    private String newstime;
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
+
     public String getPublishTime() {
         return publishTime;
     }

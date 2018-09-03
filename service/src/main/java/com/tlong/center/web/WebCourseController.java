@@ -25,10 +25,7 @@ public class WebCourseController implements WebCourseApi {
     private CourseService courseService;
 
     @Override
-    public Result addCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType) {
-        String filePath = FileUploadUtils.upload(file,contentClass,contentType);
-        if (StringUtils.isNotEmpty(filePath))
-            reqDto.setVideo(filePath.substring(0, filePath.length() - 1));
+    public Result addCourse(AppCourseRequestDto reqDto) {
         return courseService.addCourse(reqDto);
     }
 

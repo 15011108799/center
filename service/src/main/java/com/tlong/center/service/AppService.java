@@ -138,8 +138,8 @@ public class AppService {
                 TlongUser one1 = tlongUserRepository.findOne(tlongUser.id.eq(one.getParentId()));
                 if (Objects.nonNull(one1)) {
                     AppUserResponseDto responseDto = new AppUserResponseDto();
-                    responseDto.setWx(one.getWx());
-                    responseDto.setPhone(one.getPhone());
+                    responseDto.setWx(one1.getWx());
+                    responseDto.setPhone(one1.getPhone());
                     return responseDto;
                 }
             }else {

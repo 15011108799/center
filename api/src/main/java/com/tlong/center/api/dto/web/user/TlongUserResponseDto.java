@@ -130,6 +130,9 @@ public class TlongUserResponseDto implements Serializable {
     @ApiModelProperty("经营地")
     private String premises;
 
+    @ApiModelProperty("newstime")
+    private String newstime;
+
     public String getOrgName() {
         return orgName;
     }
@@ -448,5 +451,14 @@ public class TlongUserResponseDto implements Serializable {
 
     public void setPremises(String premises) {
         this.premises = premises;
+    }
+
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
     }
 }

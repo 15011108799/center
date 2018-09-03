@@ -9,6 +9,7 @@ import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
 import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
 import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import com.tlong.center.api.dto.web.user.AddManagerRequestDto;
+import com.tlong.center.api.dto.web.user.OrgManagerInfoResponseDto;
 import com.tlong.center.api.dto.web.user.TlongUserResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -73,8 +74,8 @@ public interface WebUserApi {
     Page<SuppliersRegisterRequsetDto> findAllManager(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("查询某个部门管理员")
-    @PostMapping("/findOrgManager")
-    PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto);
+    @PostMapping("/findOrgManager/{orgId}")
+    Page<OrgManagerInfoResponseDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long orgId);
 
     @ApiOperation("删除总公司超级合伙人管理员")
     @GetMapping("/delManage/{id}/{roleId}")

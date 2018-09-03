@@ -50,6 +50,17 @@ public class Course {
     //发布时间
     private String publishTime;
 
+    //newstime
+    private String newstime;
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
+
     public Long getStyleId() {
         return styleId;
     }

@@ -12,6 +12,7 @@ import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
 import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
 import com.tlong.center.api.dto.web.user.AddManagerRequestDto;
+import com.tlong.center.api.dto.web.user.OrgManagerInfoResponseDto;
 import com.tlong.center.api.dto.web.user.TlongUserResponseDto;
 import com.tlong.center.api.web.WebUserApi;
 import com.tlong.center.common.utils.FileUploadUtils;
@@ -140,8 +141,8 @@ public class WebUserController implements WebUserApi {
     }
 
     @Override
-    public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto) {
-        return userService.findOrgManager(requestDto);
+    public Page<OrgManagerInfoResponseDto> findOrgManager(@RequestBody PageAndSortRequestDto requestDto, @PathVariable Long orgId) {
+        return userService.findOrgManager(requestDto,orgId);
     }
 
     @Override

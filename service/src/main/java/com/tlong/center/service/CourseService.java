@@ -46,8 +46,8 @@ public class CourseService {
         course.setPublishTime(simpleDateFormat.format(new Date()));
         course.setTeacher(requestDto.getTeacher());
         course.setVideo(requestDto.getVideo());
-        if (!requestDto.getImg().equals(""))
-            course.setImg(FileUploadUtils.readFile(requestDto.getImg()));
+        course.setImg(requestDto.getImg());
+        course.setNewstime(requestDto.getNewstime());
         Course course1 = appCourseRepository.save(course);
         if (course1 == null) {
             return new Result(0, "添加失败");

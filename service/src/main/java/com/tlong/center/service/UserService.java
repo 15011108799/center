@@ -15,6 +15,7 @@ import com.tlong.center.api.dto.user.UserSearchRequestDto;
 import com.tlong.center.api.dto.web.FindUserPublishNumResponseDto;
 import com.tlong.center.api.dto.web.UpdateUserPublishNumRequsetDto;
 import com.tlong.center.api.dto.web.user.AddManagerRequestDto;
+import com.tlong.center.api.dto.web.user.OrgManagerInfoResponseDto;
 import com.tlong.center.api.dto.web.user.TlongUserResponseDto;
 import com.tlong.center.api.exception.CustomException;
 import com.tlong.center.common.user.UserSettingsSerivce;
@@ -194,6 +195,7 @@ public class UserService {
         tlongUser.setNickName(requsetDto.getNickName());
         tlongUser.setIsExemption(requsetDto.getIsExemption());
         tlongUser.setEsgin(0);
+        tlongUser.setNewstime(requsetDto.getNewstime());
         tlongUser.setAuthentication(0);
         tlongUser.setGoodsClass(requsetDto.getGoodsClass());
         //设置用户发布数量
@@ -409,6 +411,7 @@ public class UserService {
             response.setPremises(one.getPremises());
             response.setWx(one.getWx());
             response.setUserCode(one.getUserCode());
+            response.setNewstime(one.getNewstime());
             return response;
         });
     }
@@ -549,6 +552,7 @@ public class UserService {
             registerRequsetDto.setAuthentication(one.getAuthentication());
             registerRequsetDto.setRegistDate(one.getRegistDate());
             registerRequsetDto.setUserCode(one.getUserCode());
+            registerRequsetDto.setNewstime(one.getNewstime());
             return registerRequsetDto;
         });
     }
@@ -684,28 +688,46 @@ public class UserService {
         });
     }
 
-    public PageResponseDto<SuppliersRegisterRequsetDto> findOrgManager(PageAndSortRequestDto requestDto) {
-        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
-        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
-        Page<TlongUserRole> tlongUserRoles = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()), pageRequest);
-        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
-        tlongUserRoles.forEach(one -> {
-            SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
-            registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
-            registerRequsetDto.setRoleId(one.getRoleId());
-            TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
-            registerRequsetDto.setId(tlongUser.getId());
-            registerRequsetDto.setUserName(tlongUser.getUserName());
-            registerRequsetDto.setRealName(tlongUser.getRealName());
-            registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
-            suppliersRegisterRequsetDtos.add(registerRequsetDto);
-        });
-        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
-        final int[] count = {0};
-        Iterable<TlongUserRole> tlongUserRoles1 = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()));
-        tlongUserRoles1.forEach(one -> count[0]++);
-        pageSuppliersResponseDto.setCount(count[0]);
-        return pageSuppliersResponseDto;
+    public Page<OrgManagerInfoResponseDto> findOrgManager(PageAndSortRequestDto requestDto, Long orgId) {
+        WebOrg one = webOrgRepository.findOne(orgId);
+        if (Objects.nonNull(one)){
+            PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+            Integer userType = 0;
+            switch (one.getOrgClass()){
+                case 0 : userType = 3;break;
+                case 1 : userType = 5;break;
+                case 2 : userType = 6;break;
+                case 3 : userType = 7;break;
+                case 4 : userType = 4;break;
+                default: userType = 0;break;
+            }
+            Page<TlongUser> all = appUserRepository.findAll(QTlongUser.tlongUser.orgId.eq(orgId)
+                        .and(QTlongUser.tlongUser.userType.eq(userType)),pageRequest);
+            return all.map(TlongUser::toOrgManagerInfoResponseDto);
+        }
+
+
+//        PageResponseDto<SuppliersRegisterRequsetDto> pageSuppliersResponseDto = new PageResponseDto<>();
+//        PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
+//        Page<TlongUserRole> tlongUserRoles = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()), pageRequest);
+//        List<SuppliersRegisterRequsetDto> suppliersRegisterRequsetDtos = new ArrayList<>();
+//        tlongUserRoles.forEach(one -> {
+//            SuppliersRegisterRequsetDto registerRequsetDto = new SuppliersRegisterRequsetDto();
+//            registerRequsetDto.setRoleName(tlongRoleRepository.findOne(one.getRoleId()).getRoleName());
+//            registerRequsetDto.setRoleId(one.getRoleId());
+//            TlongUser tlongUser = appUserRepository.findOne(one.getUserId());
+//            registerRequsetDto.setId(tlongUser.getId());
+//            registerRequsetDto.setUserName(tlongUser.getUserName());
+//            registerRequsetDto.setRealName(tlongUser.getRealName());
+//            registerRequsetDto.setRegistDate(tlongUser.getRegistDate());
+//            suppliersRegisterRequsetDtos.add(registerRequsetDto);
+//        });
+//        pageSuppliersResponseDto.setList(suppliersRegisterRequsetDtos);
+//        final int[] count = {0};
+//        Iterable<TlongUserRole> tlongUserRoles1 = tlongUserRoleRepository.findAll(tlongUserRole.roleId.intValue().eq(requestDto.getLevel().intValue()));
+//        tlongUserRoles1.forEach(one -> count[0]++);
+//        pageSuppliersResponseDto.setCount(count[0]);
+        return null;
     }
 
     public void delManage(Long id, Long roleId) {
@@ -1244,25 +1266,34 @@ public class UserService {
 
         String esgin = params.getFirst("esign");
         String userName = params.getFirst("userName");
+        String realName = params.getFirst("realName");
         String userCode = params.getFirst("userCode");
         String authentication = params.getFirst("authentication");
         String userType = params.getFirst("userType");
         String registDate = params.getFirst("registDate");
+        String beginTime = params.getFirst("beginTime");
+        String endTime = params.getFirst("endTime");
 
         BooleanExpression userTypeEq = StringUtils.isNotEmpty(userType) ? QTlongUser.tlongUser.userType.eq(Integer.valueOf(userType)) : null;
         BooleanExpression esginEq = StringUtils.isNotEmpty(esgin) ? QTlongUser.tlongUser.esgin.eq(Integer.valueOf(esgin)) : null;
         BooleanExpression userNameEq = StringUtils.isNotEmpty(userName) ? QTlongUser.tlongUser.userName.like("%" + userName + "%") : null;
+        BooleanExpression realNameLike = StringUtils.isNotEmpty(realName) ? QTlongUser.tlongUser.realName.like("%" + realName + "%") : null;
         BooleanExpression userCodeEq = StringUtils.isNotEmpty(userCode) ? QTlongUser.tlongUser.userCode.like("%" + userCode + "%") : null;
         BooleanExpression  authenticationEq = StringUtils.isNotEmpty(authentication) ? QTlongUser.tlongUser.authentication.eq(Integer.valueOf(authentication)) : null;
         BooleanExpression registDateEq = StringUtils.isNotEmpty(registDate) ? QTlongUser.tlongUser.registDate.like(registDate) : null;
+        BooleanExpression AfterBeginTime = StringUtils.isNotEmpty(beginTime) ? QTlongUser.tlongUser.newstime.gt(beginTime) : null;
+        BooleanExpression beforeEndTime = StringUtils.isNotEmpty(endTime) ? QTlongUser.tlongUser.newstime.loe(endTime) : null;
 
         List<BooleanExpression> list = new ArrayList<>();
         list.add(userTypeEq);
         list.add(esginEq);
         list.add(userNameEq);
+        list.add(realNameLike);
         list.add(userCodeEq);
         list.add(authenticationEq);
         list.add(registDateEq);
+        list.add(AfterBeginTime);
+        list.add(beforeEndTime);
 
         List<BooleanExpression> collect = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
         Predicate[] pre = {QTlongUser.tlongUser.id.isNotNull()};

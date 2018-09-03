@@ -36,10 +36,13 @@ public class AppUserService {
         tlongUser.setOrgId(requestDto.getOrgId());
         tlongUser.setLevel(2);
         tlongUser.setSex("1");
+        tlongUser.setAuthentication(0);
+        tlongUser.setEsgin(0);
         tlongUser.setPhone(requestDto.getPhone());
         tlongUser.setUserType(2);
         tlongUser.setOrgId(1450L);
         tlongUser.setIsCompany(0);
+        tlongUser.setNewstime(new Date().getTime() / 1000 + "");
 
         //生成用户编码
         String userCode = codeService.createUserCode(2, 1, 0);

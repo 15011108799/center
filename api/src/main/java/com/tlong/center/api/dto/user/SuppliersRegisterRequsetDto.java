@@ -139,6 +139,17 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("已售商品个数统计")
     private Integer soldGoodsNum;
 
+    @ApiModelProperty("newstime")
+    private String newstime;
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
+
     public String getOrgName() {
         return orgName;
     }

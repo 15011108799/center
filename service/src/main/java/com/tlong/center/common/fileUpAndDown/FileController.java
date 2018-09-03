@@ -54,7 +54,7 @@ public class FileController implements UploadApi{
         //文件上传后的路径
         //TODO 自定义控制文件目录
         String filePath;
-        if (suffixName.toUpperCase().equals("MP4")){
+        if (suffixName.toUpperCase().equals(".MP4")){
             filePath = "C:\\resources\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
         }else {
             //C:\\resources
