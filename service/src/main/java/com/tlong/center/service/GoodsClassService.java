@@ -1,5 +1,6 @@
 package com.tlong.center.service;
 
+import com.google.common.collect.Iterables;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -9,6 +10,7 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.api.dto.web.user.UserRequestDto;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.goods.AppGoodsPriceSystem;
@@ -16,12 +18,12 @@ import com.tlong.center.domain.app.goods.AppGoodsclass;
 import com.tlong.center.domain.app.goods.QAppGoodsclass;
 import com.tlong.center.domain.repository.GoodsClassRepository;
 import com.tlong.center.domain.repository.GoodsPriceSystemRepository;
+import com.tlong.center.domain.repository.TlongUserRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,26 +35,26 @@ import static com.tlong.center.domain.app.goods.QAppGoodsclass.appGoodsclass;
 @Component
 @Transactional
 public class GoodsClassService {
-    final GoodsClassRepository repository;
-    final EntityManager entityManager;
+    private final GoodsClassRepository repository;
+    private final TlongUserRepository tlongUserRepository;
+    private final EntityManager entityManager;
+    private final GoodsPriceSystemRepository systemRepository;
     JPAQueryFactory queryFactory;
-    final GoodsPriceSystemRepository systemRepository;
 
     @PostConstruct
     public void init() {
         queryFactory = new JPAQueryFactory(entityManager);
     }
 
-    public GoodsClassService(EntityManager entityManager, GoodsClassRepository repository, GoodsPriceSystemRepository systemRepository) {
+    public GoodsClassService(EntityManager entityManager, GoodsClassRepository repository, TlongUserRepository tlongUserRepository, GoodsPriceSystemRepository systemRepository) {
         this.entityManager = entityManager;
         this.repository = repository;
+        this.tlongUserRepository = tlongUserRepository;
         this.systemRepository = systemRepository;
     }
 
     /**
      * 分页查询分类列表
-     *
-     * @return
      */
     public GoodsClassRequestDto findAllGoodsClass() {
         List<Tuple> tuples = queryFactory.select(appGoodsclass.id, appGoodsclass.goodsClassName, appGoodsclass.goodsClassLevel, appGoodsclass.goodsClassIdParent,
@@ -87,8 +89,6 @@ public class GoodsClassService {
 
     /**
      * 添加分类
-     *
-     * @return
      */
     public Result addGoodsClass(WebGoodsClassRequestDto requestDto) {
         AppGoodsclass one = repository.findOne(QAppGoodsclass.appGoodsclass.goodsClassName.eq(requestDto.getClassName())
@@ -122,8 +122,6 @@ public class GoodsClassService {
 
     /**
      * 删除分类
-     *
-     * @return
      */
     public Result delGoodsClass(Long id) {
         Iterable<AppGoodsclass> goodsclass = repository.findAll(appGoodsclass.id.longValue().eq(id).or(appGoodsclass.goodsClassIdParent.longValue().eq(id)));
@@ -139,8 +137,6 @@ public class GoodsClassService {
 
     /**
      * 查找单个分类
-     *
-     * @return
      */
     public WebGoodsClassRequestDto findGoodsTypeById(WebGoodsClassRequestDto requestDto) {
         AppGoodsclass appGoodsclass = repository.findOne(requestDto.getId());
@@ -154,8 +150,6 @@ public class GoodsClassService {
 
     /**
      * 修改分类
-     *
-     * @return
      */
     public Result updateGoodsType(WebGoodsClassRequestDto requestDto) {
         AppGoodsclass appGoodsclass = repository.findOne(requestDto.getId());
@@ -171,93 +165,145 @@ public class GoodsClassService {
         return new Result(0, "修改失败");
     }
 
+//    /**
+//     * 查询一级分类
+//     *
+//     * @return
+//     */
+//    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+//        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+//        if (Objects.nonNull(user) && user.getUserType() != null && user.getUserType() == 1) {
+//            String[] goodsClass = user.getGoodsClass().split(",");
+//            if (goodsClass.length == 0) {
+//                return goodsTypeResponseDtos;
+//            }
+//            HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
+//
+//
+////            ArrayList<Long> a1 = new ArrayList<>();
+////            Arrays.asList(goodsClass).forEach(one -> a1.add(Long.valueOf(one)));
+////            Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.id.in(a1));
+////            List<AppGoodsclass> appGoodsClassesN = ToListUtil.IterableToList(all);
+//
+////            List<Long> collect = appGoodsClassesN.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
+////            Iterable<AppGoodsclass> all1 = repository.findAll(appGoodsclass.id.in(collect));
+////            List<AppGoodsclass> appGoodsclasses1 = ToListUtil.IterableToList(all1);
+////            appGoodsclasses1.forEach(AppGoodsclass::toDto);
+////            return appGoodsclasses1;
+//
+//
+//            for (String goodsclass : goodsClass) {
+//                AppGoodsclass appGoodsclass = repository.findOne(Long.valueOf(goodsclass));
+//                AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.getGoodsClassIdParent());
+//                appGoodsclasses.add(appGoodsclass1);
+//            }
+//            for (AppGoodsclass goodsclass : appGoodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        } else {
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        }
+//    }
+//
+//    /**
+//     * 查询二级分类
+//     *
+//     * @return
+//     */
+//    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id, HttpSession session) {
+//        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+//        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+//        if (user.getUserType() != null && user.getUserType() == 1) {
+//            String[] goodsClass = user.getGoodsClass().split(",");
+//            if (goodsClass.length == 0)
+//                return goodsTypeResponseDtos;
+//            Predicate pre = appGoodsclass.id.isNull();
+//            for (String goodsclass : goodsClass) {
+//                pre = ExpressionUtils.or(pre, appGoodsclass.id.longValue().eq(Long.valueOf(goodsclass)));
+//            }
+//            pre = ExpressionUtils.and(pre, appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(pre);
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        } else {
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        }
+//    }
+
     /**
      * 查询一级分类
-     *
-     * @return
      */
-    public List<GoodsTypeResponseDto> findGoodsClass(HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
-        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        if (Objects.nonNull(user) && user.getUserType() != null && user.getUserType() == 1) {
-            String[] goodsClass = user.getGoodsClass().split(",");
-            if (goodsClass.length == 0) {
-                return goodsTypeResponseDtos;
-            }
-            HashSet<AppGoodsclass> appGoodsclasses = new HashSet<>();
-
-
-//            ArrayList<Long> a1 = new ArrayList<>();
-//            Arrays.asList(goodsClass).forEach(one -> a1.add(Long.valueOf(one)));
-//            Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.id.in(a1));
-//            List<AppGoodsclass> appGoodsClassesN = ToListUtil.IterableToList(all);
-
-//            List<Long> collect = appGoodsClassesN.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
-//            Iterable<AppGoodsclass> all1 = repository.findAll(appGoodsclass.id.in(collect));
-//            List<AppGoodsclass> appGoodsclasses1 = ToListUtil.IterableToList(all1);
-//            appGoodsclasses1.forEach(AppGoodsclass::toDto);
-//            return appGoodsclasses1;
-
-
-            for (String goodsclass : goodsClass) {
-                AppGoodsclass appGoodsclass = repository.findOne(Long.valueOf(goodsclass));
-                AppGoodsclass appGoodsclass1 = repository.findOne(appGoodsclass.getGoodsClassIdParent());
-                appGoodsclasses.add(appGoodsclass1);
-            }
-            for (AppGoodsclass goodsclass : appGoodsclasses) {
-                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-                goodsTypeResponseDto.setId(goodsclass.getId());
-                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-                goodsTypeResponseDtos.add(goodsTypeResponseDto);
-            }
-            return goodsTypeResponseDtos;
-        } else {
-            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassLevel.intValue().eq(0));
-            for (AppGoodsclass goodsclass : goodsclasses) {
-                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-                goodsTypeResponseDto.setId(goodsclass.getId());
-                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-                goodsTypeResponseDtos.add(goodsTypeResponseDto);
-            }
-            return goodsTypeResponseDtos;
-        }
+    public List<GoodsTypeResponseDto> findGoodsClassLevelOne() {
+        Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.goodsClassLevel.eq(0));
+        List<AppGoodsclass> appGoodsclasses = ToListUtil.IterableToList(all);
+        return appGoodsclasses.stream().map(AppGoodsclass::toDto).collect(Collectors.toList());
     }
 
     /**
-     * 查询二级分类
-     *
-     * @return
+     * 根据一级分类查询二级分类列表
      */
-    public List<GoodsTypeResponseDto> findGoodsTwoClass(Long id, HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
-        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
-        if (user.getUserType() != null && user.getUserType() == 1) {
-            String[] goodsClass = user.getGoodsClass().split(",");
-            if (goodsClass.length == 0)
-                return goodsTypeResponseDtos;
-            Predicate pre = appGoodsclass.id.isNull();
-            for (String goodsclass : goodsClass) {
-                pre = ExpressionUtils.or(pre, appGoodsclass.id.longValue().eq(Long.valueOf(goodsclass)));
-            }
-            pre = ExpressionUtils.and(pre, appGoodsclass.goodsClassIdParent.longValue().eq(id));
-            Iterable<AppGoodsclass> goodsclasses = repository.findAll(pre);
-            for (AppGoodsclass goodsclass : goodsclasses) {
-                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-                goodsTypeResponseDto.setId(goodsclass.getId());
-                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-                goodsTypeResponseDtos.add(goodsTypeResponseDto);
-            }
-            return goodsTypeResponseDtos;
-        } else {
-            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
-            for (AppGoodsclass goodsclass : goodsclasses) {
-                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-                goodsTypeResponseDto.setId(goodsclass.getId());
-                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
-                goodsTypeResponseDtos.add(goodsTypeResponseDto);
-            }
-            return goodsTypeResponseDtos;
-        }
+    public List<GoodsTypeResponseDto> findGoodsLevelTwo(Long goodsClassId) {
+        Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.goodsClassLevel.eq(1)
+                .and(appGoodsclass.goodsClassIdParent.eq(goodsClassId)));
+        List<AppGoodsclass> appGoodsclasses = ToListUtil.IterableToList(all);
+        return appGoodsclasses.stream().map(AppGoodsclass::toDto).collect(Collectors.toList());
+//        TlongUser user = new TlongUser();
+//        user.setUserType(request.getUserType());
+//        user.setGoodsClass(request.getGoodsClass());
+//        user.setId(request.getUserId());
+        //id = request.getId();
+//        List<GoodsTypeResponseDto> goodsTypeResponseDtos = new ArrayList<>();
+//        if (user.getUserType() != null && user.getUserType() == 1) {
+//            String[] goodsClass = user.getGoodsClass().split(",");
+//            if (goodsClass.length == 0)
+//                return goodsTypeResponseDtos;
+//            Predicate pre = appGoodsclass.id.isNull();
+//            for (String goodsclass : goodsClass) {
+//                pre = ExpressionUtils.or(pre, appGoodsclass.id.longValue().eq(Long.valueOf(goodsclass)));
+//            }
+//            pre = ExpressionUtils.and(pre, appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(pre);
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        } else {
+//            Iterable<AppGoodsclass> goodsclasses = repository.findAll(appGoodsclass.goodsClassIdParent.longValue().eq(id));
+//            for (AppGoodsclass goodsclass : goodsclasses) {
+//                GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
+//                goodsTypeResponseDto.setId(goodsclass.getId());
+//                goodsTypeResponseDto.setClassName(goodsclass.getGoodsClassName());
+//                goodsTypeResponseDtos.add(goodsTypeResponseDto);
+//            }
+//            return goodsTypeResponseDtos;
+//        }
     }
 
     public GoodsClassRequestDto findAllGoodsClassByName(String goodsClassName) {
@@ -348,7 +394,62 @@ public class GoodsClassService {
     public GoodsTypeResponseDto findOneGoodsClass(Long id) {
         AppGoodsclass appGoodsclass = repository.findOne(id);
         GoodsTypeResponseDto goodsTypeResponseDto = new GoodsTypeResponseDto();
-        goodsTypeResponseDto.setClassName(appGoodsclass.getGoodsClassName());
+        goodsTypeResponseDto.setGoodsClassName(appGoodsclass.getGoodsClassName());
         return goodsTypeResponseDto;
+    }
+
+
+    /**
+     * 获取供应商可上货一级分类
+     */
+    public List<GoodsTypeResponseDto> supplierGoodsClass(Long userId) {
+        TlongUser one = tlongUserRepository.findOne(userId);
+        if (Objects.nonNull(one)){
+            Iterable<AppGoodsclass> all;
+            String goodsClass = one.getGoodsClass();
+            //判断是不是存在goodsClass
+            if (StringUtils.isNotBlank(goodsClass)) {
+                String[] str = goodsClass.split(",");
+                List<Long> goodsClassIds = Arrays.stream(str).map(Long::valueOf).collect(Collectors.toList());
+                //获取所有的对应的一级分类
+                List<AppGoodsclass> all1 = repository.findAll(goodsClassIds);
+                List<Long> collect = all1.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
+                all = repository.findAll(collect);
+            }else {
+                //否则返回所有的一级分类
+                return this.findGoodsClassLevelOne();
+            }
+            List<AppGoodsclass> appGoodsclasses = ToListUtil.IterableToList(all);
+            //拼接返回数据
+            return appGoodsclasses.stream().map(one2 -> {
+                GoodsTypeResponseDto responseDto = new GoodsTypeResponseDto();
+                responseDto.setId(one2.getId());
+                responseDto.setGoodsClassName(one2.getGoodsClassName());
+                return responseDto;
+            }).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    /**
+     * 获取供应商可上传商品的二级分类
+     */
+    public List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(Long userId,Long goodsClassId) {
+        TlongUser one = tlongUserRepository.findOne(userId);
+        if (Objects.nonNull(one)) {
+            String goodsClass = one.getGoodsClass();
+            if (StringUtils.isNotBlank(goodsClass)) {
+                String[] str = goodsClass.split(",");
+                List<Long> goodsClassIds = Arrays.stream(str).map(Long::valueOf).collect(Collectors.toList());
+                //获取所有的对应的一级分类
+                Iterable<AppGoodsclass> all = repository.findAll(appGoodsclass.id.in(goodsClassIds)
+                        .and(appGoodsclass.goodsClassIdParent.eq(goodsClassId)));
+                List<AppGoodsclass> appGoodsclasses = ToListUtil.IterableToList(all);
+                return appGoodsclasses.stream().map(AppGoodsclass::toDto).collect(Collectors.toList());
+            } else {
+                return this.findGoodsLevelTwo(goodsClassId);
+            }
+        }
+        return null;
     }
 }

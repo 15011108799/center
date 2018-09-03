@@ -9,6 +9,7 @@ import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import com.tlong.center.api.web.WebGoodsApi;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.WebGoodsService;
+import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +29,17 @@ public class WebGoodsController implements WebGoodsApi {
         this.webGoodsService = webGoodsService;
     }
 
+    /**
+     * 获取商品列表
+     */
     @Override
-    public PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto) {
-        return webGoodsService.findAllGoodsByPage(requestDto);
+    public Page<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto, @RequestParam MultiValueMap<String,String> params) {
+        return webGoodsService.findAllGoodsByPage(requestDto,params);
     }
 
     @Override
-    public Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session, @RequestParam String contentClass,@RequestParam String contentType) {
-        return webGoodsService.add(FileUploadUtils.handleFileUpload(file,contentClass,contentType), reqDto,session);
+    public Result addGoods(WebGoodsDetailResponseDto reqDto) {
+        return webGoodsService.add(reqDto);
     }
 
     @Override
@@ -49,8 +53,8 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public void updateGoodsState(@RequestBody Long id) {
-        webGoodsService.updateGoodsState(id);
+    public void updateGoodsState(@RequestBody Long id, @RequestParam Long checkUserId) {
+        webGoodsService.updateGoodsState(id,checkUserId);
     }
 
     @Override
@@ -74,7 +78,7 @@ public class WebGoodsController implements WebGoodsApi {
     }
 
     @Override
-    public Result publishAgain(@RequestBody String goodsId) {
-        return webGoodsService.publishAgain(goodsId);
+    public Result publishAgain(@RequestBody WebGoodsDetailResponseDto reqDto) {
+        return webGoodsService.publishAgain(reqDto);
     }
 }

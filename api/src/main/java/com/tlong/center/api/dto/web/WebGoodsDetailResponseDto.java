@@ -114,8 +114,41 @@ public class WebGoodsDetailResponseDto implements Serializable {
     @ApiModelProperty("发布人部门")
     private String orgId;
 
+    @ApiModelProperty("部门名称")
+    private String orgName;
+
     @ApiModelProperty("是否审核")
-    private String isCheck;
+    private Integer state;
+
+    @ApiModelProperty("newstime")
+    private Long newstime;
+
+    @ApiModelProperty("审核人名称")
+    private String checkUserName;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getCheckUserName() {
+        return checkUserName;
+    }
+
+    public void setCheckUserName(String checkUserName) {
+        this.checkUserName = checkUserName;
+    }
+
+    public Long getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(Long newstime) {
+        this.newstime = newstime;
+    }
 
     public String getOrgId() {
         return orgId;
@@ -125,12 +158,12 @@ public class WebGoodsDetailResponseDto implements Serializable {
         this.orgId = orgId;
     }
 
-    public String getIsCheck() {
-        return isCheck;
+    public Integer getState() {
+        return state;
     }
 
-    public void setIsCheck(String isCheck) {
-        this.isCheck = isCheck;
+    public void setState(Integer state) {
+        this.state = state;
     }
 
     public String getPublishPhone() {

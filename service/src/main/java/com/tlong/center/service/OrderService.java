@@ -8,6 +8,7 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
 import com.tlong.center.api.dto.order.OrderSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
+import com.tlong.center.api.dto.web.OrderPageRequestDto;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.app.TlongUser;
@@ -73,59 +74,112 @@ public class OrderService {
      * @param requestDto
      * @return
      */
-    public PageResponseDto<OrderRequestDto> findAllOrders(PageAndSortRequestDto requestDto, HttpSession session) {
-        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
+    public PageResponseDto<OrderRequestDto> findAllOrders(OrderPageRequestDto requestDto) {
         PageResponseDto<OrderRequestDto> orderRequestDtoPageResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         List<OrderRequestDto> requestDtos = new ArrayList<>();
+
+        List<Long> userIds = new ArrayList<>();
         //判断当前用户是不是管理员
-        if (user.getUserType() == null){
+        if (requestDto.getUserType() == null) {
+//            //判断是不是特殊身份的管理员 总公司部门管理员
+//            TlongUserRole one = tlongUserRoleRepository.findOne(requestDto.getUserId());
+//            if (Objects.nonNull(one)){
+//                //获取身份 是不是财务部
+//                if (one.getRoleId() == 16){
+//                    requestDto.setOrgId(1426L);
+//                }
+//            }
             //先查出当前管理员所属机构下的所有用户id
-            Iterable<WebOrg> all = webOrgRepository.findAll(QWebOrg.webOrg.parentOrgId.eq(user.getOrgId()));
+            Iterable<WebOrg> all = webOrgRepository.findAll(QWebOrg.webOrg.parentOrgId.eq(requestDto.getOrgId()));
             List<WebOrg> webOrgs = ToListUtil.IterableToList(all);
             List<Long> orgIds = webOrgs.stream().map(WebOrg::getId).collect(Collectors.toList());
             Iterable<TlongUser> all1 = appUserRepository.findAll(tlongUser.orgId.in(orgIds));
             List<TlongUser> tlongUsers = ToListUtil.IterableToList(all1);
-            List<Long> userIds = tlongUsers.stream().map(TlongUser::getId).collect(Collectors.toList());
-            //获取这些用户下所有订单
-            Iterable<WebOrder> all2 = webOrderRepository.findAll(webOrder.userId.in(userIds),pageRequest);
-            List<WebOrder> webOrders1 = ToListUtil.IterableToList(all2);
-            List<WebOrder> webOrders = webOrders1.stream().filter(Objects::nonNull).collect(Collectors.toList());
-            //获取所有商品的id集合
-            List<Long> goodsIds1 = webOrders.stream().map(WebOrder::getGoodsId).collect(Collectors.toList());
-            List<Long> goodsIds = goodsIds1.stream().filter(Objects::nonNull).collect(Collectors.toList());
-            //获取所有商品对应的发布人的id name phone code
-            Iterable<WebGoods> all3 = goodsRepository.findAll(webGoods.id.in(goodsIds));
-            List<WebGoods> webGoods = ToListUtil.IterableToList(all3);
-            List<Long> publishUserIds1 = webGoods.stream().map(WebGoods::getPublishUserId).collect(Collectors.toList());
-            List<Long> publishUserIds = publishUserIds1.stream().filter(Objects::nonNull).collect(Collectors.toList());
-            //查询出所有商品的发布人
-            Iterable<TlongUser> all4 = appUserRepository.findAll(tlongUser.id.in(publishUserIds));
-            List<TlongUser> tlongUsers1 = ToListUtil.IterableToList(all4);
-            Map<Long,String[]> publishInfo = new HashMap<>();
-            tlongUsers1.forEach(one -> {
+            userIds = tlongUsers.stream().map(TlongUser::getId).collect(Collectors.toList());
+        }else if (requestDto.getUserType() == 0){
+            Iterable<TlongUser> all = appUserRepository.findAll(tlongUser.parentId.eq(requestDto.getUserId()));
+            List<TlongUser> tlongUsers = ToListUtil.IterableToList(all);
+            userIds = tlongUsers.stream().map(TlongUser::getId).collect(Collectors.toList());
+        }else {
+            userIds.add(requestDto.getUserId());
+        }
+        Iterable<WebOrder> all2 = webOrderRepository.findAll(webOrder.userId.in(userIds), pageRequest);
+        List<WebOrder> webOrders1 = ToListUtil.IterableToList(all2);
+        List<WebOrder> webOrders = webOrders1.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        //获取所有商品的id集合
+        List<Long> goodsIds1 = webOrders.stream().map(WebOrder::getGoodsId).collect(Collectors.toList());
+        List<Long> goodsIds = goodsIds1.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        //获取所有商品对应的发布人的id name phone code
+        Iterable<WebGoods> all3 = goodsRepository.findAll(webGoods.id.in(goodsIds));
+        List<WebGoods> webGoods = ToListUtil.IterableToList(all3);
+        List<Long> publishUserIds1 = webGoods.stream().map(WebGoods::getPublishUserId).collect(Collectors.toList());
+        List<Long> publishUserIds = publishUserIds1.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        //查询出所有商品的发布人
+        Iterable<TlongUser> all4 = appUserRepository.findAll(tlongUser.id.in(publishUserIds));
+        List<TlongUser> tlongUsers1 = ToListUtil.IterableToList(all4);
+        Map<Long, String[]> publishInfo = new HashMap<>();
+        tlongUsers1.forEach(one -> {
                 String[] str = new String[3];
                 str[0] = one.getUserName();
                 str[1] = one.getPhone();
                 str[2] = one.getUserCode();
-                publishInfo.put(one.getId(),str);
-            });
+                publishInfo.put(one.getId(), str);
+        });
 
             //拼装返回给前端的数据
-            webOrders.forEach(one ->{
+        webOrders.forEach(one ->{
+
                 OrderRequestDto orderRequestDto = new OrderRequestDto();
+                TlongUser one4 = appUserRepository.findOne(one.getUserId());
+                if (Objects.nonNull(one4)) {
+                    orderRequestDto.setUserName(one4.getUserName());
+                    orderRequestDto.setUserCode(one4.getUserCode());
+                    orderRequestDto.setUserType(one4.getUserType());
+                }
+
+                orderRequestDto.setGoodsName(one.getGoodsName());
+                orderRequestDto.setGoodsCode(one.getGoodsCode());
 
                 WebGoods one1 = goodsRepository.findOne(one.getGoodsId());
                 if (Objects.nonNull(one1)){
+                    orderRequestDto.setGoodsUrl(one1.getGoodsPic());
                     orderRequestDto.setGoodsName(one1.getGoodsHead());
                     orderRequestDto.setGoodsCode(one1.getGoodsCode());
+                    //获取商品的三个价格
+                    orderRequestDto.setFounderPrice(one1.getFounderPrice());
+                    orderRequestDto.setPublishPrice(one1.getPublishPrice());
+                }else {
                     logger.warn("当前订单内的商品不存在了：id为" + one.getGoodsId());
                 }
+
+
+                if (one.getPublishUserId() != null) {
+                    TlongUser one3 = appUserRepository.findOne(one.getPublishUserId());
+                    if (Objects.nonNull(one3)) {
+                        orderRequestDto.setPublishName(one3.getRealName());
+                        //设置成交价格
+                        if (Objects.nonNull(one1)) {
+                            switch (one3.getLevel()) {
+                                case 0:
+                                    orderRequestDto.setGoodsPrice(one1.getFounderPrice());
+                                    break;
+                                case 1:
+                                    orderRequestDto.setGoodsPrice(one1.getFlagshipPrice());
+                            }
+                        }
+
+                    }
+                }
+                orderRequestDto.setPublishCode(one.getPublishUserCode());
+                orderRequestDto.setPublishPhone(one.getPublishUserPhone());
+                orderRequestDto.setUserPhone(one.getPhone());
+
 
                 TlongUser one2 = appUserRepository.findOne(one.getUserId());
                 if (Objects.nonNull(one2)){
                     orderRequestDto.setUserName(one2.getUserName());
-                    orderRequestDto.setRealName(one2.getUserName());
+                    orderRequestDto.setRealName(one2.getRealName());
                     orderRequestDto.setUserCode(one2.getUserCode());
                     orderRequestDto.setUserPhone(one2.getPhone());
                 }
@@ -137,6 +191,7 @@ public class OrderService {
 //                orderRequestDto.setFounderPrice(one.get(webGoods.founderPrice));
 //                orderRequestDto.setPublishPrice(one.get(webGoods.publishPrice));
 //                orderRequestDto.setGoodsPrice(userType == null ? 0.0 : userType == 2 ? one.get(webGoods.founderPrice) : userType == 3 ? one.get(webGoods.flagshipPrice) : one.get(webGoods.storePrice));
+                orderRequestDto.setPlaceOrderTime(one.getPlaceOrderTime());
                 orderRequestDto.setPlaceOrderTime(one.getPlaceOrderTime());
                 orderRequestDto.setState(one.getState());
 //                if (one.get(QWebGoods.webGoods.publishUserId) != null) {
@@ -158,9 +213,10 @@ public class OrderService {
 //        orderRequestDtoPageResponseDto.setOrderNum(orderNum[0]);
 //        orderRequestDtoPageResponseDto.setFounderPrice(founderPrice[0]);
 //        orderRequestDtoPageResponseDto.setPublishPrice(publishPrice[0]);
-
-        }
         return orderRequestDtoPageResponseDto;
+        }
+
+
 //        TlongUser user = (TlongUser) session.getAttribute("tlongUser");
 //        Iterable<WebGoods> appGoods1;
 //        if (user.getUserType() != null && user.getUserType() == 1) {
@@ -351,7 +407,7 @@ public class OrderService {
 //        orderRequestDtoPageResponseDto.setFounderPrice(founderPrice[0]);
 //        orderRequestDtoPageResponseDto.setPublishPrice(publishPrice[0]);
 //        return orderRequestDtoPageResponseDto;
-    }
+//    }
 
     public PageResponseDto<OrderRequestDto> searchOrders(OrderSearchRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");

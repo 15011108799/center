@@ -43,23 +43,22 @@ public class FileController implements UploadApi{
         String fileName = file.getOriginalFilename();
         logger.info("上传的文件的文件名为:" + fileName);
         String[] split = fileName.split("_");
-        String[] split1 = split[split.length - 1].split(".");
-        String type = split1[split1.length];
+        String[] split1 = split[split.length - 1].split("\\.");
+        String type = split1[0];
         //获取文件的后缀名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         logger.info("上传文件的后缀名为:" + suffixName);
-
 
         SimpleDateFormat sim = new SimpleDateFormat("yyyyMMdd");
         String format = sim.format(new Date());
         //文件上传后的路径
         //TODO 自定义控制文件目录
         String filePath;
-        if (suffixName.toUpperCase().equals("MP4")){
-            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
+        if (suffixName.toUpperCase().equals(".MP4")){
+            filePath = "C:\\resources\\tlongFiles\\" + contentClass + "\\" + type + "\\video\\" + format + "\\";
         }else {
             //C:\\resources
-            filePath = "D:\\apache-tomcat-8.5.30\\webapps\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
+            filePath = "C:\\resources\\tlongFiles\\" + contentClass + "\\" + type + "\\pic\\" + format + "\\";
         }
 
             //解决中文问题,，liunx下中文路径，monitor_control.restrict_backdoor = "true"
@@ -73,12 +72,10 @@ public class FileController implements UploadApi{
             try {
                 file.transferTo(newFile);
                 return fileName + ",";
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (IllegalStateException | IOException e) {
                 e.printStackTrace();
             }
-            return null;
+        return null;
         }
 //        if (file.isEmpty()){
 //            logger.error("上传文件为空");
@@ -182,30 +179,6 @@ public class FileController implements UploadApi{
     //多文件上传
     @PostMapping(value = "/batchUpload")
     public String handleFileUpload(@RequestParam("file") List<MultipartFile> files, @RequestParam String contentClass) {
-//        MultipartFile file = null;
-//        BufferedOutputStream stream = null;
-//        for (int i = 0; i < files.size(); ++i) {
-//            file = files.get(i);
-//            if (!file.isEmpty()) {
-//                try {
-//                    byte[] bytes = file.getBytes();
-//                    stream = new BufferedOutputStream(new FileOutputStream(
-//                            new File(file.getOriginalFilename())));
-//                    stream.write(bytes);
-//                    stream.close();
-//
-//                } catch (Exception e) {
-//                    stream = null;
-//                    return "You failed to upload " + i + " => "
-//                            + e.getMessage();
-//                }
-//            } else {
-//                return "You failed to upload " + i
-//                        + " because the file was empty.";
-//            }
-//        }
-//        return "upload successful";
-
         if (!CollectionUtils.isEmpty(files)){
             for (MultipartFile file :files){
                 try {
@@ -213,10 +186,10 @@ public class FileController implements UploadApi{
                 }catch (Exception e){
                     return "上传失败";
                 }
-
             }
+            return "上传成功!";
         }
-        return "上传成功!";
+        return "上传文件为空!上传失败!";
     }
 
 

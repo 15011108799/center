@@ -47,6 +47,7 @@ public class CodeUtil {
      * 商品编码生成规则
      */
     public String goodsCode(Integer codeType, Integer userType, Integer head, Integer isCompany) {
+        // 1 0 1 0
         String content;
         String code;
         String placeholder1 = "0";
@@ -54,14 +55,23 @@ public class CodeUtil {
                 .from(tlongCode, tlongCodeRule)
                 .where(tlongCode.ruleId.intValue().eq(tlongCodeRule.id.intValue())
                         .and(tlongCodeRule.type.intValue().eq(codeType))
-                        .and(tlongCodeRule.userType.intValue().eq(userType)))
+                        .and(userType == null ? null : tlongCodeRule.userType.intValue().eq(userType)))
                 .orderBy(tlongCode.id.desc())
                 .fetch();
+//        tlongCodeRepository.findAll(tlongCode.ruleId.eq());
 
         //读取规则
-        TlongCodeRule tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
-                .and(tlongCodeRule.userType.eq(userType))
-                .and(tlongCodeRule.isCompany.eq(isCompany)));
+        //判断是不是管理员要生成编码
+        TlongCodeRule tlongCodeRule1;
+        if (userType != null) {
+            tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
+                    .and(tlongCodeRule.userType.eq(userType))
+                    .and(tlongCodeRule.isCompany.eq(isCompany)));
+        }else {
+            tlongCodeRule1 = tlongCodeRuleRepository.findOne(tlongCodeRule.type.eq(codeType)
+                    .and(tlongCodeRule.userType.isNull())
+                    .and(tlongCodeRule.isCompany.eq(isCompany)));
+        }
         if (Objects.isNull(tlongCodeRule1)) {
             logger.error("未获取到对应的编码规则");
             return "ERROR";

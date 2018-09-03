@@ -16,7 +16,6 @@ import com.tlong.center.domain.repository.TlongUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +31,7 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 public class AppService {
 
     private final TlongUserRepository tlongUserRepository;
-
     private final ClazzStyleRepository clazzStyleRepository;
-
     private final CourseRepository courseRepository;
 
     @Autowired
@@ -43,17 +40,6 @@ public class AppService {
         this.clazzStyleRepository = clazzStyleRepository;
         this.courseRepository = courseRepository;
     }
-
-//    @Autowired
-//    private EntityManager entityManager;
-//
-//    private JPAQueryFactory queryFactory;
-//
-//
-//    @PostConstruct
-//    public void init() {
-//        queryFactory = new JPAQueryFactory(entityManager);
-//    }
 
     /**
      * app登录业务
@@ -70,12 +56,12 @@ public class AppService {
             one = tlongUserRepository.findOne(tlongUser.userName.eq(requestDto.getUserName())
                     .and(tlongUser.password.eq(md5Password)));
             if (Objects.isNull(one)){
-                responseDto.setFlag(0);
+                responseDto.setFlag(1);
                 return responseDto;
             }
         }
         responseDto.setOrgId(one.getOrgId());
-        responseDto.setFlag(1);
+        responseDto.setFlag(0);
         responseDto.setUserType(one.getUserType());
         responseDto.setEsgin(one.getEsgin());
         responseDto.setUserId(one.getId());
@@ -91,11 +77,20 @@ public class AppService {
         TlongUser one = tlongUserRepository.findOne(userId);
         AppUserResponseDto responseDto = new AppUserResponseDto();
         if (!Objects.isNull(one)){
+           responseDto.setAge(one.getAge());
+           if (one.getSex() != null) {
+               responseDto.setSex(Integer.valueOf(one.getSex()));
+           }
+           responseDto.setAuthentication(one.getAuthentication());
+           responseDto.setEsgin(one.getEsgin());
+           responseDto.setOrgId(one.getOrgId());
            responseDto.setEvId(one.getEvId());
            responseDto.setUserCode(one.getUserCode());
            responseDto.setHeadImage(one.getHeadImage());
+           responseDto.setPhone(one.getPhone());
            responseDto.setNickName(one.getNickName());
            responseDto.setServiceHotline(one.getServiceHotline());
+           responseDto.setGoodsClass(one.getGoodsClass());
            responseDto.setUserId(userId);
            responseDto.setWx(one.getWx());
         }
@@ -131,5 +126,26 @@ public class AppService {
         }
         List<Course> courses = ToListUtil.IterableToList(all);
         return courses.stream().map(Course::toClazzResponseDto).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取上级用户信息
+     */
+    public AppUserResponseDto parentInfo(Long userId) {
+        TlongUser one = tlongUserRepository.findOne(tlongUser.id.eq(userId));
+        if (Objects.nonNull(one)){
+            if (one.getParentId() != null) {
+                TlongUser one1 = tlongUserRepository.findOne(tlongUser.id.eq(one.getParentId()));
+                if (Objects.nonNull(one1)) {
+                    AppUserResponseDto responseDto = new AppUserResponseDto();
+                    responseDto.setWx(one1.getWx());
+                    responseDto.setPhone(one1.getPhone());
+                    return responseDto;
+                }
+            }else {
+                return new AppUserResponseDto();
+            }
+        }
+        return new AppUserResponseDto();
     }
 }

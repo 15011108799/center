@@ -12,7 +12,7 @@ public class GoodsTypeResponseDto implements Serializable {
     private Long id;
 
     @ApiModelProperty("商品类型名称")
-    private String className;
+    private String goodsClassName;
 
     public Long getId() {
         return id;
@@ -22,11 +22,11 @@ public class GoodsTypeResponseDto implements Serializable {
         this.id = id;
     }
 
-    public String getClassName() {
-        return className;
+    public String getGoodsClassName() {
+        return goodsClassName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGoodsClassName(String goodsClassName) {
+        this.goodsClassName = goodsClassName;
     }
 }

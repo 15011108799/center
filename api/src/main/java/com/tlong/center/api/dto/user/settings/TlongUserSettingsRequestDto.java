@@ -11,7 +11,7 @@ public class TlongUserSettingsRequestDto implements Serializable {
     private Long userId;
 
     //用户类型
-    private Integer userType;
+    private Integer isCompany;
 
     //个人发布数量
     private Integer personReleaseNumber;
@@ -43,12 +43,12 @@ public class TlongUserSettingsRequestDto implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getUserType() {
-        return userType;
+    public Integer getIsCompany() {
+        return isCompany;
     }
 
-    public void setUserType(Integer userType) {
-        this.userType = userType;
+    public void setIsCompany(Integer isCompany) {
+        this.isCompany = isCompany;
     }
 
     public String getPersonBehind() {

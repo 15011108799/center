@@ -37,10 +37,6 @@ public class PartnerService {
 
     /**
      * 添加合伙人
-     *
-     * @param s
-     * @param reqDto
-     * @return
      */
     public Result addPartner(String s, PartnerRequestDto reqDto) {
         reqDto.setPic(s.substring(0, s.length() - 1));
@@ -58,9 +54,6 @@ public class PartnerService {
 
     /**
      * 删除合伙人
-     *
-     * @param id
-     * @return
      */
     public Result delPartner(Long id) {
         WebPartner webPartner1 = repository.findOne(id);
@@ -72,10 +65,6 @@ public class PartnerService {
 
     /**
      * 修改合伙人信息
-     *
-     * @param s
-     * @param reqDto
-     * @return
      */
     public Result updatePartner(String s, PartnerRequestDto reqDto) {
         WebPartner webPartner1 = repository.findOne(Long.valueOf(reqDto.getId()));
@@ -106,8 +95,6 @@ public class PartnerService {
 
     /**
      * 更新审核状态
-     *
-     * @param id
      */
     public void updatePartnerState(Long id) {
         WebPartner webPartner = repository.findOne(id);
@@ -120,9 +107,6 @@ public class PartnerService {
 
     /**
      * 查找合伙人通过id
-     *
-     * @param id
-     * @return
      */
     public PartnerRequestDto findPartnerById(Long id) {
         WebPartner webPartner = repository.findOne(id);
@@ -131,35 +115,23 @@ public class PartnerService {
 
     /**
      * 查询所有分页
-     * @param requestDto
-     * @return
      */
-    public PageResponseDto<PartnerRequestDto> findAllPartners(PageAndSortRequestDto requestDto) {
-        PageResponseDto<PartnerRequestDto> partnerRequestDtoPageResponseDto=new PageResponseDto<>();
+    public Page<PartnerRequestDto> findAllPartners(PageAndSortRequestDto requestDto) {
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<WebPartner> partners = repository.findAll(pageRequest);
-        List<PartnerRequestDto> requestDtos = new ArrayList<>();
-        partners.forEach(partner -> {
-            PartnerRequestDto partnerRequestDto=partner.toDto();
+        return partners.map(partner -> {
+            PartnerRequestDto partnerRequestDto = partner.toDto();
             partnerRequestDto.setId(partner.getId()+"");
-            requestDtos.add(partnerRequestDto);
+            return partnerRequestDto;
         });
-        partnerRequestDtoPageResponseDto.setList(requestDtos);
-        final int[] count = {0};
-        Iterable<WebPartner> webPartners = repository.findAll();
-        webPartners.forEach(webPartner -> {
-            count[0]++;
-        });
-        partnerRequestDtoPageResponseDto.setCount(count[0]);
-        return partnerRequestDtoPageResponseDto;
     }
 
     public Result delBatchPartner(String id) {
         String[] goodsIds;
         if (StringUtils.isNotEmpty(id)) {
             goodsIds = id.split(",");
-            for (int i = 0; i < goodsIds.length; i++) {
-                delPartner(Long.valueOf(goodsIds[i]));
+            for (String goodsId : goodsIds) {
+                delPartner(Long.valueOf(goodsId));
             }
         }
         return new Result(1, "删除成功");
@@ -169,8 +141,8 @@ public class PartnerService {
         String[] goodsIds;
         if (StringUtils.isNotEmpty(id)) {
             goodsIds = id.split(",");
-            for (int i = 0; i < goodsIds.length; i++) {
-                updatePartnerState(Long.valueOf(goodsIds[i]));
+            for (String goodsId : goodsIds) {
+                updatePartnerState(Long.valueOf(goodsId));
             }
         }
     }

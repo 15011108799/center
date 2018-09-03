@@ -58,6 +58,17 @@ public class WebOrg {
 
     private Long parentOrgId;
 
+    //机构类型
+    private Integer orgClass;
+
+    public Integer getOrgClass() {
+        return orgClass;
+    }
+
+    public void setOrgClass(Integer orgClass) {
+        this.orgClass = orgClass;
+    }
+
     public Long getId() {
         return id;
     }

@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.web.WebRoleDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +16,10 @@ import java.util.List;
 @Api("角色增删改查接口")
 public interface WebRoleApi {
 
+    //TODO 前端修改
     @ApiOperation("获取其他部门角色列表")
     @PostMapping("/roleList")
-    PageResponseDto<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto);
+    Page<WebRoleDto> roleList(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiOperation("获取所有角色列表")
     @PostMapping("/allRoleList")

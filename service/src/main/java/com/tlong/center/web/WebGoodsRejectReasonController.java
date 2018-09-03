@@ -7,6 +7,7 @@ import com.tlong.center.service.GoodsRejectReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,12 +22,12 @@ public class WebGoodsRejectReasonController implements WebGoodsRejectReasonApi {
     }
 
     @Override
-    public WebGoodsReasonResponseDto findReason(@RequestBody  Long id) {
+    public WebGoodsReasonResponseDto findReason(@RequestParam Long id) {
         return service.findReason(id);
     }
 
     @Override
-    public Result delReason(@RequestBody  Long id) {
+    public Result delReason(@RequestParam  Long id) {
         return service.delReason(id);
     }
 }

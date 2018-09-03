@@ -9,6 +9,9 @@ import java.io.Serializable;
 @ApiModel("用户查询信息返回模型")
 public class GoodsSearchRequestDto implements Serializable {
 
+    @ApiModelProperty("根据分类id查询所有商品")
+    private Long goodsClassId;
+
     @ApiModelProperty("用户id")
     private Long userId;
 
@@ -36,11 +39,30 @@ public class GoodsSearchRequestDto implements Serializable {
     @ApiModelProperty("商品编码")
     private String goodsCode;
 
+    @ApiModelProperty("商品名称")
+    private String goodsName;
+
     @ApiModelProperty("开始时间")
     private String startTime;
 
     @ApiModelProperty("结束时间")
     private String endTime;
+
+    public Long getGoodsClassId() {
+        return goodsClassId;
+    }
+
+    public void setGoodsClassId(Long goodsClassId) {
+        this.goodsClassId = goodsClassId;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
 
     public Integer getIsCompany() {
         return isCompany;

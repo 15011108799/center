@@ -6,10 +6,7 @@ import com.tlong.center.api.dto.common.TlongResultDto;
 import com.tlong.center.common.fileUpAndDown.FileController;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.service.AppGoodsService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -30,5 +27,13 @@ public class AppGoodsController implements AppGoodsApi {
     @Override
     public TlongResultDto appGoodsUpload(@RequestBody AppGoodsUploadRequestDto reqDto) {
         return appGoodsService.appGoodsUpload(reqDto);
+    }
+
+    /**
+     * 商品下架
+     */
+    @Override
+    public TlongResultDto downGoods(@PathVariable Long goodsId) {
+        return appGoodsService.downGoods(goodsId);
     }
 }

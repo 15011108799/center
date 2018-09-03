@@ -1,12 +1,13 @@
 package com.tlong.center.domain.app;
 
 import com.tlong.center.api.dto.app.user.AppUserResponseDto;
+import com.tlong.center.api.dto.user.SuppliersRegisterRequsetDto;
+import com.tlong.center.api.dto.web.user.OrgManagerInfoResponseDto;
 import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -19,6 +20,16 @@ public class TlongUser implements Serializable {
 
     public AppUserResponseDto toAppUserResponseDto() {
         AppUserResponseDto dto = new AppUserResponseDto();
+        PropertyUtils.copyPropertiesOfNotNull(this,dto);
+        return dto;
+    }
+
+    public TlongUser (SuppliersRegisterRequsetDto requsetDto){
+        PropertyUtils.copyPropertiesOfNotNull(requsetDto,this);
+    }
+
+    public OrgManagerInfoResponseDto toOrgManagerInfoResponseDto(){
+        OrgManagerInfoResponseDto dto = new OrgManagerInfoResponseDto();
         PropertyUtils.copyPropertiesOfNotNull(this,dto);
         return dto;
     }
@@ -142,6 +153,18 @@ public class TlongUser implements Serializable {
 
     //经营地
     private String premises;
+
+    //newstime
+    private String newstime;
+
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
 
     public Long getId() {
         return id;

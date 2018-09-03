@@ -45,20 +45,20 @@ public class WebRoleService {
     /**
      * 角色列表查询
      */
-    public PageResponseDto<WebRoleDto> roleList(PageAndSortRequestDto requestDto) {
-        PageResponseDto<WebRoleDto> pageSuppliersResponseDto = new PageResponseDto<>();
+    public Page<WebRoleDto> roleList(PageAndSortRequestDto requestDto) {
+//        PageResponseDto<WebRoleDto> pageSuppliersResponseDto = new PageResponseDto<>();
         PageRequest pageRequest = PageAndSortUtil.pageAndSort(requestDto);
         Page<TlongRole> all = repository.findAll(tlongRole.type.intValue().eq(2), pageRequest);
-        List<WebRoleDto> webRoleDtos = new ArrayList<>();
-        all.forEach(one -> webRoleDtos.add(one.toDto()));
-        pageSuppliersResponseDto.setList(webRoleDtos);
-        final int[] count = {0};
-        Iterable<TlongRole> tlongRoles = repository.findAll(tlongRole.type.intValue().eq(2));
-        tlongRoles.forEach(tlongRole -> {
-            count[0]++;
-        });
-        pageSuppliersResponseDto.setCount(count[0]);
-        return pageSuppliersResponseDto;
+//        List<WebRoleDto> webRoleDtos = new ArrayList<>();
+        return all.map(TlongRole::toDto);
+//        pageSuppliersResponseDto.setList(webRoleDtos);
+//        final int[] count = {0};
+//        Iterable<TlongRole> tlongRoles = repository.findAll(tlongRole.type.intValue().eq(2));
+//        tlongRoles.forEach(tlongRole -> {
+//            count[0]++;
+//        });
+//        pageSuppliersResponseDto.setCount(count[0]);
+//        return pageSuppliersResponseDto;
     }
 
 

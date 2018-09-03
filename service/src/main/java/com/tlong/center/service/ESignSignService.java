@@ -11,6 +11,7 @@ import com.tlong.center.common.utils.SignHelper;
 import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.esign.EsignCompany;
 import com.tlong.center.domain.app.esign.EsignPerson;
+import com.tlong.center.domain.app.esign.QEsignPerson;
 import com.tlong.center.domain.repository.EsignCompanyRepository;
 import com.tlong.center.domain.repository.EsignPersonRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
@@ -142,7 +143,7 @@ public class ESignSignService {
                 case 0:
                     scene = 0;
                     //<-- 获取个人信息 -->
-                    EsignPerson user1 = esignPersonRepository.findOne(userid);
+                    EsignPerson user1 = esignPersonRepository.findOne(QEsignPerson.esignPerson.userId.eq(2689L));
 //                    sql = String.format("select * from tsign_person where peopleid = '%s'", userid);
 //                    map.put("sql", sql);
 //                    peopleInfoList = informationMapper.runSql(map);
@@ -268,10 +269,11 @@ public class ESignSignService {
         }
         // 待签署的PDF文件路径
 //		String srcPdfFile = File.separator + "LongShi" + File.separator + "pub" + File.separator + "admin" + File.separator + "upload" + File.separator + "pdf" + File.separator + "天珑珠宝服务协议" + appTypeName + ".pdf";
-        String srcPdfFile = this.getClass().getClassLoader().getResource("/").getPath() + "../../pub/admin/upload/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
+//        String srcPdfFile = this.getClass().getClassLoader().getResource("/").getPath() + "../../pub/admin/upload/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
+        String srcPdfFile = "C:/Users/ASUS/Desktop/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
         // 最终签署后的PDF文件路径
 //		String signedFolder ="LongShi" + File.separator + "pub" + File.separator + "admin" + File.separator + "upload" + File.separator + "pdfOut" + File.separator;
-        String signedFolder = this.getClass().getClassLoader().getResource("/").getPath() + "../../pub/admin/upload/pdfOut/";
+        String signedFolder = "C:/Users/ASUS/Desktop/pdf/pdfOut/";
         // 最终签署后PDF文件名称
         String signedFileName = "天珑珠宝服务协议" + appTypeName;
         // 初始化项目，做全局使用，只初始化一次即可

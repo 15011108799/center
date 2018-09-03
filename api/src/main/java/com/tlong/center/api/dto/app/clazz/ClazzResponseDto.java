@@ -30,6 +30,17 @@ public class ClazzResponseDto {
     @ApiModelProperty("发布时间")
     private String publishTime;
 
+    @ApiModelProperty("newstime")
+    private String newstime;
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
+
     public Long getId() {
         return id;
     }

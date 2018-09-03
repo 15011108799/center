@@ -5,8 +5,10 @@ import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.goods.GoodsTypeSearchRequestDto;
 import com.tlong.center.api.dto.web.GoodsClassRequestDto;
 import com.tlong.center.api.dto.web.WebGoodsClassRequestDto;
+import com.tlong.center.api.dto.web.user.UserRequestDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,13 +43,17 @@ public interface WebGoodsClassApi {
     @PostMapping("/updateGoodsType")
     Result updateGoodsType(@RequestBody WebGoodsClassRequestDto requestDto);
 
+
+
     @ApiOperation("查询一级分类接口")
-    @PostMapping("/findGoodsClass")
-    List<GoodsTypeResponseDto> findGoodsClass(HttpSession session);
+    @PostMapping("/findGoodsClassLevelOne")
+    List<GoodsTypeResponseDto> findGoodsClassLevelOne();
 
     @ApiOperation("查询二级分类接口")
-    @PostMapping("/findGoodsTwoClass")
-    List<GoodsTypeResponseDto> findGoodsTwoClass(@RequestBody  Long id,HttpSession session);
+    @PostMapping("/findGoodsLevelTwo/{goodsClassId}")
+    List<GoodsTypeResponseDto> findGoodsLevelTwo(@PathVariable  Long goodsClassId);
+
+
 
     @ApiOperation("商品分类搜索")
     @PostMapping("/searchGoodsType")
@@ -56,4 +62,14 @@ public interface WebGoodsClassApi {
     @ApiOperation("查询单个分类接口")
     @PostMapping("/findOneGoodsClass")
     GoodsTypeResponseDto findOneGoodsClass(@RequestBody  Long id);
+
+    @ApiOperation("获取供应商可上货分类")
+    @PostMapping("/supplierGoodsClass/{userId}")
+    List<GoodsTypeResponseDto> supplierGoodsClass(@PathVariable Long userId);
+
+    @ApiOperation("获取供应商可上货二级分类")
+    @PostMapping("/supplierGoodsClass/{userId}/{goodsClassId}")
+    List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(@PathVariable Long userId, @PathVariable Long goodsClassId);
+
+
 }

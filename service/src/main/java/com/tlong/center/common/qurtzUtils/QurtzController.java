@@ -1,6 +1,9 @@
 package com.tlong.center.common.qurtzUtils;
 
 import com.tlong.center.api.dto.quertz.QuartzRequestDto;
+import com.tlong.center.domain.repository.WebOrderRepository;
+import com.tlong.center.domain.web.QWebOrder;
+import com.tlong.center.domain.web.WebOrder;
 import com.tlong.center.service.WebGoodsService;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -28,13 +31,15 @@ public class QurtzController {
 
     private final Logger logger = LoggerFactory.getLogger(QurtzController.class);
     final WebGoodsService webGoodsService;
+    final WebOrderRepository webOrderRepository;
 
-    public QurtzController(WebGoodsService webGoodsService) {
+    public QurtzController(WebGoodsService webGoodsService, WebOrderRepository webOrderRepository) {
         this.webGoodsService = webGoodsService;
+        this.webOrderRepository = webOrderRepository;
     }
 
     @PostMapping("/main")
-    public void testSchedulerTask(@RequestBody QuartzRequestDto requestDto) throws SchedulerException {
+    public Long testSchedulerTask(@RequestBody QuartzRequestDto requestDto) throws SchedulerException {
         //创建默认定时任务对象
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
@@ -42,8 +47,9 @@ public class QurtzController {
         Trigger trigger = this.creatGoodsLockTrigger();
         scheduler.scheduleJob(jobDetail, trigger);
         scheduler.start();
+        Long laterTime = 7200000L;
         try {
-            Long laterTime = 18000L;
+//            Long laterTime = 1L;
             if (requestDto.getLaterTime() != null) {
                 laterTime = requestDto.getLaterTime();
             }
@@ -51,6 +57,7 @@ public class QurtzController {
             //这里去调用业务的技术逻辑
             Long goodsId = null;
             if (requestDto.getGoodsId() != null) {
+                this.orderStateChange(requestDto.getGoodsId());
                 goodsId = this.unLockGoods(requestDto.getGoodsId());
             }
             if (goodsId != null) {
@@ -61,8 +68,10 @@ public class QurtzController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return laterTime;
 
     }
+
 
     /**
      * 创建商品上锁30分钟后自动解锁的定时任务
@@ -100,9 +109,19 @@ public class QurtzController {
      */
     public Long unLockGoods(Long goodsId) {
         //修改商品的状态 TODO
-        webGoodsService.updateState(goodsId, 3);
+        webGoodsService.updateState(goodsId, 1);
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
+    }
+
+    /**
+     * 修改订单状态为3
+     */
+    private void orderStateChange(Long goodsId) {
+        WebOrder one = webOrderRepository.findOne(QWebOrder.webOrder.goodsId.eq(goodsId)
+            .and(QWebOrder.webOrder.state.in(2)));
+        one.setState(3);
+        webOrderRepository.save(one);
     }
 
 }

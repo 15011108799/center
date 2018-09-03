@@ -7,6 +7,7 @@ import com.tlong.center.api.dto.user.PageResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public interface WebNewsApi {
 
     @ApiOperation("获取新闻列表")
     @PostMapping("/findAllNews")
-    PageResponseDto<NewsRequestDto> findAllNews(@RequestBody PageAndSortRequestDto requestDto);
+    Page<NewsRequestDto> findAllNews(@RequestBody PageAndSortRequestDto requestDto);
 
     @ApiModelProperty("新增新闻")
     @PostMapping("/addNews")

@@ -34,10 +34,13 @@ public class TlongRole extends BaseJpa {
     //角色名称
     private String roleName;
 
+    //机构描述
     private String des;
 
+    //机构创建时间
     private String registDate;
 
+    //角色类型 1普通角色 2机构
     private Integer type;
 
     public Long getId() {

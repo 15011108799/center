@@ -8,6 +8,10 @@ import java.io.Serializable;
 @ApiModel("代理商注册请求模型")
 public class SuppliersRegisterRequsetDto implements Serializable {
     private static final long serialVersionUID = -7697313937998312834L;
+
+    @ApiModelProperty("修改信息设备 null后台 1app")
+    private Integer isApp;
+
     @ApiModelProperty("id")
     private Long id;
 
@@ -47,8 +51,12 @@ public class SuppliersRegisterRequsetDto implements Serializable {
     @ApiModelProperty("头像 url")
     private String headImage;
 
-    @ApiModelProperty("所属部门名称")
-    private String orgId;
+    @ApiModelProperty("所属部门id")
+    private Long orgId;
+
+    @ApiModelProperty("机构名称")
+    private String orgName;
+
 
     @ApiModelProperty("经营地")
     private String premises;
@@ -130,6 +138,33 @@ public class SuppliersRegisterRequsetDto implements Serializable {
 
     @ApiModelProperty("已售商品个数统计")
     private Integer soldGoodsNum;
+
+    @ApiModelProperty("newstime")
+    private String newstime;
+
+    public String getNewstime() {
+        return newstime;
+    }
+
+    public void setNewstime(String newstime) {
+        this.newstime = newstime;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public Integer getIsApp() {
+        return isApp;
+    }
+
+    public void setIsApp(Integer isApp) {
+        this.isApp = isApp;
+    }
 
     public String getCompanyName() {
         return companyName;
@@ -251,11 +286,15 @@ public class SuppliersRegisterRequsetDto implements Serializable {
         this.serviceHotline = serviceHotline;
     }
 
-    public String getOrgId() {
+    public void setHeadImage(String headImage) {
+        this.headImage = headImage;
+    }
+
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(String orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 

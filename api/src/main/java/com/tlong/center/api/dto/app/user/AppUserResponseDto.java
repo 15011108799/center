@@ -11,6 +11,21 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("E签宝认证状态（1 认证通过  0 未认证）")
+    private Integer esgin;
+
+    @ApiModelProperty("后台认证")
+    private Integer authentication;
+
+    @ApiModelProperty("机构id")
+    private Long orgId;
+
+    @ApiModelProperty("用户年龄")
+    private Integer age;
+
+    @ApiModelProperty("性别")
+    private Integer sex;
+
     @ApiModelProperty("用户编码")
     private String userCode;
 
@@ -23,12 +38,57 @@ public class AppUserResponseDto implements Serializable {
     @ApiModelProperty("服务热线")
     private String serviceHotline;
 
+    @ApiModelProperty("手机号")
+    private String phone;
+
     @ApiModelProperty("电子协议存证编号")
     private String evId;
 
     @ApiModelProperty("头像URL")
     private String headImage;
 
+    @ApiModelProperty("供应商可上传分类")
+    private String goodsClass;
+
+    public Integer getEsgin() {
+        return esgin;
+    }
+
+    public void setEsgin(Integer esgin) {
+        this.esgin = esgin;
+    }
+
+    public Integer getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Integer authentication) {
+        this.authentication = authentication;
+    }
+
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
+    }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getUserCode() {
         return userCode;
@@ -84,5 +144,21 @@ public class AppUserResponseDto implements Serializable {
 
     public void setHeadImage(String headImage) {
         this.headImage = headImage;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 }

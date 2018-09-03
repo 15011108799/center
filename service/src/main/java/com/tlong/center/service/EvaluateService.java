@@ -59,9 +59,6 @@ public class EvaluateService {
 
     /**
      * 分页查询评价列表
-     *
-     * @param requestDto
-     * @return
      */
     public PageResponseDto<EvaluateRequestDto> findAllEvaluate(PageAndSortRequestDto requestDto, HttpSession session) {
         TlongUser user = (TlongUser) session.getAttribute("tlongUser");

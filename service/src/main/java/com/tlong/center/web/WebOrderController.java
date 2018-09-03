@@ -4,6 +4,7 @@ import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.order.OrderRequestDto;
 import com.tlong.center.api.dto.order.OrderSearchRequestDto;
 import com.tlong.center.api.dto.user.PageResponseDto;
+import com.tlong.center.api.dto.web.OrderPageRequestDto;
 import com.tlong.center.api.web.WebOrderApi;
 import com.tlong.center.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class WebOrderController implements WebOrderApi {
     private OrderService orderService;
 
     @Override
-    public PageResponseDto<OrderRequestDto> findAllOrders(@RequestBody PageAndSortRequestDto requestDto, HttpSession session) {
-        return orderService.findAllOrders(requestDto,session);
+    public PageResponseDto<OrderRequestDto> findAllOrders(@RequestBody OrderPageRequestDto requestDto) {
+        return orderService.findAllOrders(requestDto);
     }
 
     @Override

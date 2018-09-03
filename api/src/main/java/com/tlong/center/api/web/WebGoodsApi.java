@@ -11,6 +11,7 @@ import com.tlong.center.api.dto.web.WebGoodsPageRequestDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +24,11 @@ public interface WebGoodsApi {
 
     @ApiOperation("获取商品列表")
     @PostMapping("/findAllGoods")
-    PageResponseDto<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto);
+    Page<WebGoodsDetailResponseDto> findAllGoods(@RequestBody WebGoodsPageRequestDto requestDto, @RequestParam MultiValueMap<String,String> params);
 
     @ApiModelProperty("新增商品")
     @PostMapping("/addGoods")
-    Result addGoods(@RequestParam("file") List<MultipartFile> file, WebGoodsDetailResponseDto reqDto,HttpSession session, @RequestParam String contentClass,@RequestParam String contentType);
+    Result addGoods(WebGoodsDetailResponseDto reqDto);
 
     @ApiModelProperty("删除商品")
     @PutMapping("/delGoods")
@@ -39,7 +40,7 @@ public interface WebGoodsApi {
 
     @ApiOperation("修改商品为通过状态")
     @PostMapping("/updateGoodsState")
-    void updateGoodsState(@RequestBody Long id);
+    void updateGoodsState(@RequestBody Long id, @RequestParam Long checkUserId);
 
     @ApiOperation("修改商品为驳回状态")
     @PostMapping("/updateGoodsStateReject")
@@ -59,5 +60,5 @@ public interface WebGoodsApi {
 
     @ApiModelProperty("重新发布商品")
     @PutMapping("/publishAgain")
-    Result publishAgain(@RequestParam String goodsId);
+    Result publishAgain(@RequestBody WebGoodsDetailResponseDto reqDto);
 }

@@ -26,25 +26,13 @@ public class UserSettingsSerivce {
      * 修改设置商品发布 重新发布数量
      */
     public void updateGoodsReleaseNumber(TlongUserSettingsRequestDto req) {
-        TlongUserSettings one;
         //获取用户类型对应的可以上架的商品的数量 用户类型(0个人 1企业 2个人默认设置 3企业默认设置)
-         one = repository.findOne(tlongUserSettings.userType.eq(req.getUserType())
-                .and(tlongUserSettings.userId.eq(req.getUserId())));
-         if (one == null) {
-             one = repository.findOne(tlongUserSettings.userType.eq(req.getUserType() + 2));
-         }
+        TlongUserSettings one = repository.findOne(tlongUserSettings.userId.eq(req.getUserId()));
         if (Objects.nonNull(one)){
-            if (req.getUserType() == 0){
-                one.setUserId(req.getUserId());
-                one.setGoodsReleaseNumber(req.getPersonReleaseNumber());
-                one.setGoodsReReleaseNumber(req.getPersonReReleaseNumber());
-            }else if (req.getUserType() == 1){
-                one.setGoodsReleaseNumber(req.getCompanyReleaseNumber());
-                one.setGoodsReReleaseNumber(req.getCompanyReReleaseNumber());
-            }
-        }else {
-            //创建默认参数
-            createTlongUserSettings(req,2);
+            //个人的数量
+            one.setGoodsReleaseNumber(req.getPersonReleaseNumber());
+            one.setGoodsReReleaseNumber(req.getPersonReReleaseNumber());
+            repository.save(one);
         }
     }
 
@@ -62,14 +50,19 @@ public class UserSettingsSerivce {
     /**
      * 新增代理商或者供应商的设置
      */
-    public void addUserSettings(Long userId, Integer userType){
-        //获取用户类型支持的商品发布数量和重新发布数量
-        TlongUserSettings one1 = repository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(userType));
+    public void addUserSettings(Long userId, Integer userType,Integer isCompany){
+        //获取用户类型支持的商品发布数量和重新发布数量  这里的userType是是否是公司
+        TlongUserSettings one1 = repository.findOne(QTlongUserSettings.tlongUserSettings.userType.intValue().eq(isCompany)
+            .and(QTlongUserSettings.tlongUserSettings.userId.isNull()));
 
         //在用户设置表中设置当前注册人的商品发布数量和重新发布数量
-        TlongUserSettings tlongUserSettings = new TlongUserSettings();
-        tlongUserSettings.setGoodsReleaseNumber(one1.getGoodsReleaseNumber());
-        tlongUserSettings.setGoodsReReleaseNumber(one1.getGoodsReReleaseNumber());
-        tlongUserSettings.setUserId(userId);
+        if (Objects.nonNull(one1)) {
+            TlongUserSettings tlongUserSettings = new TlongUserSettings();
+            tlongUserSettings.setGoodsReleaseNumber(one1.getGoodsReleaseNumber());
+            tlongUserSettings.setGoodsReReleaseNumber(one1.getGoodsReReleaseNumber());
+            tlongUserSettings.setUserType(isCompany);
+            tlongUserSettings.setUserId(userId);
+            repository.save(tlongUserSettings);
+        }
     }
 }
