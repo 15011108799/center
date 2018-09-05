@@ -404,7 +404,7 @@ public class GoodsClassService {
      */
     public List<GoodsTypeResponseDto> supplierGoodsClass(Long userId) {
         TlongUser one = tlongUserRepository.findOne(userId);
-        if (Objects.nonNull(one)){
+        if (Objects.nonNull(one)) {
             Iterable<AppGoodsclass> all;
             String goodsClass = one.getGoodsClass();
             //判断是不是存在goodsClass
@@ -415,7 +415,7 @@ public class GoodsClassService {
                 List<AppGoodsclass> all1 = repository.findAll(goodsClassIds);
                 List<Long> collect = all1.stream().map(AppGoodsclass::getGoodsClassIdParent).collect(Collectors.toList());
                 all = repository.findAll(collect);
-            }else {
+            } else {
                 //否则返回所有的一级分类
                 return this.findGoodsClassLevelOne();
             }
@@ -434,7 +434,7 @@ public class GoodsClassService {
     /**
      * 获取供应商可上传商品的二级分类
      */
-    public List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(Long userId,Long goodsClassId) {
+    public List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(Long userId, Long goodsClassId) {
         TlongUser one = tlongUserRepository.findOne(userId);
         if (Objects.nonNull(one)) {
             String goodsClass = one.getGoodsClass();
@@ -448,6 +448,23 @@ public class GoodsClassService {
                 return appGoodsclasses.stream().map(AppGoodsclass::toDto).collect(Collectors.toList());
             } else {
                 return this.findGoodsLevelTwo(goodsClassId);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 接获取当前供应商所有的二级分类的列表
+     */
+    public List<GoodsTypeResponseDto> selectAllGoodsClassLevelTwo(Long userId) {
+        TlongUser one = tlongUserRepository.findOne(userId);
+        if (Objects.nonNull(one)) {
+            String goodsClass = one.getGoodsClass();
+            if (StringUtils.isNotBlank(goodsClass)) {
+                String[] str = goodsClass.split(",");
+                List<Long> goodsClassIds = Arrays.stream(str).map(Long::valueOf).collect(Collectors.toList());
+                List<AppGoodsclass> all = repository.findAll(goodsClassIds);
+                return all.stream().map(AppGoodsclass::toDto).collect(Collectors.toList());
             }
         }
         return null;

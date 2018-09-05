@@ -2,6 +2,7 @@ package com.tlong.center.service;
 
 import com.tlong.center.api.dto.Result;
 import com.tlong.center.api.dto.slide.WebSlideDto;
+import com.tlong.center.api.exception.CustomException;
 import com.tlong.center.common.utils.FileUploadUtils;
 import com.tlong.center.domain.repository.SlideRepository;
 import com.tlong.center.domain.web.WebSlideshow;
@@ -89,11 +90,15 @@ public class WebSlideService {
      */
     public void updateSlideState(Long id) {
         WebSlideshow slideshow = repository.findOne(id);
-        if (slideshow.getState() == 0)
-            slideshow.setState(1);
-        else
-            slideshow.setState(0);
-        repository.save(slideshow);
+        if (Objects.nonNull(slideshow)) {
+            if (slideshow.getState() == 0)
+                slideshow.setState(1);
+            else {
+                slideshow.setState(0);
+            }
+            repository.save(slideshow);
+        }
+        throw new CustomException("传递的轮播图id未查询到对应的轮播图信息");
     }
 
     /**

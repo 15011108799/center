@@ -91,4 +91,12 @@ public class WebGoodsClassController implements WebGoodsClassApi{
     public List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(@PathVariable Long userId, @PathVariable Long goodsClassId) {
         return goodsClassService.supplierGoodsClassLevelTwo(userId,goodsClassId);
     }
+
+    /**
+     * 直接获取当前供应商所有的二级分类的列表
+     */
+    @Override
+    public List<GoodsTypeResponseDto> selectAllGoodsClassLevelTwo(@PathVariable Long userId) {
+        return goodsClassService.selectAllGoodsClassLevelTwo(userId);
+    }
 }

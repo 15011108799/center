@@ -44,7 +44,6 @@ public interface WebGoodsClassApi {
     Result updateGoodsType(@RequestBody WebGoodsClassRequestDto requestDto);
 
 
-
     @ApiOperation("查询一级分类接口")
     @PostMapping("/findGoodsClassLevelOne")
     List<GoodsTypeResponseDto> findGoodsClassLevelOne();
@@ -52,7 +51,6 @@ public interface WebGoodsClassApi {
     @ApiOperation("查询二级分类接口")
     @PostMapping("/findGoodsLevelTwo/{goodsClassId}")
     List<GoodsTypeResponseDto> findGoodsLevelTwo(@PathVariable  Long goodsClassId);
-
 
 
     @ApiOperation("商品分类搜索")
@@ -70,6 +68,10 @@ public interface WebGoodsClassApi {
     @ApiOperation("获取供应商可上货二级分类")
     @PostMapping("/supplierGoodsClass/{userId}/{goodsClassId}")
     List<GoodsTypeResponseDto> supplierGoodsClassLevelTwo(@PathVariable Long userId, @PathVariable Long goodsClassId);
+
+    @ApiOperation("获取当前供应商支持上货的所有二级分类列表")
+    @PostMapping("/selectAllGoodsClassLevelTwo/{userId}")
+    List<GoodsTypeResponseDto> selectAllGoodsClassLevelTwo(@PathVariable Long userId);
 
 
 }

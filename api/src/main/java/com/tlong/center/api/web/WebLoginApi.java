@@ -12,6 +12,6 @@ import javax.servlet.http.HttpSession;
 @Api("Web登录接口")
 public interface WebLoginApi {
     @PostMapping("/login")
-    @ApiOperation("测试登录")
+    @ApiOperation("web登录页面")
     WebLoginResponseDto webLogin(@RequestBody WebLoginRequestDto requestDto, HttpSession session);
 }

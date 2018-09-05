@@ -335,7 +335,7 @@ public class ESignSignService {
 //						result.setUserId(HMACSHA256(param));
                         result.setMsg(evid);
                         TlongUser one = tlongUserRepository.findOne(userid);
-                        //one.setEvId(evid);
+                        one.setEvId(evid);
                         one.setEsgin(2);
                         tlongUserRepository.saveAndFlush(one);
 //                        sql = String.format("update zjxx_people set evid = '%s' , echecktype = '2' where id = '%s'", evid, userid);
