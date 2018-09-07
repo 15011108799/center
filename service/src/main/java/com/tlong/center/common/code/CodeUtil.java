@@ -132,8 +132,4 @@ public class CodeUtil {
         return code;
     }
 
-    /**
-     * 用户编码生成规则
-     */
-
 }

@@ -14,19 +14,8 @@ public class InvitationUtils {
     public static String createInvitation(Long userId) {
         String strUUID = UUID.randomUUID().toString();
         String strUserId = String.valueOf(userId);
-//        if (strUserId.length() == 1){
-//            return strUserId + strUUID.charAt(2) + strUUID.charAt(4) + strUUID.charAt(6) +
-//                    strUUID.substring(strUUID.length() - 7, strUUID.length());
-//        }else if (strUserId.length() > 1){
-//            if (strUserId.length() <=7){
-//                System.out.println(strUUID);
-                return strUserId + strUUID.charAt(2) + strUUID.charAt(4) + strUUID.charAt(6) +
-                    strUUID.substring(strUUID.length() - (10-strUserId.length()-3), strUUID.length());
-//            }else {
-//                return strUserId + strUUID.charAt(2) + strUUID.charAt(4) + strUUID.charAt(6) +
-//                        strUUID.substring(strUUID.length() - (10-strUserId.length()-3), strUserId.length());
-//            }
-//        }
-//        return "编码生成失败";
+        String str1 = strUserId.substring(strUserId.length() -1) + strUUID.charAt(2) + strUUID.charAt(4) + strUUID.charAt(6);
+        String str2 = str1 + strUUID.substring(strUUID.length() - 2);
+        return  str2;
     }
 }

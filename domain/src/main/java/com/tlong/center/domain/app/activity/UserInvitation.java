@@ -16,8 +16,8 @@ public class UserInvitation {
     //邀请码id
     private Long invitationId;
 
-    //填写的受邀邀请码用户id(父id)
-    private Long beInvitedCodeId;
+    //邀请人id
+    private Long beInvitedUserId;
 
     //已邀请人数(父id是本人邀请码人数)
     private Integer invitationUserCount;
@@ -52,12 +52,12 @@ public class UserInvitation {
         this.invitationId = invitationId;
     }
 
-    public Long getBeInvitedCodeId() {
-        return beInvitedCodeId;
+    public Long getBeInvitedUserId() {
+        return beInvitedUserId;
     }
 
-    public void setBeInvitedCodeId(Long beInvitedCodeId) {
-        this.beInvitedCodeId = beInvitedCodeId;
+    public void setBeInvitedUserId(Long beInvitedUserId) {
+        this.beInvitedUserId = beInvitedUserId;
     }
 
     public Integer getInvitationUserCount() {

@@ -21,6 +21,10 @@ public class TlongResultDto implements Serializable {
         this.result = result;
     }
 
+    public TlongResultDto(String content) {
+        Content = content;
+    }
+
     public TlongResultDto(Integer result, String content) {
         this.result = result;
         Content = content;

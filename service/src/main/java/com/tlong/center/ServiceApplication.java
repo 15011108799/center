@@ -11,6 +11,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.MultipartConfigElement;
@@ -20,6 +21,7 @@ import javax.servlet.MultipartConfigElement;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableSwagger2
+@EnableScheduling
 public class ServiceApplication extends SpringBootServletInitializer {
 
     @Override
