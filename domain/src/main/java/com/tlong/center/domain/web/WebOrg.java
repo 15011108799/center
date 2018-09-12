@@ -1,6 +1,7 @@
 package com.tlong.center.domain.web;
 
 import com.tlong.center.api.dto.web.WebOrgDto;
+import com.tlong.center.api.dto.web.org.UpdateOrgRequestDto;
 import com.tlong.core.base.BaseJpa;
 import com.tlong.core.utils.PropertyUtils;
 import org.hibernate.annotations.DynamicUpdate;
@@ -19,6 +20,10 @@ public class WebOrg {
     }
 
     public WebOrg(WebOrgDto dto) {
+        PropertyUtils.copyPropertiesOfNotNull(dto, this);
+    }
+
+    public WebOrg(UpdateOrgRequestDto dto) {
         PropertyUtils.copyPropertiesOfNotNull(dto, this);
     }
 

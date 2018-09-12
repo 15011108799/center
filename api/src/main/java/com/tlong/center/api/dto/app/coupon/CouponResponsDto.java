@@ -20,6 +20,9 @@ public class CouponResponsDto implements Serializable {
     @ApiModelProperty("卡券描述")
     private String couponDetail;
 
+    @ApiModelProperty("卡券效果")
+    private String effectName;
+
     @ApiModelProperty("卡券剩余库存数量")
     private Integer remainNumber;
 
@@ -28,6 +31,14 @@ public class CouponResponsDto implements Serializable {
 
     @ApiModelProperty("当前状态 0未过期 1已过期")
     private Integer curState;
+
+    public String getEffectName() {
+        return effectName;
+    }
+
+    public void setEffectName(String effectName) {
+        this.effectName = effectName;
+    }
 
     public String getCouponPic() {
         return couponPic;

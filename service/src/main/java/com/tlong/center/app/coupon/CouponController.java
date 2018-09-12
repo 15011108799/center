@@ -79,9 +79,12 @@ public class CouponController implements CouponApi {
     }
 
 
+    /**
+     * 根据卡券id获取卡券详细信息
+     */
     @Override
-    public CouponResponsDto findCouponById(Long id) {
-        return null;
+    public CouponResponsDto findCouponById(@PathVariable Long id) {
+        return couponService.findCouponById(id);
     }
 
     /**
@@ -106,5 +109,21 @@ public class CouponController implements CouponApi {
     @Override
     public TlongResultDto deleteCouponFromAccount(@RequestBody DeleteCouponToAccountRequestDto requestDto) {
         return couponService.deleteCouponFromAccount(requestDto);
+    }
+
+    /**
+     * 获取商品所有可用优惠券
+     */
+    @Override
+    public List<CouponResponsDto> canUseCouponList(@PathVariable Long goodsId) {
+        return couponService.canUseCouponList(goodsId);
+    }
+
+    /**
+     * 获取当前商品所有可用优惠券
+     */
+    @Override
+    public List<CouponResponsDto> userCanUseCouponList(@PathVariable Long userId,@PathVariable Long goodsId) {
+        return couponService.userCanUseCouponList(userId,goodsId);
     }
 }

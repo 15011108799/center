@@ -2,10 +2,7 @@ package com.tlong.center.api.web.org;
 
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
-import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
-import com.tlong.center.api.dto.web.org.TlongOrgResponseDto;
+import com.tlong.center.api.dto.web.org.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -29,4 +26,12 @@ public interface WebOrgApi {
     @PostMapping("/agentList/{orgId}")
     Page<TlongOrgResponseDto> agentList(@PathVariable Long orgId, @RequestBody PageAndSortRequestDto pageAndSortRequestDto);
 
+    @ApiModelProperty
+    @PostMapping("/findOne/{orgId}")
+    TlongOrgResponseDto findOne(@PathVariable Long orgId);
+
+    @ApiModelProperty
+    @PostMapping("/updateOne")
+    TlongResultDto updateOne(@RequestBody UpdateOrgRequestDto requestDto);
+    //根据id获取单个部门信息  修改接口
 }

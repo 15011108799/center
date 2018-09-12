@@ -33,17 +33,24 @@ import static com.tlong.center.domain.app.course.QCourse.course;
 @Component
 @Transactional
 public class CourseService {
+
+    private final AppCourseRepository appCourseRepository;
+
     @Autowired
-    private AppCourseRepository appCourseRepository;
+    public CourseService(AppCourseRepository appCourseRepository) {
+        this.appCourseRepository = appCourseRepository;
+    }
 
     public Result addCourse(AppCourseRequestDto requestDto) {
         Course course = new Course();
+        course.setStyleId(requestDto.getStyleId());
         course.setTitle(requestDto.getTitle());
         course.setCatalog(requestDto.getCatalog());
         course.setCurState(requestDto.getCurState());
         course.setDes(requestDto.getDes());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         course.setPublishTime(simpleDateFormat.format(new Date()));
+        course.setNewstime(new Date().getTime() / 1000 + "");
         course.setTeacher(requestDto.getTeacher());
         course.setVideo(requestDto.getVideo());
         course.setImg(requestDto.getImg());

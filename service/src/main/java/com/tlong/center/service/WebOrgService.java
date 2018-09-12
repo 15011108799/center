@@ -2,10 +2,8 @@ package com.tlong.center.service;
 
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
-import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
-import com.tlong.center.api.dto.web.org.TlongOrgResponseDto;
+import com.tlong.center.api.dto.web.org.*;
+import com.tlong.center.api.exception.CustomException;
 import com.tlong.center.common.utils.PageAndSortUtil;
 import com.tlong.center.common.utils.ToListUtil;
 import com.tlong.center.domain.repository.WebOrgRepository;
@@ -109,4 +107,33 @@ public class WebOrgService {
     }
 
 
+    /**
+     * 获取单个机构信息
+     */
+    public TlongOrgResponseDto findOne(Long orgId) {
+        WebOrg one = webOrgRepository.findOne(orgId);
+        if (Objects.isNull(one)){
+            throw new CustomException("当前查询机构不存在!");
+        }
+        TlongOrgResponseDto dto = new TlongOrgResponseDto();
+        dto.setOrgName(one.getOrgName());
+        dto.setCreateDate(one.getCreateDate());
+        dto.setOrgId(one.getId());
+        dto.setOrgLevel(1);
+        return dto;
+    }
+
+
+    /**
+     * 修改单个机构信息
+     */
+    public TlongResultDto updateOne(UpdateOrgRequestDto requestDto) {
+        WebOrg one = webOrgRepository.findOne(requestDto.getOrgId());
+        if (Objects.isNull(one)){
+            throw new CustomException("当前查询机构不存在!");
+        }
+        WebOrg webOrg = new WebOrg(requestDto);
+        webOrgRepository.save(webOrg);
+        return new TlongResultDto(0,"修改成功!");
+    }
 }

@@ -10,10 +10,7 @@ import com.tlong.center.api.dto.common.TlongResultDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +35,7 @@ public interface CouponApi {
     @GetMapping("/couponPage")
     Page<CouponResponsDto> findAllCouponPage(@RequestBody PageAndSortRequestDto pageAndSortRequestDto);
 
+
     @ApiOperation("根据卡券类型获取卡券效果列表")
     @PostMapping("/couponEffectList/{couponType}")
     List<CouponEffectResponsDto> couponEffectList(@PathVariable Integer couponType);
@@ -49,6 +47,7 @@ public interface CouponApi {
     @ApiOperation("根据卡券id获取卡券详细信息")
     @PostMapping("/couponOne/{id}")
     CouponResponsDto findCouponById(@PathVariable Long id);
+
 
     @ApiOperation("根据用户id查询出当前用户拥有的所有卡券")
     @PostMapping("/userCouponPage/{userId}")
@@ -62,5 +61,12 @@ public interface CouponApi {
     @PostMapping("/deleteCouponFromAccount")
     TlongResultDto deleteCouponFromAccount(@RequestBody DeleteCouponToAccountRequestDto requestDto);
 
+    @ApiOperation("获取当前商品所有可用优惠券")
+    @PostMapping("canUseCouponList/{goodsId}")
+    List<CouponResponsDto> canUseCouponList(@PathVariable Long goodsId);
+
+    @ApiOperation("获取当前商品所有可用优惠券")
+    @PostMapping("userCanUseCouponList/{userId}/{goodsId}")
+    List<CouponResponsDto> userCanUseCouponList(@PathVariable Long userId, @PathVariable Long goodsId);
 
 }

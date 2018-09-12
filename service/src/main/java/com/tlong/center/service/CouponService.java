@@ -1,6 +1,7 @@
 package com.tlong.center.service;
 
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tlong.center.api.dto.app.activity.AddCouponToAccountRequestDto;
 import com.tlong.center.api.dto.app.activity.DeleteCouponToAccountRequestDto;
 import com.tlong.center.api.dto.app.coupon.AddCouponRequestDto;
@@ -15,10 +16,8 @@ import com.tlong.center.domain.app.TlongUser;
 import com.tlong.center.domain.app.coupon.Coupon;
 import com.tlong.center.domain.app.coupon.CouponEffect;
 import com.tlong.center.domain.app.coupon.UserCoupon;
-import com.tlong.center.domain.repository.CouponEffectRepository;
-import com.tlong.center.domain.repository.CouponRepository;
-import com.tlong.center.domain.repository.TlongUserRepository;
-import com.tlong.center.domain.repository.UserCouponRepository;
+import com.tlong.center.domain.app.goods.WebGoods;
+import com.tlong.center.domain.repository.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,19 +45,29 @@ public class CouponService {
     private final CouponEffectRepository couponEffectRepository;
     private final UserCouponRepository userCouponRepository;
     private final TlongUserRepository userRepository;
+    private final AppGoodsRepository goodsRepository;
+    private final EntityManager entityManager;
+    private JPAQueryFactory queryFactory;
 
-    public CouponService(CouponRepository couponRepository, CouponEffectRepository couponEffectRepository, UserCouponRepository userCouponRepository, TlongUserRepository userRepository) {
+    @PostConstruct
+    public void init() {
+        queryFactory = new JPAQueryFactory(entityManager);
+    }
+
+
+    public CouponService(CouponRepository couponRepository, CouponEffectRepository couponEffectRepository, UserCouponRepository userCouponRepository, TlongUserRepository userRepository, AppGoodsRepository goodsRepository, EntityManager entityManager) {
         this.couponRepository = couponRepository;
         this.couponEffectRepository = couponEffectRepository;
         this.userCouponRepository = userCouponRepository;
         this.userRepository = userRepository;
+        this.goodsRepository = goodsRepository;
+        this.entityManager = entityManager;
     }
 
     /**
      * 批量生成卡券
      */
     public TlongResultDto addCoupon(AddCouponRequestDto requestDto) {
-
         Coupon coupon = new Coupon(requestDto);
         coupon.setCurState(0);
         coupon.setNewsTime(new Date().getTime() / 1000);
@@ -227,4 +238,64 @@ public class CouponService {
             throw new CustomException("部分优惠券已失效");
         }
     }
+
+    /**
+     * 根据卡券id获取卡券详细信息
+     */
+    public CouponResponsDto findCouponById(Long id) {
+        Coupon one = couponRepository.findOne(id);
+        if (Objects.isNull(one)){
+            throw new CustomException("查询的卡券不存在!");
+        }
+        //获取卡券对应的效果
+        CouponEffect one1 = couponEffectRepository.findOne(couponEffect1.id.eq(one.getCouponEffectId()));
+        //组装卡券信息对象
+        CouponResponsDto responsDto = one.toCouponDto();
+        responsDto.setEffectName(one1.getEffectName());
+        return responsDto;
+    }
+
+    /**
+     * 获取商品所有可用优惠券(所有可用的包括未领取的优惠券)
+     */
+    public List<CouponResponsDto> canUseCouponList(Long goodsId) {
+        //获取该商品所属一级分类
+        WebGoods one = goodsRepository.findOne(goodsId);
+        if (Objects.isNull(one)){
+            throw new CustomException("商品信息不存在");
+        }
+        //获取该商品可用所有优惠券
+        List<Coupon> coupons = queryFactory.select(coupon)
+                .from(coupon,userCoupon)
+//                .innerJoin(userCoupon)
+//                .on(coupon.id.eq(userCoupon.couponId)
+//                    .and())
+                .where(coupon.goodsClass.contains(String.valueOf(one.getGoodsClassId())))
+//                    .and(userCoupon.couponId.eq(coupon.id)))
+                .distinct()
+                .fetch();
+        return coupons.stream().map(Coupon::toCouponDto).collect(Collectors.toList());
+    }
+
+
+    /**
+     * 获取商品所有可用优惠券(该用户拥有的)
+     */
+    public List<CouponResponsDto> userCanUseCouponList(Long userId,Long goodsId) {
+        //获取该商品所属一级分类
+        WebGoods one = goodsRepository.findOne(goodsId);
+        if (Objects.isNull(one)){
+            throw new CustomException("商品信息不存在");
+        }
+        //获取该商品可用所有优惠券
+        List<Coupon> coupons = queryFactory.select(coupon)
+                .from(coupon,userCoupon)
+                .where(coupon.goodsClass.contains(String.valueOf(one.getGoodsClassId()))
+                    .and(userCoupon.couponId.eq(coupon.id))
+                    .and(userCoupon.userId.eq(userId)))
+                .distinct()
+                .fetch();
+        return coupons.stream().map(Coupon::toCouponDto).collect(Collectors.toList());
+    }
+
 }

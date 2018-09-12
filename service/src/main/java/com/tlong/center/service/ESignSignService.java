@@ -270,10 +270,10 @@ public class ESignSignService {
         // 待签署的PDF文件路径
 //		String srcPdfFile = File.separator + "LongShi" + File.separator + "pub" + File.separator + "admin" + File.separator + "upload" + File.separator + "pdf" + File.separator + "天珑珠宝服务协议" + appTypeName + ".pdf";
 //        String srcPdfFile = this.getClass().getClassLoader().getResource("/").getPath() + "../../pub/admin/upload/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
-        String srcPdfFile = "C:/Users/ASUS/Desktop/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
+        String srcPdfFile = "E:/resources/pdf/天珑珠宝服务协议" + appTypeName + ".pdf";
         // 最终签署后的PDF文件路径
 //		String signedFolder ="LongShi" + File.separator + "pub" + File.separator + "admin" + File.separator + "upload" + File.separator + "pdfOut" + File.separator;
-        String signedFolder = "C:/Users/ASUS/Desktop/pdf/pdfOut/";
+        String signedFolder = "E:/resources/pdfOut/";
         // 最终签署后PDF文件名称
         String signedFileName = "天珑珠宝服务协议" + appTypeName;
         // 初始化项目，做全局使用，只初始化一次即可

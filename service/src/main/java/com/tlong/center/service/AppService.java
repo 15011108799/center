@@ -14,6 +14,7 @@ import com.tlong.center.domain.repository.ClazzStyleRepository;
 import com.tlong.center.domain.repository.CourseRepository;
 import com.tlong.center.domain.repository.TlongUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -120,7 +121,8 @@ public class AppService {
      * 获取课程列表
      */
     public List<ClazzResponseDto> clazzList(Long clazzId) {
-        Iterable<Course> all = courseRepository.findAll(course.styleId.eq(clazzId));
+        Sort sort = new Sort(Sort.Direction.DESC,"newstime");
+        Iterable<Course> all = courseRepository.findAll(course.styleId.eq(clazzId), sort);
         if (all == null){
             return null;
         }

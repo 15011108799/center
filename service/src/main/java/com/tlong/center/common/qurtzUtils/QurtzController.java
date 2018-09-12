@@ -1,6 +1,11 @@
 package com.tlong.center.common.qurtzUtils;
 
 import com.tlong.center.api.dto.quertz.QuartzRequestDto;
+import com.tlong.center.domain.app.goods.WebGoods;
+import com.tlong.center.domain.common.quartz.QTlongQuartz;
+import com.tlong.center.domain.common.quartz.TlongQuartz;
+import com.tlong.center.domain.repository.AppGoodsRepository;
+import com.tlong.center.domain.repository.TlongQuartzRepository;
 import com.tlong.center.domain.repository.WebOrderRepository;
 import com.tlong.center.domain.web.QWebOrder;
 import com.tlong.center.domain.web.WebOrder;
@@ -18,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -30,12 +36,16 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class QurtzController {
 
     private final Logger logger = LoggerFactory.getLogger(QurtzController.class);
-    final WebGoodsService webGoodsService;
-    final WebOrderRepository webOrderRepository;
+    private final WebGoodsService webGoodsService;
+    private final WebOrderRepository webOrderRepository;
+    private final AppGoodsRepository goodsRepository;
+    private final TlongQuartzRepository quartzRepository;
 
-    public QurtzController(WebGoodsService webGoodsService, WebOrderRepository webOrderRepository) {
+    public QurtzController(WebGoodsService webGoodsService, WebOrderRepository webOrderRepository, AppGoodsRepository goodsRepository, TlongQuartzRepository quartzRepository) {
         this.webGoodsService = webGoodsService;
         this.webOrderRepository = webOrderRepository;
+        this.goodsRepository = goodsRepository;
+        this.quartzRepository = quartzRepository;
     }
 
     @PostMapping("/main")
@@ -47,7 +57,16 @@ public class QurtzController {
         Trigger trigger = this.creatGoodsLockTrigger();
         scheduler.scheduleJob(jobDetail, trigger);
         scheduler.start();
-        Long laterTime = 7200000L;
+//        Long laterTime = 7200000L;
+        Long laterTime = 30000L;
+        TlongQuartz one1 = quartzRepository.findOne(QTlongQuartz.tlongQuartz.goodsId.eq(requestDto.getGoodsId()));
+        if (Objects.isNull(one1)){
+            TlongQuartz quartz = new TlongQuartz();
+            quartz.setGoodsId(requestDto.getGoodsId());
+            quartzRepository.save(quartz);
+            logger.info("定时任务商品持久化完成!");
+        }
+
         try {
 //            Long laterTime = 1L;
             if (requestDto.getLaterTime() != null) {
@@ -61,6 +80,10 @@ public class QurtzController {
                 goodsId = this.unLockGoods(requestDto.getGoodsId());
             }
             if (goodsId != null) {
+                TlongQuartz one = quartzRepository.findOne(QTlongQuartz.tlongQuartz.goodsId.eq(goodsId));
+                if (Objects.nonNull(one)){
+                    quartzRepository.delete(one);
+                }
                 logger.info("商品id为" + goodsId + "的商品已被成功解除锁定");
             }
             scheduler.shutdown(true);
@@ -76,7 +99,7 @@ public class QurtzController {
     /**
      * 创建商品上锁30分钟后自动解锁的定时任务
      */
-    public JobDetail creatGoodsLockJob(QuartzRequestDto requestDto) {
+    private JobDetail creatGoodsLockJob(QuartzRequestDto requestDto) {
         //定义工作并将其与我们的GoodsLockJob类联系起来
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("goodsId", requestDto.getGoodsId());
@@ -87,7 +110,7 @@ public class QurtzController {
                 .build();
     }
 
-    public Trigger creatGoodsLockTrigger() {
+    private Trigger creatGoodsLockTrigger() {
         return newTrigger()
                 .withIdentity("trigger1", "GoodsLockGroup")
                 .startAt(this.localDateTimeToDate(LocalDateTime.now()))
@@ -95,7 +118,7 @@ public class QurtzController {
                 .build();
     }
 
-    public Date localDateTimeToDate(LocalDateTime localDateTime) {
+    private Date localDateTimeToDate(LocalDateTime localDateTime) {
         ZoneId zoneId = ZoneId.systemDefault();
         ZonedDateTime zdt = localDateTime.atZone(zoneId);
         Date date = Date.from(zdt.toInstant());
@@ -107,9 +130,13 @@ public class QurtzController {
     /**
      * 解除商品上锁
      */
-    public Long unLockGoods(Long goodsId) {
+    private Long unLockGoods(Long goodsId) {
         //修改商品的状态 TODO
-        webGoodsService.updateState(goodsId, 1);
+        WebGoods webGoods = goodsRepository.findOne(goodsId);
+        webGoods.setState(1);
+        webGoods.setCurState(1);
+        goodsRepository.save(webGoods);
+//        webGoodsService.updateState(goodsId, 1);
         logger.info("商品" + goodsId + "已经被解锁");
         return goodsId;
     }
@@ -119,7 +146,7 @@ public class QurtzController {
      */
     private void orderStateChange(Long goodsId) {
         WebOrder one = webOrderRepository.findOne(QWebOrder.webOrder.goodsId.eq(goodsId)
-            .and(QWebOrder.webOrder.state.in(2)));
+            .and(QWebOrder.webOrder.state.in(1)));
         one.setState(3);
         webOrderRepository.save(one);
     }

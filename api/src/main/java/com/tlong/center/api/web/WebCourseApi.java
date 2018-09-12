@@ -33,11 +33,9 @@ public interface WebCourseApi {
     @PutMapping("/delCourse")
     Result delCourse(@RequestParam Long id);
 
-
     @ApiOperation("修改课程接口")
     @PostMapping("/updateCourse")
-    Result updateCourse(@RequestParam("file") MultipartFile file, AppCourseRequestDto reqDto, @RequestParam String contentClass,@RequestParam String contentType);
-
+    Result updateCourse(AppCourseRequestDto reqDto);
 
     @ApiOperation("查找单条课程接口")
     @PutMapping("/findCourseById")

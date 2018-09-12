@@ -8,9 +8,9 @@ spring:
     #数据库连接池配置
     datasource:
         driver-class-name: com.mysql.jdbc.Driver
-#        url: jdbc:mysql://47.96.66.66:3306/tlong?useUnicode=true&characterEncoding=utf8
         url: jdbc:mysql://47.96.66.66:3306/tlongdb?useUnicode=true&characterEncoding=utf8
-        username: root
+#        url: jdbc:mysql://106.15.183.59:3306/tlongdb?useUnicode=true&characterEncoding=utf8
+        username: user
         password: mypassword
 
     #JPA配置

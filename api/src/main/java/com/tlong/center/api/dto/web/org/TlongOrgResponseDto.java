@@ -15,6 +15,12 @@ public class TlongOrgResponseDto implements Serializable {
     @ApiModelProperty("机构名称")
     private String orgName;
 
+    @ApiModelProperty("邮箱")
+    private String orgEmail;
+
+    @ApiModelProperty("电话")
+    private String phone;
+
     @ApiModelProperty("所属机构id (父级机构id)")
     private Long parentOrgId;
 
@@ -26,6 +32,22 @@ public class TlongOrgResponseDto implements Serializable {
 
     @ApiModelProperty("注册时间")
     private Date createDate;
+
+    public String getOrgEmail() {
+        return orgEmail;
+    }
+
+    public void setOrgEmail(String orgEmail) {
+        this.orgEmail = orgEmail;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public Long getOrgId() {
         return orgId;

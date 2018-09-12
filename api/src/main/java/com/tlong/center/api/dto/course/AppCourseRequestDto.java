@@ -14,6 +14,9 @@ public class AppCourseRequestDto implements Serializable {
     @ApiModelProperty("标题")
     private String title;
 
+    @ApiModelProperty("课程类型")
+    private Long styleId;
+
     @ApiModelProperty("课程目录")
     private Integer catalog;
 
@@ -37,6 +40,14 @@ public class AppCourseRequestDto implements Serializable {
 
     @ApiModelProperty("newstime")
     private String newstime;
+
+    public Long getStyleId() {
+        return styleId;
+    }
+
+    public void setStyleId(Long styleId) {
+        this.styleId = styleId;
+    }
 
     public String getNewstime() {
         return newstime;

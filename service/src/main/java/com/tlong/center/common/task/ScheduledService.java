@@ -37,7 +37,7 @@ public class ScheduledService {
         this.userCouponRepository = userCouponRepository;
     }
 
-    @Scheduled(cron = "59 59 11 * * ?")
+    @Scheduled(cron = "59 59 23 * * ?")
     public void clearCoupon() {
         clearnCouponTable();
         clearnUserCouponTable();

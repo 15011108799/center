@@ -38,10 +38,10 @@ public class PartnerService {
     /**
      * 添加合伙人
      */
-    public Result addPartner(String s, PartnerRequestDto reqDto) {
-        reqDto.setPic(s.substring(0, s.length() - 1));
-        reqDto.setTitleIcon(FileUploadUtils.readFile(reqDto.getTitleIcon()));
-        reqDto.setVideo(FileUploadUtils.readFile(reqDto.getVideo()));
+    public Result addPartner(PartnerRequestDto reqDto) {
+        reqDto.setPic(reqDto.getPic());
+        reqDto.setTitleIcon(reqDto.getTitleIcon());
+        reqDto.setVideo(reqDto.getVideo());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         reqDto.setPublishTime(simpleDateFormat.format(new Date()));
         reqDto.setIsCheck("0");
@@ -66,22 +66,12 @@ public class PartnerService {
     /**
      * 修改合伙人信息
      */
-    public Result updatePartner(String s, PartnerRequestDto reqDto) {
+    public Result updatePartner(PartnerRequestDto reqDto) {
         WebPartner webPartner1 = repository.findOne(Long.valueOf(reqDto.getId()));
-        if (s.equals(""))
-            reqDto.setPic(reqDto.getPic().substring(1));
-        else
-            reqDto.setPic(s.substring(0, s.length() - 1) + reqDto.getPic());
-        String icon = FileUploadUtils.readFile(reqDto.getTitleIcon());
-        if (icon != null && !icon.equals(""))
-            reqDto.setTitleIcon(icon);
-        else
-            reqDto.setTitleIcon(webPartner1.getTitleIcon());
-        String video = FileUploadUtils.readFile(reqDto.getVideo());
-        if (video != null && !video.equals(""))
-            reqDto.setVideo(video);
-        else
-            reqDto.setVideo(webPartner1.getVideo());
+        reqDto.setPic(reqDto.getPic());
+        reqDto.setTitleIcon(reqDto.getTitleIcon());
+        reqDto.setVideo(reqDto.getVideo());
+        reqDto.setVideo(webPartner1.getVideo());
         WebPartner webPartner = new WebPartner(reqDto);
         webPartner.setIsCheck("0");
         webPartner.setPublishTime(webPartner1.getPublishTime());

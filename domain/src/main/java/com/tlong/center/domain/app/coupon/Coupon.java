@@ -56,12 +56,22 @@ public class Coupon {
     //卡券图片路径
     private String couponPic;
 
+    //优惠券可用商品分类
+    private String goodsClass;
+
     //当前状态
     private Integer curState;
 
     //是否删除
     private Integer isDeleted;
 
+    public String getGoodsClass() {
+        return goodsClass;
+    }
+
+    public void setGoodsClass(String goodsClass) {
+        this.goodsClass = goodsClass;
+    }
 
     public String getCouponPic() {
         return couponPic;

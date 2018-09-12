@@ -2,10 +2,7 @@ package com.tlong.center.web.org;
 
 import com.tlong.center.api.dto.common.PageAndSortRequestDto;
 import com.tlong.center.api.dto.common.TlongResultDto;
-import com.tlong.center.api.dto.web.org.AddOrgRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyRequestDto;
-import com.tlong.center.api.dto.web.org.SuppliersCompanyResponseDto;
-import com.tlong.center.api.dto.web.org.TlongOrgResponseDto;
+import com.tlong.center.api.dto.web.org.*;
 import com.tlong.center.api.web.org.WebOrgApi;
 import com.tlong.center.service.WebOrgService;
 import org.springframework.data.domain.Page;
@@ -47,5 +44,21 @@ public class WebOrgController implements WebOrgApi {
     @Override
     public Page<TlongOrgResponseDto> agentList(@PathVariable Long orgId, @RequestBody PageAndSortRequestDto pageAndSortRequestDto) {
         return webOrgService.agentList(orgId,pageAndSortRequestDto);
+    }
+
+    /**
+     * 获取单个机构信息
+     */
+    @Override
+    public TlongOrgResponseDto findOne(@PathVariable Long orgId) {
+        return webOrgService.findOne(orgId);
+    }
+
+    /**
+     * 修改单个机构信息
+     */
+    @Override
+    public TlongResultDto updateOne(@RequestBody UpdateOrgRequestDto requestDto) {
+        return webOrgService.updateOne(requestDto);
     }
 }
